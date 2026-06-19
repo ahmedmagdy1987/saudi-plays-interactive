@@ -28,10 +28,26 @@ const LINKS: [string, string][] = [
   ["malahi", "beneficiary"], ["sponsors", "beneficiary"], ["investors", "beneficiary"],
   ["strategic", "beneficiary"], ["developers", "beneficiary"],
 ];
+// Connector path anchored at each node's CIRCUMFERENCE (never through centres):
+// start/end are pushed out by the node radius (+ a small breathing gap) along
+// the line joining the two centres, then a vertical-tangent cubic curve links
+// them. This also guarantees horizontal links have a non-zero extent.
+const EDGE_GAP = 5;
 const path = (a: Pos, b: Pos) => {
-  const my = (a.y + b.y) / 2;
-  return `M${a.x} ${a.y} C${a.x} ${my} ${b.x} ${my} ${b.x} ${b.y}`;
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const dist = Math.hypot(dx, dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const ax = a.x + ux * (a.r + EDGE_GAP), ay = a.y + uy * (a.r + EDGE_GAP);
+  const bx = b.x - ux * (b.r + EDGE_GAP), by = b.y - uy * (b.r + EDGE_GAP);
+  const my = (ay + by) / 2;
+  return `M${ax.toFixed(1)} ${ay.toFixed(1)} C${ax.toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
 };
+// nodes one hop away from `id` (so the connected hub visibly responds on hover)
+const NEIGHBORS: Record<string, Set<string>> = LINKS.reduce((m, [f, t]) => {
+  (m[f] ??= new Set()).add(t);
+  (m[t] ??= new Set()).add(f);
+  return m;
+}, {} as Record<string, Set<string>>);
 
 /**
  * Section 07 — Governance as an interactive national operating system. The
@@ -69,16 +85,22 @@ export default function Governance() {
 
   const linkState = (f: string, t: string) =>
     active ? (f === active || t === active ? " is-hot" : " is-dim") : "";
-  const nodeState = (id: string) => (active ? (id === active ? " is-hot" : " is-dim") : "");
+  // active node lights up; the nodes it connects to "respond" (stay lit, softly
+  // emphasised); everything else dims.
+  const nodeState = (id: string) =>
+    active ? (id === active ? " is-hot" : NEIGHBORS[active]?.has(id) ? " is-near" : " is-dim") : "";
 
   return (
     <SectionShell id="governance" index="07" eyebrow={governance.eyebrow} title={governance.title} lede={governance.sub} label={governance.title}>
       <div className="gov__diagram-wrap container">
         <svg className="gov__diagram" viewBox="0 0 1000 720" role="img" aria-label={governance.title}>
           <defs>
-            <linearGradient id="g-link" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="rgba(56,224,205,0.7)" />
-              <stop offset="1" stopColor="rgba(138,120,240,0.6)" />
+            {/* userSpaceOnUse so HORIZONTAL links (zero-height bbox) don't get a
+                degenerate objectBoundingBox gradient and vanish — spans the whole
+                720u diagram so every connector, any orientation, is painted. */}
+            <linearGradient id="g-link" gradientUnits="userSpaceOnUse" x1="500" y1="0" x2="500" y2="720">
+              <stop offset="0" stopColor="rgba(56,224,205,0.75)" />
+              <stop offset="1" stopColor="rgba(138,120,240,0.65)" />
             </linearGradient>
             <radialGradient id="g-halo" cx="0.5" cy="0.5" r="0.5">
               <stop offset="0" stopColor="rgba(56,224,205,0.4)" />

@@ -7,6 +7,9 @@ import "./RevenueEcosystem.css";
 
 const R = 80;
 const C = 2 * Math.PI * R;
+// tiny visual gap between adjacent segments (viewBox units ≈ 0.4% of C — does
+// not materially distort the percentages, just makes the six arcs legible)
+const GAP = 2;
 const accentVar = (a: string) => (a === "violet" ? "var(--violet)" : a === "gold" ? "var(--gold)" : "var(--teal)");
 
 /**
@@ -21,19 +24,25 @@ export default function RevenueEcosystem() {
   const { revenue } = useContent();
   const [active, setActive] = useState<string | null>(null);
 
-  // cumulative starts (exact, never rounded)
+  // cumulative starts (exact, never rounded). `dash` is the painted arc length
+  // (minus a hair for the inter-segment gap); the dash/gap pair is baked into
+  // the JSX below so the six coloured segments exist natively in the DOM and do
+  // NOT depend on JS — gsap only animates the reveal (strokeDashoffset).
   let acc = 0;
   const segs = revenue.streams.map((s) => {
     const start = acc;
     acc += s.pct;
-    return { ...s, start, len: (s.pct / 100) * C, rotate: -90 + (start / 100) * 360 };
+    const len = (s.pct / 100) * C;
+    return { ...s, start, len, dash: Math.max(len - GAP, 0.5), rotate: -90 + (start / 100) * 360 };
   });
 
   useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
+    // base stroke-dasharray comes from JSX; here we only set the hidden→shown
+    // offset so a StrictMode/context revert can never leave the ring un-segmented.
     const arcs = gsap.utils.toArray<SVGCircleElement>(".rev__seg");
     arcs.forEach((a) => {
-      const len = Number(a.dataset.len);
-      gsap.set(a, { strokeDasharray: `${len} ${C}`, strokeDashoffset: reduced ? 0 : len });
+      const dash = Number(a.dataset.dash);
+      gsap.set(a, { strokeDashoffset: reduced ? 0 : dash });
     });
     if (reduced) {
       gsap.set(".rev__center", { opacity: 1 });
@@ -57,6 +66,7 @@ export default function RevenueEcosystem() {
       <div className="rev__layout container">
         <div className="rev__ring-wrap">
           <svg className="rev__ring" viewBox="0 0 200 200" role="img" aria-label={`${revenue.centerCap} 100%`}>
+            {/* subtle dark track under the segments — never covers them */}
             <circle cx="100" cy="100" r={R} fill="none" stroke="rgba(120,162,224,0.1)" strokeWidth="26" />
             {segs.map((s) => (
               <circle
@@ -66,9 +76,12 @@ export default function RevenueEcosystem() {
                 cy="100"
                 r={R}
                 stroke={accentVar(s.accent)}
+                /* dash = this segment's arc; gap = the rest of the ring, so each
+                   <circle> paints ONLY its own slice in its own colour */
+                strokeDasharray={`${s.dash.toFixed(2)} ${(C - s.dash).toFixed(2)}`}
                 data-id={s.id}
-                data-len={s.len.toFixed(2)}
-                style={{ transform: `rotate(${s.rotate}deg)` }}
+                data-dash={s.dash.toFixed(2)}
+                style={{ transform: `rotate(${s.rotate}deg)`, transformBox: "view-box", transformOrigin: "center" }}
               />
             ))}
             <g className="rev__center">

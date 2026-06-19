@@ -31,6 +31,8 @@
 .gov-node--beneficiary .gov-disc { stroke: var(--violet-bright); }
 .gov-icon { color: inherit; }
 .gov-node.is-hot .gov-disc { stroke: currentColor; stroke-width: 2.6; filter: drop-shadow(0 0 9px currentColor); }
+/* a directly-connected node responds (stays lit, gentle emphasis) rather than dimming */
+.gov-node.is-near .gov-disc { stroke: currentColor; stroke-width: 2; filter: drop-shadow(0 0 5px currentColor); }
 .gov-node.is-dim { filter: brightness(0.5) saturate(0.55); }
 .gov-node:focus-visible .gov-disc { stroke: var(--teal-bright); stroke-width: 2.6; }
 .gov-halo { opacity: 0.55; }
