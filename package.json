@@ -1,0 +1,34 @@
+{
+  "name": "saudi-plays",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "السعودية تلعب — cinematic Arabic RTL landing experience for the Saudi Plays national entertainment initiative (presented by Malahi).",
+  "scripts": {
+    "predev": "node scripts/genGeo.mjs",
+    "dev": "vite",
+    "prebuild": "node scripts/genGeo.mjs",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc -b --noEmit",
+    "gengeo": "node scripts/genGeo.mjs",
+    "shots": "node scripts/screenshots.mjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-sans": "^5.1.0",
+    "@fontsource/ibm-plex-sans-arabic": "^5.1.0",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.21",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.49.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

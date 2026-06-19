@@ -1,0 +1,89 @@
+/* top page-progress bar */
+.progress-bar {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 3px;
+  z-index: var(--z-nav);
+  background: transparent;
+  pointer-events: none;
+}
+.progress-bar__fill {
+  height: 100%;
+  width: var(--p, 0%);
+  background: linear-gradient(90deg, var(--teal), var(--violet-bright), var(--gold));
+  box-shadow: var(--glow-teal-soft);
+  transform-origin: inline-start;
+}
+
+/* side rail (desktop) */
+.navrail {
+  position: fixed;
+  inset-inline-start: clamp(0.6rem, 1.6vw, 1.8rem);
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  z-index: var(--z-nav);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.7rem 0.55rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  background: rgba(6, 14, 30, 0.5);
+  backdrop-filter: blur(10px);
+}
+.navrail__item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: none;
+  padding: 0.2rem;
+  color: var(--ink-mute);
+}
+.navrail__dot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: transparent;
+  transition: all var(--dur-fast) var(--ease-out);
+  flex: none;
+}
+.navrail__item[aria-current="true"] .navrail__dot {
+  border-color: var(--teal);
+  background: var(--teal);
+  box-shadow: var(--glow-teal);
+}
+.navrail__label {
+  position: absolute;
+  inset-inline-start: 2.6rem;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: rgba(6, 14, 30, 0.82);
+  border: 1px solid var(--line);
+  padding: 0.25em 0.7em;
+  border-radius: var(--radius-pill);
+  opacity: 0;
+  transform: translateX(8px);
+  pointer-events: none;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.navrail__item:hover .navrail__label,
+.navrail__item:focus-visible .navrail__label,
+.navrail__item[aria-current="true"] .navrail__label {
+  opacity: 1;
+  transform: translateX(0);
+}
+.navrail__index {
+  font-family: var(--font-en);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--teal);
+}
+
+@media (max-width: 900px) {
+  .navrail { display: none; }
+}

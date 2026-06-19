@@ -1,0 +1,94 @@
+/* ============================================================================
+   السعودية تلعب — Design tokens
+   Visual language: deep midnight navy, atmospheric blue gradients, luminous
+   teal, controlled violet, warm gold, crisp off-white. Government-grade clarity
+   with entertainment-grade energy.
+   ========================================================================== */
+
+:root {
+  /* ---- Backgrounds (midnight depth stack) ---- */
+  --abyss: #02060f;
+  --night: #050c1c;
+  --navy-900: #071330;
+  --navy-800: #0a1a3c;
+  --navy-700: #0e2350;
+  --navy-600: #143064;
+
+  /* ---- Accents ---- */
+  --teal: #38e0cd;
+  --teal-bright: #5ff3e2;
+  --teal-deep: #11a99e;
+  --violet: #8a78f0;
+  --violet-bright: #a99bff;
+  --violet-deep: #5a44c4;
+  --gold: #ecc578;
+  --gold-bright: #f6d99a;
+  --gold-deep: #b88a3e;
+
+  /* signal red/green used sparingly in the demo ops dashboard */
+  --pulse-green: #4fd99a;
+  --pulse-amber: #f0b95e;
+
+  /* ---- Ink (typography) ---- */
+  --ink: #eef3fb;
+  --ink-soft: rgba(238, 243, 251, 0.74);
+  --ink-mute: rgba(238, 243, 251, 0.52);
+  --ink-faint: rgba(238, 243, 251, 0.34);
+
+  /* ---- Lines & surfaces ---- */
+  --line: rgba(120, 162, 224, 0.16);
+  --line-strong: rgba(132, 178, 240, 0.3);
+  --hair: rgba(146, 184, 240, 0.1);
+  --surface: rgba(18, 36, 72, 0.42);
+  --surface-2: rgba(12, 26, 56, 0.6);
+  --surface-glass: rgba(14, 30, 64, 0.5);
+  --node: #bfe9ff;
+
+  /* ---- Glows ---- */
+  --glow-teal: 0 0 36px rgba(56, 224, 205, 0.42);
+  --glow-teal-soft: 0 0 22px rgba(56, 224, 205, 0.26);
+  --glow-violet: 0 0 36px rgba(138, 120, 240, 0.4);
+  --glow-gold: 0 0 30px rgba(236, 197, 120, 0.36);
+  --shadow-card: 0 24px 60px -28px rgba(0, 0, 0, 0.7);
+  --shadow-deep: 0 40px 120px -40px rgba(0, 0, 0, 0.85);
+
+  /* ---- Typography ---- */
+  --font-ar: "IBM Plex Sans Arabic", "Segoe UI", "Tahoma", system-ui, sans-serif;
+  --font-en: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, sans-serif;
+
+  /* fluid type scale (clamp: min, fluid, max) */
+  --fz-eyebrow: clamp(0.66rem, 0.6rem + 0.3vw, 0.8rem);
+  --fz-label: clamp(0.82rem, 0.78rem + 0.2vw, 0.95rem);
+  --fz-body: clamp(0.98rem, 0.92rem + 0.4vw, 1.18rem);
+  --fz-lead: clamp(1.12rem, 1rem + 0.8vw, 1.6rem);
+  --fz-h3: clamp(1.3rem, 1.05rem + 1.2vw, 2rem);
+  --fz-h2: clamp(1.9rem, 1.3rem + 3vw, 3.5rem);
+  --fz-h1: clamp(2.6rem, 1.4rem + 6vw, 6rem);
+  --fz-display: clamp(3.2rem, 1.4rem + 9vw, 8.5rem);
+  --fz-stat: clamp(2.4rem, 1.4rem + 4.4vw, 4.6rem);
+
+  /* ---- Spacing & layout ---- */
+  --maxw: 1280px;
+  --maxw-narrow: 940px;
+  --gut: clamp(1.1rem, 0.6rem + 3vw, 3.4rem);
+  --section-pad: clamp(4rem, 2rem + 8vh, 9rem);
+  --radius: 18px;
+  --radius-lg: 26px;
+  --radius-sm: 11px;
+  --radius-pill: 999px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.32s;
+  --dur: 0.6s;
+  --dur-slow: 1.1s;
+
+  /* ---- Z-index ---- */
+  --z-bg: 0;
+  --z-content: 1;
+  --z-nav: 40;
+  --z-overlay: 60;
+
+  color-scheme: dark;
+}

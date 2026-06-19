@@ -1,0 +1,73 @@
+.section--zones {
+  background:
+    radial-gradient(80% 70% at 50% -10%, rgba(40, 26, 92, 0.4), transparent 55%),
+    linear-gradient(180deg, var(--night), var(--abyss));
+}
+/* ---- core + audiences orbit ---- */
+.zones__orbit-wrap { position: relative; margin: clamp(1.4rem, 3vh, 2.4rem) auto 0; }
+.zones__orbit { width: 100%; height: auto; overflow: visible; }
+.zorbit-ring { fill: none; stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 9; transform-origin: center; }
+.section--zones[data-spin="true"] .zorbit-ring { animation: zspin 60s linear infinite; }
+@keyframes zspin { to { transform: rotate(360deg); } }
+.zorbit-link { stroke: url(#z-link); stroke-width: 1.2; fill: none; vector-effect: non-scaling-stroke; }
+.zorbit-core { fill: rgba(6,16,34,0.9); stroke: var(--teal); stroke-width: 1.5; }
+.zorbit-core-label { fill: var(--teal-bright); font-family: var(--font-ar); font-weight: 700; paint-order: stroke; stroke: rgba(2,6,15,0.85); stroke-width: 4px; }
+.zaud { transform-box: fill-box; transform-origin: center; }
+.zaud-dot { fill: var(--node); }
+.zaud-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 500; paint-order: stroke; stroke: rgba(2,6,15,0.8); stroke-width: 3px; }
+
+/* ---- zones sequence ---- */
+.zones__seq-head { margin: clamp(2.4rem, 6vh, 4rem) 0 1.4rem; }
+.zones__row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(82vw, 340px);
+  gap: clamp(0.9rem, 1.6vw, 1.4rem);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.4rem clamp(1.1rem, 3vw, 3.4rem) 1.4rem;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.zone-card {
+  scroll-snap-align: center;
+  position: relative;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(16, 34, 72, 0.4), rgba(8, 18, 40, 0.55));
+  padding: clamp(1.4rem, 2.2vw, 1.9rem);
+  display: flex; flex-direction: column; gap: 0.9rem;
+  overflow: hidden;
+  transition: border-color var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+  --accent: var(--teal);
+  --accent-bright: var(--teal-bright);
+}
+.zone-card[data-accent="violet"] { --accent: var(--violet); --accent-bright: var(--violet-bright); }
+.zone-card[data-accent="gold"] { --accent: var(--gold); --accent-bright: var(--gold-bright); }
+.zone-card:hover, .zone-card:focus-within { border-color: var(--accent); transform: translateY(-4px); }
+.zone-card__viz {
+  position: relative;
+  height: 132px;
+  display: grid; place-items: center;
+  border-radius: var(--radius);
+  background: radial-gradient(60% 60% at 50% 50%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
+  color: var(--accent-bright);
+  overflow: hidden;
+}
+.zone-card__viz .ring {
+  position: absolute; width: 70px; height: 70px; border-radius: 50%;
+  border: 1.5px solid var(--accent); opacity: 0.5;
+}
+.section--zones[data-spin="true"] .zone-card__viz .ring { animation: zpulse 3.4s ease-out infinite; }
+.section--zones[data-spin="true"] .zone-card__viz .ring.r2 { animation-delay: 1.7s; }
+@keyframes zpulse { 0% { transform: scale(0.5); opacity: 0.6; } 100% { transform: scale(2.6); opacity: 0; } }
+.zone-card__viz svg.glyph { position: relative; z-index: 1; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 60%, transparent)); }
+.zone-card__index { font-family: var(--font-en); font-size: var(--fz-eyebrow); letter-spacing: 0.2em; color: var(--accent-bright); direction: ltr; }
+.zone-card__ar { font-size: var(--fz-h3); font-weight: 600; }
+.zone-card__en { font-family: var(--font-en); font-size: var(--fz-eyebrow); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); direction: ltr; }
+.zone-card__desc { font-size: var(--fz-body); color: var(--ink-soft); }
+.zones__hint { margin-top: 0.4rem; color: var(--ink-faint); font-size: var(--fz-eyebrow); padding-inline: clamp(1.1rem, 3vw, 3.4rem); }
+
+@media (prefers-reduced-motion: reduce) {
+  .zorbit-ring, .zone-card__viz .ring { animation: none !important; }
+}

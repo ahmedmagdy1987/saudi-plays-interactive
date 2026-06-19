@@ -1,0 +1,53 @@
+.section--governance {
+  background:
+    radial-gradient(70% 60% at 10% 10%, rgba(40, 26, 92, 0.34), transparent 55%),
+    linear-gradient(180deg, var(--night), var(--abyss));
+}
+.gov__diagram-wrap {
+  margin-top: clamp(1.6rem, 4vh, 2.6rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(12, 26, 56, 0.4), rgba(6, 14, 32, 0.5));
+  padding: clamp(0.8rem, 1.6vw, 1.4rem);
+  overflow: hidden;
+}
+.gov__diagram { width: 100%; height: auto; overflow: visible; }
+.gov-link { fill: none; stroke: url(#g-link); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.gov-node circle { transform-box: fill-box; transform-origin: center; }
+.gov-node--hub .gov-disc { fill: rgba(8,20,42,0.92); stroke: var(--teal); stroke-width: 1.6; }
+.gov-node--operator .gov-disc { stroke: var(--gold); }
+.gov-node--beneficiary .gov-disc { stroke: var(--violet-bright); }
+.gov-disc { fill: rgba(10,22,46,0.9); stroke: var(--line-strong); stroke-width: 1.2; }
+.gov-halo { opacity: 0.5; }
+.gov-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: rgba(2,6,15,0.85); stroke-width: 3.5px; }
+.gov-role { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 400; paint-order: stroke; stroke: rgba(2,6,15,0.8); stroke-width: 3px; }
+
+/* readable legend — desktop relies on the diagram; shown when labels shrink */
+.gov__legend { display: none; }
+@media (max-width: 820px) {
+  .gov__legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: 1.4rem;
+  }
+  .gov__legend-item {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: rgba(14, 30, 64, 0.4);
+  }
+  .gov__legend-item strong { font-size: var(--fz-label); font-weight: 600; }
+  .gov__legend-item span { font-size: var(--fz-eyebrow); color: var(--ink-mute); }
+}
+@media (max-width: 440px) { .gov__legend { grid-template-columns: 1fr; } }
+
+.gov__align { margin-top: clamp(1.6rem, 4vh, 2.6rem); display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; }
+.gov__align-label { color: var(--ink-mute); font-size: var(--fz-label); margin-inline-end: 0.4rem; }
+.gov__align .chip { border-color: var(--line-strong); }
+.gov__align .chip svg { color: var(--gold); }
+
+@media (max-width: 640px) {
+  .gov-label { font-size: 15px; }
+}

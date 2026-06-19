@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+_geo/ne50.geojson
+*.local
+.DS_Store
+.vite
+npm-debug.log*
+yarn-error.log*
+__screenshots__/
+
+# tsc -b (composite) emit artifacts for the node config
+vite.config.js
+vite.config.d.ts
+*.tsbuildinfo

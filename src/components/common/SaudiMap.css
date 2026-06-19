@@ -1,0 +1,82 @@
+.saudimap {
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+}
+.saudimap__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  display: block;
+}
+
+/* atmosphere */
+.saudimap__field { opacity: 0.5; }
+
+/* border */
+.saudimap__fill {
+  fill: url(#sm-fill);
+  stroke: none;
+}
+.saudimap__border {
+  fill: none;
+  stroke: url(#sm-border);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px rgba(56, 224, 205, 0.5));
+}
+
+/* connection links */
+.saudimap__link {
+  fill: none;
+  stroke: url(#sm-link);
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.6;
+}
+.saudimap__link--armed { opacity: 0; }
+
+/* nodes */
+.saudimap__node-core {
+  fill: var(--node);
+}
+.saudimap__node--origin .saudimap__node-core { fill: var(--gold-bright); }
+.saudimap__node-ring {
+  fill: none;
+  stroke: var(--teal-bright);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.saudimap__node--origin .saudimap__node-ring { stroke: var(--gold-bright); }
+.saudimap__node--armed { opacity: 0; }
+
+/* ambient pulse (paused when reduced-motion or tab hidden) */
+.saudimap[data-animate="true"] .saudimap__node-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sm-pulse 3.2s ease-out infinite;
+}
+.saudimap__node--origin .saudimap__node-pulse { animation-duration: 2.4s; }
+@keyframes sm-pulse {
+  0% { transform: scale(0.5); opacity: 0.7; }
+  70% { transform: scale(3.4); opacity: 0; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .saudimap__node-pulse { animation: none !important; opacity: 0; }
+}
+
+/* labels (SVG DOM text — accessible, selectable) */
+.saudimap__label {
+  fill: var(--ink);
+  font-family: var(--font-ar);
+  font-weight: 500;
+  paint-order: stroke;
+  stroke: rgba(2, 6, 15, 0.75);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.saudimap__label--origin { fill: var(--gold-bright); font-weight: 600; }

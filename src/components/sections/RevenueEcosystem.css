@@ -1,0 +1,44 @@
+.section--revenue {
+  background: linear-gradient(180deg, var(--abyss), var(--night) 50%, var(--abyss));
+}
+.rev__layout {
+  margin-top: clamp(1.6rem, 4vh, 2.6rem);
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(1.4rem, 3vw, 3rem);
+  align-items: center;
+}
+.rev__ring-wrap { position: relative; display: grid; place-items: center; }
+.rev__ring { width: 100%; max-width: 380px; height: auto; }
+.rev__seg { fill: none; stroke-width: 26; transform-origin: center; }
+.rev__center-total { fill: var(--ink); font-family: var(--font-en); font-weight: 700; }
+.rev__center-cap { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 500; }
+
+.rev__streams { display: flex; flex-direction: column; gap: 0.7rem; }
+.rev-stream {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(18, 36, 74, 0.3), rgba(8, 18, 40, 0.42));
+  --accent: var(--teal);
+}
+.rev-stream[data-accent="violet"] { --accent: var(--violet); }
+.rev-stream[data-accent="gold"] { --accent: var(--gold); }
+.rev-stream__sw { width: 14px; height: 14px; border-radius: 4px; background: var(--accent); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent); flex: none; }
+.rev-stream__body { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.rev-stream__name { font-size: var(--fz-lead); font-weight: 600; }
+.rev-stream__desc { font-size: var(--fz-label); color: var(--ink-mute); }
+.rev-stream__bar { height: 5px; border-radius: 99px; background: rgba(120,162,224,0.12); overflow: hidden; margin-top: 0.2rem; }
+.rev-stream__bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; }
+.rev-stream__pct { font-family: var(--font-en); font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; color: var(--accent); direction: ltr; unicode-bidi: isolate; }
+
+.rev__note { margin-top: 1.4rem; }
+
+@media (max-width: 820px) {
+  .rev__layout { grid-template-columns: 1fr; }
+  .rev__ring { max-width: 300px; }
+}
