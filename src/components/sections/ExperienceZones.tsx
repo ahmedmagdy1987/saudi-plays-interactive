@@ -45,6 +45,13 @@ export default function ExperienceZones() {
     tl.to(".zorbit-core, .zorbit-core-label", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" })
       .to(links, { strokeDashoffset: 0, duration: 0.8, stagger: 0.07 }, "-=0.2")
       .to(auds, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.08, ease: "back.out(1.5)" }, "-=0.6");
+
+    // each experience zone gets its own staggered entrance
+    gsap.set(".zone-card", { opacity: 0, y: 28 });
+    gsap.to(".zone-card", {
+      opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power3.out",
+      scrollTrigger: { trigger: ".zones__row", start: "top 84%", toggleActions: "play none none none" },
+    });
     ScrollTrigger.refresh();
   });
 

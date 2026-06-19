@@ -54,6 +54,13 @@ export default function NationalVision() {
       .to(lines, { strokeDashoffset: 0, duration: 0.9, stagger: 0.12, ease: "power2.out" }, "-=0.2")
       .to(sats, { opacity: 1, scale: 1, duration: 0.6, stagger: 0.12, ease: "back.out(1.5)" }, "-=0.7");
 
+    // explanatory cards reveal AFTER the network, with a restrained stagger
+    gsap.set(".vforce", { opacity: 0, y: 26 });
+    gsap.to(".vforce", {
+      opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "power3.out",
+      scrollTrigger: { trigger: ".vision__forces", start: "top 84%", toggleActions: "play none none none" },
+    });
+
     ScrollTrigger.refresh();
   });
 
@@ -126,7 +133,7 @@ export default function NationalVision() {
 
       <div className="vision__forces container">
         {vision.forces.map((f) => (
-          <article className="vforce" key={f.id} data-reveal>
+          <article className="vforce" key={f.id}>
             <span className="vforce__icon">
               <Icon name={FORCE_ICONS[f.id] ?? "spark"} size={22} />
             </span>

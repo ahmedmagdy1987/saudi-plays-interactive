@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { initSmoothScroll } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/hooks";
 import SectionProgressNavigation from "@/components/nav/SectionProgressNavigation";
@@ -22,6 +23,12 @@ export default function App() {
 
     const lenis = initSmoothScroll();
 
+    // Recompute pin/trigger geometry once webfonts settle and after full load,
+    // so measurements taken before fonts loaded don't leave pins misaligned.
+    const refresh = () => ScrollTrigger.refresh();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+    window.addEventListener("load", refresh);
+
     // Generic scroll-reveal for [data-reveal] (CSS handles the transition).
     let obs: IntersectionObserver | null = null;
     if (!reduced && typeof IntersectionObserver !== "undefined") {
@@ -43,6 +50,7 @@ export default function App() {
 
     return () => {
       obs?.disconnect();
+      window.removeEventListener("load", refresh);
       lenis?.destroy();
     };
   }, []);

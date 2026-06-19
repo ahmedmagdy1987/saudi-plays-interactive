@@ -53,6 +53,13 @@ export default function MalahiOperating() {
       .to(line, { strokeDashoffset: 0, duration: 1.4, ease: "power2.out" }, "-=1.1")
       .to(".mo-spark__area", { opacity: 1, duration: 0.7 }, "-=0.8")
       .to(bar, { width: `${locPct * 100}%`, duration: 1, ease: "power2.out" }, "-=1");
+
+    // operating pillars assemble one by one
+    gsap.set(".mo-pillar", { opacity: 0, y: 24 });
+    gsap.to(".mo-pillar", {
+      opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out",
+      scrollTrigger: { trigger: ".mo__pillars", start: "top 84%", toggleActions: "play none none none" },
+    });
     ScrollTrigger.refresh();
   });
 
@@ -67,7 +74,7 @@ export default function MalahiOperating() {
       <div className="container">
         <div className="mo__pillars">
           {malahi.pillars.map((p) => (
-            <article className="mo-pillar" key={p.id} data-reveal>
+            <article className="mo-pillar" key={p.id}>
               <span className="mo-pillar__icon"><Icon name={p.icon as IconName} size={20} /></span>
               <h3 className="mo-pillar__ar">{p.ar}</h3>
               <p className="mo-pillar__proof">{p.proof}</p>

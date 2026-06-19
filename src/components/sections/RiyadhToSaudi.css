@@ -20,7 +20,10 @@
 .r2s__proof-card h3 { font-size: var(--fz-lead); font-weight: 600; }
 .r2s__proof-card p { font-size: var(--fz-body); color: var(--ink-soft); }
 
-.r2s__scrolly { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(1rem, 3vw, 3rem); align-items: start; }
+/* align-items: stretch (default) so the map column is as tall as the steps —
+   this is what lets the sticky map stay in view through the whole scrollytelling
+   sequence instead of releasing early and leaving an empty column. */
+.r2s__scrolly { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(1rem, 3vw, 3rem); align-items: stretch; }
 .r2s__mapcol { position: relative; }
 .r2s__mapwrap {
   position: sticky;
@@ -43,7 +46,7 @@
 
 .r2s__steps { display: flex; flex-direction: column; }
 .r2s__step {
-  min-height: 78vh;
+  min-height: 62vh;
   display: flex;
   align-items: center;
 }

@@ -232,19 +232,22 @@ export default function SaudiMap({
             })}
           </g>
 
-          {/* labels (SVG DOM text) */}
+          {/* labels (SVG DOM text) — nudged off-node via labelDx/labelDy so
+              dense clusters (e.g. Makkah/Jeddah) never overlap */}
           <g className="saudimap__labels">
             {nodes
               .filter((n) => labelSet.has(n.id))
               .map((n) => (
                 <text
                   key={n.id}
-                  className={`saudimap__label${n.origin ? " saudimap__label--origin" : ""}`}
+                  className={`saudimap__label${n.origin ? " saudimap__label--origin" : ""}${
+                    isArmed ? " saudimap__label--armed" : ""
+                  }`}
                   data-label={n.id}
-                  x={n.x}
-                  y={n.y - (n.origin ? 16 : 12)}
+                  x={n.x + (n.labelDx ?? 0)}
+                  y={n.y + (n.labelDy ?? (n.origin ? -18 : -12))}
                   textAnchor="middle"
-                  fontSize={n.origin ? 19 : 14}
+                  fontSize={n.origin ? 18 : 13.5}
                   direction="rtl"
                 >
                   {n.ar}

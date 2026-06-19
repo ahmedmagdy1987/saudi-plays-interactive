@@ -56,22 +56,25 @@
   --font-ar: "IBM Plex Sans Arabic", "Segoe UI", "Tahoma", system-ui, sans-serif;
   --font-en: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, sans-serif;
 
-  /* fluid type scale (clamp: min, fluid, max) */
-  --fz-eyebrow: clamp(0.66rem, 0.6rem + 0.3vw, 0.8rem);
+  /* fluid type scale (clamp: min, fluid, SAFE max — capped so headings never
+     overload the composition or clip at 1366×768) */
+  --fz-eyebrow: clamp(0.66rem, 0.6rem + 0.3vw, 0.78rem);
   --fz-label: clamp(0.82rem, 0.78rem + 0.2vw, 0.95rem);
-  --fz-body: clamp(0.98rem, 0.92rem + 0.4vw, 1.18rem);
-  --fz-lead: clamp(1.12rem, 1rem + 0.8vw, 1.6rem);
-  --fz-h3: clamp(1.3rem, 1.05rem + 1.2vw, 2rem);
-  --fz-h2: clamp(1.9rem, 1.3rem + 3vw, 3.5rem);
-  --fz-h1: clamp(2.6rem, 1.4rem + 6vw, 6rem);
-  --fz-display: clamp(3.2rem, 1.4rem + 9vw, 8.5rem);
-  --fz-stat: clamp(2.4rem, 1.4rem + 4.4vw, 4.6rem);
+  --fz-body: clamp(0.98rem, 0.92rem + 0.4vw, 1.14rem);
+  --fz-lead: clamp(1.1rem, 1rem + 0.7vw, 1.45rem);
+  --fz-h3: clamp(1.25rem, 1.05rem + 1vw, 1.8rem);
+  --fz-h2: clamp(1.75rem, 1.3rem + 2.2vw, 2.9rem);
+  --fz-h1: clamp(2.4rem, 1.5rem + 4vw, 4.4rem);
+  --fz-display: clamp(2.8rem, 1.7rem + 5vw, 5.4rem);
+  --fz-stat: clamp(2.1rem, 1.5rem + 2.8vw, 3.6rem);
 
   /* ---- Spacing & layout ---- */
   --maxw: 1280px;
   --maxw-narrow: 940px;
-  --gut: clamp(1.1rem, 0.6rem + 3vw, 3.4rem);
-  --section-pad: clamp(4rem, 2rem + 8vh, 9rem);
+  --gut: clamp(1.25rem, 0.8rem + 3vw, 3.4rem);
+  --section-pad: clamp(3.25rem, 2rem + 5.5vh, 6.5rem);
+  /* scrim behind text placed over busy imagery/maps (protected clear zones) */
+  --scrim: radial-gradient(120% 120% at 50% 50%, rgba(2, 6, 15, 0.82) 0%, rgba(2, 6, 15, 0.5) 45%, transparent 75%);
   --radius: 18px;
   --radius-lg: 26px;
   --radius-sm: 11px;

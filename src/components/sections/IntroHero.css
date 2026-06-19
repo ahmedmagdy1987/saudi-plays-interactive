@@ -1,7 +1,7 @@
 .intro {
   position: relative;
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(16, 40, 90, 0.55), transparent 60%),
+    radial-gradient(120% 90% at 50% 0%, rgba(16, 40, 90, 0.5), transparent 60%),
     linear-gradient(180deg, var(--abyss), var(--night));
 }
 .intro__stage {
@@ -19,9 +19,9 @@
   object-fit: cover;
   width: 100%;
   height: 100%;
-  opacity: 0.34;
+  opacity: 0.32;
   filter: saturate(1.05) contrast(1.02);
-  mask-image: radial-gradient(125% 95% at 50% 32%, #000 42%, transparent 82%);
+  mask-image: radial-gradient(130% 100% at 50% 28%, #000 40%, transparent 84%);
 }
 .intro__map {
   position: absolute;
@@ -31,59 +31,68 @@
   z-index: 1;
 }
 .intro__map .saudimap {
-  max-width: min(88vw, 900px);
-  filter: drop-shadow(0 30px 80px rgba(0, 0, 0, 0.6));
+  max-width: min(78vw, 820px);
+  opacity: 0.92;
+  filter: drop-shadow(0 30px 80px rgba(0, 0, 0, 0.55));
 }
 .intro__veil {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: radial-gradient(80% 60% at 50% 52%, transparent 30%, rgba(2, 6, 15, 0.5) 100%);
+  background: radial-gradient(78% 60% at 50% 52%, transparent 32%, rgba(2, 6, 15, 0.5) 100%);
   opacity: 0;
 }
 .intro__overlay {
   position: relative;
   z-index: 3;
   text-align: center;
-  padding: var(--gut);
-  max-width: 960px;
+  padding-inline: var(--gut);
+  max-width: 920px;
   pointer-events: none;
 }
-.intro__eyebrow { justify-content: center; margin-bottom: 1.2rem; }
+/* protected clear zone behind the title (keeps text readable over map + photo) */
+.intro__overlay::before {
+  content: "";
+  position: absolute;
+  inset: -8% -6%;
+  z-index: -1;
+  background: radial-gradient(58% 52% at 50% 54%, rgba(2, 6, 15, 0.78), rgba(2, 6, 15, 0.4) 55%, transparent 74%);
+}
+.intro__eyebrow { justify-content: center; margin-bottom: 1.3rem; }
+.intro__titlewrap { will-change: opacity; }
 .intro__title {
   font-family: var(--font-ar);
   font-weight: 700;
   font-size: var(--fz-display);
-  line-height: 0.98;
+  line-height: 1.0;
   letter-spacing: -0.02em;
   margin: 0;
 }
 .intro__title .line {
   display: block;
   overflow: hidden;
-  padding-block: 0.04em;
+  padding-block: 0.06em;
 }
 .intro__title .line > span { display: block; }
 .intro__title .line--2 > span {
-  background: linear-gradient(120deg, var(--teal-bright), var(--teal) 45%, var(--violet-bright));
+  background: linear-gradient(118deg, var(--teal-bright), var(--teal) 42%, var(--violet-bright));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 60px rgba(56, 224, 205, 0.35);
+  text-shadow: 0 0 60px rgba(56, 224, 205, 0.32);
 }
 .intro__supporting {
-  margin: 1.6rem auto 0;
+  margin: 1.5rem auto 0;
   max-width: 40ch;
   font-size: var(--fz-lead);
   font-weight: 300;
   color: var(--ink-soft);
 }
 
-/* hint to scroll */
 .intro__cue {
   position: absolute;
-  inset-block-end: 1.4rem;
+  inset-block-end: 1.5rem;
   inset-inline: 0;
   z-index: 4;
   display: flex;
@@ -93,31 +102,17 @@
   letter-spacing: 0.2em;
 }
 .intro__cue span { display: inline-flex; flex-direction: column; align-items: center; gap: 0.4rem; }
-.intro__cue i {
-  width: 1px; height: 28px;
-  background: linear-gradient(var(--teal), transparent);
-  animation: cue 2.2s ease-in-out infinite;
-}
-@keyframes cue { 0%,100% { transform: scaleY(0.4); opacity: .4; } 50% { transform: scaleY(1); opacity: 1; } }
+.intro__cue i { width: 1px; height: 28px; background: linear-gradient(var(--teal), transparent); animation: cue 2.2s ease-in-out infinite; }
+@keyframes cue { 0%, 100% { transform: scaleY(0.4); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
 
 /* case-study counters */
 .intro__case {
   position: relative;
   z-index: 3;
-  padding-block: clamp(3rem, 6vh, 6rem) var(--section-pad);
+  padding-block: clamp(2.6rem, 6vh, 5rem) var(--section-pad);
 }
-.intro__case-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.9rem 1.2rem;
-  margin-bottom: 2.2rem;
-}
-.intro__stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(1rem, 2vw, 2rem);
-}
+.intro__case-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem 1.2rem; margin-bottom: 2rem; }
+.intro__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2vw, 2rem); }
 .intro__stat {
   padding: clamp(1.3rem, 2.4vw, 2.2rem);
   border-radius: var(--radius-lg);
@@ -135,7 +130,8 @@
 
 @media (max-width: 720px) {
   .intro__stats { grid-template-columns: 1fr; }
-  .intro__map .saudimap { max-width: 96vw; opacity: 0.9; }
+  .intro__map .saudimap { max-width: 94vw; opacity: 0.8; }
+  .intro__overlay::before { inset: -6% -10%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .intro__cue i { animation: none; }

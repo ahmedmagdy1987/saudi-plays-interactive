@@ -17,7 +17,7 @@ responsive and under the user's control — **no scroll-hijacking**.
 | Technique | Section | Notes |
 |---|---|---|
 | Scroll-driven camera (map group scale + `svgOrigin` focus on Riyadh) | 01, 04 | True camera, not a CSS zoom. |
-| Controlled pin + scrub | 01 (desktop only) | Hero map draws as you scroll; title reveals on load (content never gated). |
+| Controlled pin + scrub | 01 (desktop only) | Calm initial state (atmosphere + eyebrow); «السعودية تلعب» masks up as the scroll begins, then the boundary draws once (never retracts) and nodes ignite under a gentle Riyadh focus. No city labels here, so nothing collides with the title. |
 | SVG path drawing (`stroke-dashoffset`) | 01,02,03,04,06,07,10 | Border, connectors, charts, network links. |
 | City-node activation (staggered scale/opacity) | 01,02,04,05,10 | `back.out` ease for a confident pop. |
 | Sticky scrollytelling (no pin) | 04 | Map sticky; timeline steps drive cumulative reveal. |

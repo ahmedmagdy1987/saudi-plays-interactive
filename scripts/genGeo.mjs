@@ -24,16 +24,18 @@ const polygons =
 // data in projectContent.ts (1=2026 five cities, 2=2027 ten cumulative,
 // 3=2028 twenty-plus). `origin` flags Riyadh, the proven pilot.
 const CITIES = [
-  { id: "riyadh", ar: "الرياض", en: "Riyadh", lon: 46.6753, lat: 24.7136, stage: 1, origin: true },
-  { id: "jeddah", ar: "جدة", en: "Jeddah", lon: 39.1925, lat: 21.4858, stage: 1 },
-  { id: "dammam", ar: "الدمام", en: "Dammam", lon: 50.0888, lat: 26.4207, stage: 1 },
-  { id: "mecca", ar: "مكة المكرمة", en: "Makkah", lon: 39.8579, lat: 21.3891, stage: 1 },
-  { id: "medina", ar: "المدينة المنورة", en: "Madinah", lon: 39.5692, lat: 24.5247, stage: 1 },
-  { id: "taif", ar: "الطائف", en: "Taif", lon: 40.4158, lat: 21.2703, stage: 2 },
+  // labelDx/labelDy nudge a label off its node (viewBox units, +y = down/south)
+  // so dense western/eastern clusters never overlap when labelled.
+  { id: "riyadh", ar: "الرياض", en: "Riyadh", lon: 46.6753, lat: 24.7136, stage: 1, origin: true, labelDx: 0, labelDy: -22 },
+  { id: "jeddah", ar: "جدة", en: "Jeddah", lon: 39.1925, lat: 21.4858, stage: 1, labelDx: -26, labelDy: -12 },
+  { id: "dammam", ar: "الدمام", en: "Dammam", lon: 50.0888, lat: 26.4207, stage: 1, labelDx: 30, labelDy: -8 },
+  { id: "mecca", ar: "مكة المكرمة", en: "Makkah", lon: 39.8579, lat: 21.3891, stage: 1, labelDx: 30, labelDy: 22 },
+  { id: "medina", ar: "المدينة المنورة", en: "Madinah", lon: 39.5692, lat: 24.5247, stage: 1, labelDx: -8, labelDy: -14 },
+  { id: "taif", ar: "الطائف", en: "Taif", lon: 40.4158, lat: 21.2703, stage: 2, labelDx: 30, labelDy: 6 },
   { id: "abha", ar: "أبها", en: "Abha", lon: 42.5117, lat: 18.2465, stage: 2 },
   { id: "tabuk", ar: "تبوك", en: "Tabuk", lon: 36.555, lat: 28.3838, stage: 2 },
   { id: "buraidah", ar: "بريدة", en: "Buraidah", lon: 43.975, lat: 26.326, stage: 2 },
-  { id: "khobar", ar: "الخبر", en: "Khobar", lon: 50.2083, lat: 26.2794, stage: 2 },
+  { id: "khobar", ar: "الخبر", en: "Khobar", lon: 50.2083, lat: 26.2794, stage: 2, labelDx: 30, labelDy: 16 },
   { id: "hail", ar: "حائل", en: "Hail", lon: 41.69, lat: 27.5114, stage: 3 },
   { id: "jubail", ar: "الجبيل", en: "Jubail", lon: 49.6583, lat: 27.0046, stage: 3 },
   { id: "yanbu", ar: "ينبع", en: "Yanbu", lon: 38.0618, lat: 24.089, stage: 3 },
@@ -140,6 +142,9 @@ export interface CityNode {
   /** projected SVG coordinates within VIEWBOX. */
   x: number;
   y: number;
+  /** optional label nudge (viewBox units) to avoid overlaps. */
+  labelDx?: number;
+  labelDy?: number;
 }
 
 export const VIEWBOX = { w: ${W}, h: ${H} } as const;

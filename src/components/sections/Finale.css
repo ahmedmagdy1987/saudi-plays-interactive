@@ -1,5 +1,6 @@
 .section--finale {
   background: linear-gradient(180deg, var(--abyss), var(--night));
+  overflow: clip;
 }
 .why__grid {
   display: grid;
@@ -21,47 +22,84 @@
 .why-card__ar { font-size: var(--fz-lead); font-weight: 600; line-height: 1.25; }
 .why-card__desc { font-size: var(--fz-label); color: var(--ink-soft); }
 
-/* finale scene */
+/* ---- full-bleed cinematic climax ---- */
 .finale__scene {
   position: relative;
-  margin-top: clamp(3rem, 8vh, 6rem);
-  min-height: 92svh;
-  display: grid;
-  place-items: center;
-  isolation: isolate;
+  width: 100%;
+  min-height: 100svh;
+  margin-top: clamp(2.6rem, 7vh, 6rem);
   overflow: hidden;
-  border-radius: var(--radius-lg);
+  isolation: isolate;
 }
 .finale__media {
-  position: absolute; inset: 0; z-index: 0;
-  width: 100%; height: 100%; object-fit: cover;
-  opacity: 0.3;
-  mask-image: radial-gradient(120% 100% at 50% 50%, #000 30%, transparent 85%);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.4;
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 72%, transparent);
 }
 .finale__map {
-  position: absolute; inset: 0; z-index: 1;
-  display: grid; place-items: center;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  padding-block-start: clamp(2rem, 6vh, 5rem);
 }
-.finale__map .saudimap { max-width: min(82vw, 760px); filter: drop-shadow(0 20px 70px rgba(0,0,0,0.5)); }
-.finale__veil { position: absolute; inset: 0; z-index: 2; background: radial-gradient(70% 60% at 50% 50%, transparent 35%, rgba(2,6,15,0.55)); pointer-events: none; }
-.finale__overlay { position: relative; z-index: 3; text-align: center; padding: var(--gut); max-width: 880px; }
-.finale__eyebrow { justify-content: center; margin-bottom: 1.2rem; }
+/* size the map by HEIGHT so it never overflows short viewports (e.g. 1366×768) */
+.finale__map .saudimap { width: auto; }
+.finale__map .saudimap__svg {
+  width: auto;
+  height: min(72vh, 820px);
+  max-width: 94vw;
+  filter: drop-shadow(0 30px 90px rgba(0, 0, 0, 0.6));
+}
+.finale__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 40% at 50% 86%, rgba(2, 6, 15, 0.7), transparent 70%),
+    linear-gradient(180deg, rgba(2, 6, 15, 0.5) 0%, transparent 26%, transparent 52%, rgba(2, 6, 15, 0.9) 90%);
+}
+.finale__content {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: clamp(2.6rem, 8vh, 6.5rem);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  padding-inline: var(--gut);
+}
+.finale__eyebrow { justify-content: center; }
 .finale__title {
-  font-size: var(--fz-display);
+  font-size: var(--fz-h1);
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.02;
   letter-spacing: -0.02em;
+  max-width: 18ch;
   background: linear-gradient(120deg, var(--teal-bright), var(--teal) 45%, var(--gold-bright));
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  text-shadow: 0 0 80px rgba(56, 224, 205, 0.3);
+  text-shadow: 0 0 70px rgba(56, 224, 205, 0.3);
 }
 .finale__statement {
-  margin: 1.6rem auto 0;
-  max-width: 46ch;
+  max-width: 48ch;
   font-size: var(--fz-lead);
   font-weight: 300;
   color: var(--ink-soft);
 }
 
 @media (max-width: 980px) { .why__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) {
+  .finale__map .saudimap__svg { height: min(54vh, 560px); }
+  .finale__content { inset-block-end: clamp(2rem, 6vh, 4rem); }
+}
 @media (max-width: 460px) { .why__grid { grid-template-columns: 1fr; } }

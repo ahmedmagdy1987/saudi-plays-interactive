@@ -80,3 +80,4 @@
   stroke-linejoin: round;
 }
 .saudimap__label--origin { fill: var(--gold-bright); font-weight: 600; }
+.saudimap__label--armed { opacity: 0; }

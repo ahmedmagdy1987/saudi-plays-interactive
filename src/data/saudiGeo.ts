@@ -14,6 +14,9 @@ export interface CityNode {
   /** projected SVG coordinates within VIEWBOX. */
   x: number;
   y: number;
+  /** optional label nudge (viewBox units) to avoid overlaps. */
+  labelDx?: number;
+  labelDy?: number;
 }
 
 export const VIEWBOX = { w: 1000, h: 845 } as const;
@@ -36,6 +39,8 @@ export const CITY_NODES: CityNode[] = [
     "lat": 24.7136,
     "stage": 1,
     "origin": true,
+    "labelDx": 0,
+    "labelDy": -22,
     "x": 564.15,
     "y": 401.11
   },
@@ -46,6 +51,8 @@ export const CITY_NODES: CityNode[] = [
     "lon": 39.1925,
     "lat": 21.4858,
     "stage": 1,
+    "labelDx": -26,
+    "labelDy": -12,
     "x": 253.8,
     "y": 547.93
   },
@@ -56,6 +63,8 @@ export const CITY_NODES: CityNode[] = [
     "lon": 50.0888,
     "lat": 26.4207,
     "stage": 1,
+    "labelDx": 30,
+    "labelDy": -8,
     "x": 705.72,
     "y": 323.45
   },
@@ -66,6 +75,8 @@ export const CITY_NODES: CityNode[] = [
     "lon": 39.8579,
     "lat": 21.3891,
     "stage": 1,
+    "labelDx": 30,
+    "labelDy": 22,
     "x": 281.4,
     "y": 552.33
   },
@@ -76,6 +87,8 @@ export const CITY_NODES: CityNode[] = [
     "lon": 39.5692,
     "lat": 24.5247,
     "stage": 1,
+    "labelDx": -8,
+    "labelDy": -14,
     "x": 269.42,
     "y": 409.7
   },
@@ -86,6 +99,8 @@ export const CITY_NODES: CityNode[] = [
     "lon": 40.4158,
     "lat": 21.2703,
     "stage": 2,
+    "labelDx": 30,
+    "labelDy": 6,
     "x": 304.54,
     "y": 557.74
   },
@@ -126,6 +141,8 @@ export const CITY_NODES: CityNode[] = [
     "lon": 50.2083,
     "lat": 26.2794,
     "stage": 2,
+    "labelDx": 30,
+    "labelDy": 16,
     "x": 710.68,
     "y": 329.88
   },
@@ -249,6 +266,8 @@ export const RIYADH: CityNode = {
   "lat": 24.7136,
   "stage": 1,
   "origin": true,
+  "labelDx": 0,
+  "labelDy": -22,
   "x": 564.15,
   "y": 401.11
 };

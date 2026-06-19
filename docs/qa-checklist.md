@@ -1,9 +1,13 @@
 # QA Checklist
 
 Automated harness: `npm run shots` (`scripts/screenshots.mjs`) drives Playwright
-Chromium at **1440×900 (desktop)** and **390×844 (mobile)**, in both
-reduced-motion and full-motion passes, capturing every section and reporting
-console errors, page errors, and horizontal overflow.
+Chromium at **1920×1080**, **1440×900**, **1366×768**, and **390×844**, in both
+reduced-motion (per-section + full-page) and full-motion passes. The motion pass
+captures **many scroll positions inside pinned/sticky sections** (hero stages,
+§04 scrollytelling) so empty ranges and stuck states are visible. It reports
+console errors, page errors, horizontal overflow, **clipped headings**, and
+**stuck `opacity:0` reveals in view**. Screenshots are also reviewed visually,
+not only by the automated geometry checks.
 
 **Latest run:** ✅ 0 console/page errors · ✅ 0 horizontal-overflow issues ·
 ✅ production build succeeds (`tsc -b && vite build`).
