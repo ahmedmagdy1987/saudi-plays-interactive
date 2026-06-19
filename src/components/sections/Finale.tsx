@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import SaudiMap from "@/components/common/SaudiMap";
-import { finale } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import { media } from "@/data/media";
 import { useGsapScene } from "@/lib/scroll";
 import "./Finale.css";
@@ -14,6 +14,7 @@ import "./Finale.css";
  */
 export default function Finale() {
   const ref = useRef<HTMLElement>(null);
+  const { finale } = useContent();
 
   useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const border = scope.querySelector(".finale__map [data-map-border]") as SVGPathElement | null;
@@ -79,7 +80,7 @@ export default function Finale() {
         </div>
         <div className="finale__scrim" />
         <div className="finale__content">
-          <p className="eyebrow eyebrow--gold finale__eyebrow">SAUDI PLAYS · ONE NATIONAL PLATFORM</p>
+          <p className="eyebrow eyebrow--gold finale__eyebrow">{finale.finaleEyebrow}</p>
           <h2 className="finale__title">{finale.finaleTitle}</h2>
           <p className="finale__statement">{finale.finaleStatement}</p>
         </div>

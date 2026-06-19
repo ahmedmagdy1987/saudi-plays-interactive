@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import { Icon } from "@/components/common/icons";
-import { governance } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
 import "./Governance.css";
 
@@ -33,7 +33,11 @@ const LINKS: [string, string][] = [
   ["developers", "beneficiary"],
 ];
 
-const layerOf = (id: string) => governance.entities.find((e) => e.id === id)!.layer;
+// layer for any entity id (mirrors the content's entity layers)
+const LAYER_OF: Record<string, number> = {
+  gea: 0, malahi: 1, municipal: 2, qol: 2,
+  sponsors: 3, investors: 3, strategic: 3, developers: 3, beneficiary: 4,
+};
 const path = (a: Pos, b: Pos) => {
   const my = (a.y + b.y) / 2;
   return `M${a.x} ${a.y} C${a.x} ${my} ${b.x} ${my} ${b.x} ${b.y}`;
@@ -47,6 +51,7 @@ const path = (a: Pos, b: Pos) => {
  */
 export default function Governance() {
   const ref = useRef<HTMLElement>(null);
+  const { governance } = useContent();
 
   useGsapScene(ref, ({ gsap, reduced, ScrollTrigger }) => {
     const links = gsap.utils.toArray<SVGPathElement>(".gov-link");
@@ -65,7 +70,7 @@ export default function Governance() {
       const stepLinks = links.filter((l) => {
         const f = l.dataset.from ?? "";
         const t = l.dataset.to ?? "";
-        return Math.max(ORDER[layerOf(f)], ORDER[layerOf(t)]) === step;
+        return Math.max(LAYER_OF[f], LAYER_OF[t]) === step;
       });
       if (stepNodes.length)
         tl.to(stepNodes, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.08, ease: "back.out(1.5)" }, step === 0 ? 0 : "+=0.05");
@@ -76,9 +81,9 @@ export default function Governance() {
   });
 
   return (
-    <SectionShell id="governance" index="07" eyebrow={governance.eyebrow} title={governance.title} lede={governance.sub} label="الحوكمة والشراكات">
+    <SectionShell id="governance" index="07" eyebrow={governance.eyebrow} title={governance.title} lede={governance.sub} label={governance.title}>
       <div className="gov__diagram-wrap container">
-        <svg className="gov__diagram" viewBox="0 0 1000 700" role="img" aria-label="منظومة التشغيل: من الهيئة العامة للترفيه إلى ملاهي إلى الشركاء فالمستفيد النهائي">
+        <svg className="gov__diagram" viewBox="0 0 1000 700" role="img" aria-label={governance.title}>
           <defs>
             <linearGradient id="g-link" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="rgba(56,224,205,0.65)" />
@@ -124,7 +129,7 @@ export default function Governance() {
 
       {/* readable entity legend — surfaces the network as text where the dense
           diagram labels would shrink on small screens */}
-      <ul className="gov__legend container" aria-label="أطراف منظومة التشغيل">
+      <ul className="gov__legend container" aria-label={governance.title}>
         {governance.entities.map((e) => (
           <li className="gov__legend-item" key={e.id}>
             <strong>{e.ar}</strong>
@@ -134,7 +139,7 @@ export default function Governance() {
       </ul>
 
       <div className="gov__align container" data-reveal>
-        <span className="gov__align-label">متوائم مع:</span>
+        <span className="gov__align-label">{governance.alignmentLabel}</span>
         {governance.alignment.map((a) => (
           <span className="chip" key={a.id}>
             <Icon name="spark" size={14} /> {a.ar}

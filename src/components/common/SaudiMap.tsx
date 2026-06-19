@@ -9,6 +9,7 @@ import {
   type CityNode,
 } from "@/data/saudiGeo";
 import { useReducedMotion, usePageVisible } from "@/lib/hooks";
+import { useLang } from "@/i18n";
 import "./SaudiMap.css";
 
 type LabelSpec = "none" | "all" | "stage1" | "origin" | string[];
@@ -64,6 +65,7 @@ export default function SaudiMap({
   ariaLabel = "خريطة المملكة العربية السعودية وشبكة المدن",
 }: SaudiMapProps) {
   const nodes = useMemo(() => citiesThroughStage(stage), [stage]);
+  const { lang } = useLang();
   const reduced = useReducedMotion();
   const visible = usePageVisible();
   const isArmed = armed && !reduced;
@@ -248,9 +250,9 @@ export default function SaudiMap({
                   y={n.y + (n.labelDy ?? (n.origin ? -18 : -12))}
                   textAnchor="middle"
                   fontSize={n.origin ? 18 : 13.5}
-                  direction="rtl"
+                  direction={lang === "en" ? "ltr" : "rtl"}
                 >
-                  {n.ar}
+                  {lang === "en" ? n.en : n.ar}
                 </text>
               ))}
           </g>

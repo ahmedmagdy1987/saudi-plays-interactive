@@ -43,9 +43,22 @@ body {
 h1, h2, h3, h4 {
   margin: 0;
   font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
+  line-height: 1.2;
+  /* Arabic must NOT use negative tracking — it breaks contextual shaping.
+     Only Latin (dir=ltr) headings get tight tracking. */
+  letter-spacing: normal;
   text-wrap: balance;
+}
+[dir="ltr"] h1,
+[dir="ltr"] h2,
+[dir="ltr"] h3,
+[dir="ltr"] h4 {
+  letter-spacing: -0.015em;
+}
+/* Arabic copy: never inherit Latin tracking; comfortable shaping + line-height */
+:lang(ar),
+[dir="rtl"] {
+  letter-spacing: normal;
 }
 
 p { margin: 0; }
@@ -125,18 +138,32 @@ button { font-family: inherit; cursor: pointer; }
 .heading-xl {
   font-size: var(--fz-h2);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: normal; /* Arabic-safe */
+  line-height: 1.18;
 }
-.heading-lg { font-size: var(--fz-h3); font-weight: 600; }
+[dir="ltr"] .heading-xl { letter-spacing: -0.015em; }
+.heading-lg { font-size: var(--fz-h3); font-weight: 600; line-height: 1.22; }
 .lede {
   font-size: var(--fz-lead);
   color: var(--ink-soft);
   font-weight: 300;
-  max-width: 56ch;
-  line-height: 1.5;
+  max-width: min(72ch, 760px);
+  line-height: 1.8; /* comfortable Arabic reading */
 }
-.body { font-size: var(--fz-body); color: var(--ink-soft); }
+.body { font-size: var(--fz-body); color: var(--ink-soft); line-height: 1.75; }
 .muted { color: var(--ink-mute); }
+
+/* ---- Global section-header system: one consistent spacing rhythm --------
+   eyebrow→title ≈ 12–18px · title→subtitle ≈ 18–26px · header→visual ≈ 40–64px
+   subtitle line-height ≈ 1.8 · paragraph width ≤ 760px. No negative margins. */
+.sec-header { max-width: min(840px, 94%); margin-bottom: clamp(2.5rem, 5vh, 4rem); }
+.sec-header[data-align="center"] { margin-inline: auto; text-align: center; }
+.sec-header[data-align="center"] .eyebrow { justify-content: center; }
+.sec-header[data-align="center"] .lede,
+.sec-header[data-align="center"] .sec-lede { margin-inline: auto; }
+.sec-header .eyebrow { margin-bottom: clamp(0.78rem, 1vw, 1.12rem); }
+.sec-title { margin: 0; }
+.sec-lede { margin-top: clamp(1.15rem, 1.7vw, 1.6rem); }
 
 /* gradient / glow text */
 .glow-text { text-shadow: 0 0 40px rgba(56, 224, 205, 0.25); }

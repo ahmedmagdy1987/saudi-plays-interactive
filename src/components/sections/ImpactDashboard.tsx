@@ -1,16 +1,8 @@
 import SectionShell from "@/components/common/SectionShell";
 import CountUp from "@/components/common/CountUp";
 import { Icon, type IconName } from "@/components/common/icons";
-import { impact } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import "./ImpactDashboard.css";
-
-const CAT_ICONS: Record<string, IconName> = {
-  economy: "economy",
-  tourism: "tourism",
-  qol: "spark",
-  society: "society",
-  youth: "youth",
-};
 
 /**
  * Section 09 — KPIs & national impact. National targets and three-year
@@ -18,11 +10,12 @@ const CAT_ICONS: Record<string, IconName> = {
  * explicitly framed as a target / projected impact — never as achieved.
  */
 export default function ImpactDashboard() {
+  const { impact } = useContent();
   return (
-    <SectionShell id="impact" index="09" eyebrow={impact.eyebrow} title={impact.title} lede={impact.sub} label="المستهدفات والأثر">
+    <SectionShell id="impact" index="09" eyebrow={impact.eyebrow} title={impact.title} lede={impact.sub} label={impact.title}>
       <div className="container">
         <div className="imp__sub-head" data-reveal>
-          <h3>المستهدفات الوطنية</h3>
+          <h3>{impact.targetsTitle}</h3>
           <span className="badge-target"><span className="dot" /> {impact.targetLabel}</span>
         </div>
         <div className="imp__targets">
@@ -36,7 +29,7 @@ export default function ImpactDashboard() {
         </div>
 
         <div className="imp__sub-head" data-reveal>
-          <h3>الأثر التراكمي</h3>
+          <h3>{impact.cumulativeTitle}</h3>
           <span className="badge-target"><span className="dot" /> {impact.horizonLabel}</span>
         </div>
         <div className="imp__cumulative">
@@ -49,13 +42,13 @@ export default function ImpactDashboard() {
         </div>
 
         <div className="imp__sub-head" data-reveal>
-          <h3>مجالات الأثر</h3>
+          <h3>{impact.categoriesTitle}</h3>
           <span className="badge-target"><span className="dot" /> {impact.projectedLabel}</span>
         </div>
         <div className="imp__cats">
           {impact.categories.map((c) => (
             <article className="imp-cat" key={c.id} data-reveal>
-              <span className="imp-cat__icon"><Icon name={CAT_ICONS[c.id] ?? "spark"} size={20} /></span>
+              <span className="imp-cat__icon"><Icon name={c.icon as IconName} size={20} /></span>
               <h4 className="imp-cat__ar">{c.ar}</h4>
               <p className="imp-cat__desc">{c.desc}</p>
             </article>

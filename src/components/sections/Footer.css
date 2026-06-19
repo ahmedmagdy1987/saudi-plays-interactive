@@ -2,47 +2,40 @@
   position: relative;
   border-block-start: 1px solid var(--line);
   background: linear-gradient(180deg, var(--abyss), #01040b);
-  padding-block: clamp(2.8rem, 6vh, 4.4rem) clamp(1.6rem, 4vh, 2.4rem);
+  padding-block: clamp(3rem, 7vh, 5rem) clamp(1.8rem, 4vh, 2.6rem);
 }
-.footer__grid {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: clamp(1.6rem, 4vw, 4rem);
-  align-items: start;
+/* everything lives inside the same centered content grid as the site */
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(1.4rem, 3vh, 2.2rem);
 }
 
-/* brand — Arabic title with English on its own secondary line */
-.footer__brand { display: flex; flex-direction: column; gap: 0.3rem; }
+.footer__identity { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
 .footer__name {
   font-size: var(--fz-h3);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.15;
   background: linear-gradient(120deg, var(--ink), var(--teal-bright));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .footer__latin {
   font-family: var(--font-en);
   font-size: 0.8rem;
-  letter-spacing: 0.34em;
+  letter-spacing: 0.36em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  /* Latin letters stay L-to-R, but the line sits at the RTL start (right) so it
-     reads as a secondary line directly under the Arabic title */
-  text-align: start;
-  margin-top: 0.1rem;
+  direction: ltr;
 }
-.footer__tag { color: var(--ink-soft); margin-top: 0.5rem; font-size: var(--fz-label); }
+.footer__desc { margin-top: 0.5rem; color: var(--ink-soft); font-size: var(--fz-label); max-width: 52ch; }
 
-/* organization / entities */
-.footer__org { display: flex; flex-direction: column; gap: 0.7rem; }
-.footer__col-label {
-  font-size: var(--fz-eyebrow);
-  letter-spacing: 0.16em;
-  color: var(--teal);
-}
-.footer__present { color: var(--ink-soft); font-size: var(--fz-label); line-height: 1.6; }
+.footer__org { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; }
+.footer__present { color: var(--ink-soft); font-size: var(--fz-label); max-width: 70ch; line-height: 1.7; }
+.footer__present-label { color: var(--teal); }
 .footer__present strong { color: var(--ink); font-weight: 600; }
-.footer__entities { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.4rem; }
+.footer__entities { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
 .footer__entity {
   display: inline-flex;
   align-items: center;
@@ -61,16 +54,5 @@
   flex: none;
 }
 
-.footer__divider { height: 1px; background: var(--line); margin-block: clamp(1.6rem, 4vh, 2.4rem); }
-.footer__bottom {
-  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-  gap: 0.6rem 1.4rem;
-}
-.footer__rights { font-size: var(--fz-eyebrow); color: var(--ink-mute); }
-.footer__note { font-size: var(--fz-eyebrow); color: var(--ink-faint); max-width: 60ch; text-align: end; }
-
-@media (max-width: 700px) {
-  .footer__grid { grid-template-columns: 1fr; }
-  .footer__bottom { flex-direction: column; align-items: flex-start; }
-  .footer__note { text-align: start; }
-}
+.footer__divider { width: min(560px, 70%); height: 1px; background: var(--line); }
+.footer__legal { font-size: var(--fz-eyebrow); color: var(--ink-faint); max-width: 70ch; line-height: 1.7; }

@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { initSmoothScroll } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/hooks";
+import { useContent, useLang } from "@/i18n";
 import SectionProgressNavigation from "@/components/nav/SectionProgressNavigation";
+import LanguageSwitcher from "@/components/nav/LanguageSwitcher";
 
 import IntroHero from "@/components/sections/IntroHero";
 import NationalVision from "@/components/sections/NationalVision";
@@ -17,6 +19,8 @@ import Finale from "@/components/sections/Finale";
 import Footer from "@/components/sections/Footer";
 
 export default function App() {
+  const { ui } = useContent();
+  useLang(); // re-render App subtree on language change
   useEffect(() => {
     const reduced = prefersReducedMotion();
     if (reduced) document.documentElement.classList.add("reduced");
@@ -58,8 +62,9 @@ export default function App() {
   return (
     <div className="app-root">
       <a href="#intro" className="sr-only">
-        تخطَّ إلى المحتوى
+        {ui.skip}
       </a>
+      <LanguageSwitcher />
       <SectionProgressNavigation />
       <main>
         <IntroHero />

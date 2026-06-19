@@ -1,22 +1,28 @@
 import { useRef } from "react";
 import { Icon, type IconName } from "@/components/common/icons";
-import { experience } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
 import { useReducedMotion, usePageVisible } from "@/lib/hooks";
 import "./ExperienceZones.css";
 
 const CORE = { x: 500, y: 240 };
 const RX = 400, RY = 185;
-const aud = experience.audiences.map((a, i) => {
-  const ang = ((-90 + i * (360 / experience.audiences.length)) * Math.PI) / 180;
-  return {
-    ...a,
-    x: CORE.x + RX * Math.cos(ang),
-    y: CORE.y + RY * Math.sin(ang),
-    lx: CORE.x + (RX + 46) * Math.cos(ang),
-    ly: CORE.y + (RY + 30) * Math.sin(ang),
-  };
-});
+type Aud = { id: string; ar: string; desc: string };
+function placeAudiences(audiences: Aud[]) {
+  return audiences.map((a, i) => {
+    const ang = ((-90 + i * (360 / audiences.length)) * Math.PI) / 180;
+    const below = Math.sin(ang) > 0.1;
+    return {
+      ...a,
+      x: CORE.x + RX * Math.cos(ang),
+      y: CORE.y + RY * Math.sin(ang),
+      // labels nudged consistently outward by quadrant (above for top nodes,
+      // below for bottom nodes) so they always attach to their dot
+      lx: CORE.x + (RX + 46) * Math.cos(ang),
+      ly: CORE.y + (RY + 30) * Math.sin(ang) + (below ? 14 : -8),
+    };
+  });
+}
 
 /**
  * Section 05 — Project concept & experience zones. A living «السعودية تلعب» core
@@ -26,6 +32,8 @@ const aud = experience.audiences.map((a, i) => {
  */
 export default function ExperienceZones() {
   const ref = useRef<HTMLElement>(null);
+  const { experience, ui } = useContent();
+  const aud = placeAudiences(experience.audiences);
   const reduced = useReducedMotion();
   const visible = usePageVisible();
   const spin = !reduced && visible;
@@ -59,7 +67,7 @@ export default function ExperienceZones() {
     <section id="zones" data-section="05" ref={ref} className="section section--zones" data-spin={spin} aria-label="مناطق التجربة">
       <div className="container sec-header" data-reveal>
         <p className="eyebrow"><span className="sec-index">05</span>{experience.eyebrow}</p>
-        <h2 className="heading-xl sec-title">{experience.coreTitle} — نواة التجربة</h2>
+        <h2 className="heading-xl sec-title">{experience.title}</h2>
         <p className="lede sec-lede">{experience.coreSub}</p>
       </div>
 
@@ -116,7 +124,7 @@ export default function ExperienceZones() {
           </article>
         ))}
       </div>
-      <p className="zones__hint" aria-hidden="true">اسحب أفقيًا لاستكشاف المناطق ←</p>
+      <p className="zones__hint" aria-hidden="true">{ui.dragHint}</p>
     </section>
   );
 }

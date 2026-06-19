@@ -65,16 +65,24 @@
   font-family: var(--font-ar);
   font-weight: 700;
   font-size: var(--fz-display);
-  line-height: 1.0;
-  letter-spacing: -0.02em;
+  line-height: 1.16;
+  letter-spacing: normal; /* never negative on Arabic */
   margin: 0;
 }
+/* OUTER wrapper = the reveal mask. Generous padding so the Arabic marks
+   (dots of ت / ب, ascender of ل) sit INSIDE the clip box at rest — only the
+   slide is clipped, never the resting glyphs. */
 .intro__title .line {
   display: block;
   overflow: hidden;
-  padding-block: 0.06em;
+  padding-block: 0.16em 0.18em;
 }
-.intro__title .line > span { display: block; }
+/* INNER text element keeps the full glyph area and never clips marks */
+.intro__title .line > span {
+  display: block;
+  overflow: visible;
+  line-height: 1.22;
+}
 .intro__title .line--2 > span {
   background: linear-gradient(118deg, var(--teal-bright), var(--teal) 42%, var(--violet-bright));
   -webkit-background-clip: text;

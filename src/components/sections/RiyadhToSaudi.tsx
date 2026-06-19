@@ -3,7 +3,7 @@ import SectionShell from "@/components/common/SectionShell";
 import SaudiMap from "@/components/common/SaudiMap";
 import { Icon, type IconName } from "@/components/common/icons";
 import { NODE_BY_ID, RIYADH } from "@/data/saudiGeo";
-import { riyadhToSaudi } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
 import "./RiyadhToSaudi.css";
 
@@ -19,7 +19,9 @@ const ZOOM = [1.5, 1.16, 1.03, 1.0];
  */
 export default function RiyadhToSaudi() {
   const ref = useRef<HTMLElement>(null);
-  const [stepYear, setStepYear] = useState(riyadhToSaudi.timeline[0]);
+  const { riyadhToSaudi, ui } = useContent();
+  const [stepIdx, setStepIdx] = useState(0);
+  const stepYear = riyadhToSaudi.timeline[stepIdx];
 
   useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const nodes = gsap.utils.toArray<SVGGElement>(".r2s__mapwrap .saudimap__node");
@@ -46,7 +48,7 @@ export default function RiyadhToSaudi() {
       });
       gsap.to(zoom, { scale: ZOOM[i], svgOrigin: `${RIYADH.x} ${RIYADH.y}`, duration: animate ? 1 : 0, ease: "power2.inOut" });
       steps.forEach((s, si) => s.classList.toggle("is-active", si === i));
-      setStepYear(riyadhToSaudi.timeline[i]);
+      setStepIdx(i);
     };
 
     if (reduced) {
@@ -106,7 +108,7 @@ export default function RiyadhToSaudi() {
                 <div className="r2s__card-head">
                   <span className="period">{t.period}</span>
                   <span className={`badge-target${t.kind === "proven" ? " badge-proven" : ""}`}>
-                    <span className="dot" /> {t.kind === "proven" ? "مُثبت" : "مستهدف"}
+                    <span className="dot" /> {t.kind === "proven" ? ui.provenShort : ui.target}
                   </span>
                 </div>
                 <span className={`num${t.kind === "proven" ? " num--proven" : ""}`}>{t.cities}</span>

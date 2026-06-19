@@ -2,7 +2,7 @@ import { useRef } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import SaudiMap from "@/components/common/SaudiMap";
 import { Icon, type IconName } from "@/components/common/icons";
-import { vision } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
 import "./NationalVision.css";
 
@@ -34,6 +34,7 @@ function link(sx: number, sy: number) {
  */
 export default function NationalVision() {
   const ref = useRef<HTMLElement>(null);
+  const { vision } = useContent();
 
   useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const lines = gsap.utils.toArray<SVGPathElement>(".vline");

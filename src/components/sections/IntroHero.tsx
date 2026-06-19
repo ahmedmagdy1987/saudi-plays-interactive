@@ -2,7 +2,7 @@ import { useRef } from "react";
 import SaudiMap from "@/components/common/SaudiMap";
 import CountUp from "@/components/common/CountUp";
 import { RIYADH } from "@/data/saudiGeo";
-import { hero } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import { media } from "@/data/media";
 import { useGsapScene } from "@/lib/scroll";
 import "./IntroHero.css";
@@ -17,6 +17,7 @@ import "./IntroHero.css";
  */
 export default function IntroHero() {
   const ref = useRef<HTMLElement>(null);
+  const { hero, ui } = useContent();
 
   useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const border = scope.querySelector(".intro__map [data-map-border]") as SVGPathElement | null;
@@ -112,13 +113,13 @@ export default function IntroHero() {
           </div>
         </div>
         <div className="intro__cue" aria-hidden="true">
-          <span>تابع<i /></span>
+          <span>{ui.cue}<i /></span>
         </div>
       </div>
 
       <div className="intro__case container" data-reveal>
         <div className="intro__case-head">
-          <span className="badge-target badge-proven"><span className="dot" /> تجربة مُثبتة</span>
+          <span className="badge-target badge-proven"><span className="dot" /> {ui.proven}</span>
           <p className="body" style={{ margin: 0 }}>{hero.caseStudyTag}</p>
         </div>
         <div className="intro__stats">

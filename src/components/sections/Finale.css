@@ -83,8 +83,8 @@
 .finale__title {
   font-size: var(--fz-h1);
   font-weight: 700;
-  line-height: 1.02;
-  letter-spacing: -0.02em;
+  line-height: 1.12;
+  letter-spacing: normal;
   max-width: 18ch;
   background: linear-gradient(120deg, var(--teal-bright), var(--teal) 45%, var(--gold-bright));
   -webkit-background-clip: text; background-clip: text; color: transparent;

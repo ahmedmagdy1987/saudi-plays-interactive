@@ -3,6 +3,11 @@ dist
 dist-ssr
 _geo/ne50.geojson
 *.local
+.env
+.env.*
+!.env.example
+*.pem
+*.key
 .DS_Store
 .vite
 npm-debug.log*

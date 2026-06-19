@@ -1,25 +1,27 @@
-import { brand, footer } from "@/data/projectContent";
+import { useContent } from "@/i18n";
 import "./Footer.css";
 
 /**
- * Government-grade footer. One clear project title with the English name as a
- * distinct secondary line (never overlapping the Arabic). Entities are evenly
- * spaced TEXT labels — no fabricated logos, no dashed "unfinished" placeholders.
+ * Footer — composed inside the same centered content grid as the rest of the
+ * site. One clear identity (Arabic title + secondary Latin line), a balanced
+ * presented-by group with text entity labels (no fabricated logos, no dashed
+ * placeholders), a single divider, and one concise centered legal note.
  */
 export default function Footer() {
+  const { brand, footer } = useContent();
   return (
-    <footer className="site-footer" aria-label="تذييل الصفحة">
-      <div className="container footer__grid">
-        <div className="footer__brand">
+    <footer className="site-footer" aria-label="footer">
+      <div className="container footer__inner">
+        <div className="footer__identity">
           <p className="footer__name">{brand.name}</p>
           <p className="footer__latin">{brand.nameLatin}</p>
-          <p className="footer__tag">{brand.tagline}</p>
+          <p className="footer__desc">{footer.descriptor}</p>
         </div>
 
         <div className="footer__org">
-          <p className="footer__col-label">تقدّمها</p>
           <p className="footer__present">
-            <strong>{footer.presentedBy}</strong> · {footer.collaboration}
+            <span className="footer__present-label">{footer.presentedByLabel}</span>{" "}
+            <strong>{footer.presentedBy}</strong> — {footer.collaboration}
           </p>
           <ul className="footer__entities">
             {footer.entities.map((e) => (
@@ -27,13 +29,9 @@ export default function Footer() {
             ))}
           </ul>
         </div>
-      </div>
 
-      <div className="footer__divider" />
-
-      <div className="footer__bottom">
-        <p className="footer__rights">{footer.rights}</p>
-        <p className="footer__note">{footer.logoNote}</p>
+        <div className="footer__divider" />
+        <p className="footer__legal">{footer.legal}</p>
       </div>
     </footer>
   );
