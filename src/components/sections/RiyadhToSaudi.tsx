@@ -97,7 +97,22 @@ export default function RiyadhToSaudi() {
               <span className="yr">{stepYear.year}</span>
               <span className="cap">{stepYear.title}</span>
             </div>
-            <SaudiMap stage={3} connections="fromRiyadh" labels="origin" armed pulse ariaLabel="شبكة المدن تتوسّع من الرياض إلى المملكة" />
+            <SaudiMap stage={3} connections="fromRiyadh" labels="origin" armed pulse ariaLabel={riyadhToSaudi.title} />
+            {/* compact stepper — ALL stages stay visible, active is prominent */}
+            <ol className="r2s__stepper">
+              {riyadhToSaudi.timeline.map((t, i) => (
+                <li
+                  key={t.id}
+                  className={`r2s__stepper-item${i === stepIdx ? " is-active" : ""}${i < stepIdx ? " is-done" : ""}${t.kind === "proven" ? " is-proven" : ""}`}
+                >
+                  <span className="r2s__stepper-cities">{t.cities}</span>
+                  <span className="r2s__stepper-meta">
+                    <span className="r2s__stepper-yr">{t.year}</span>
+                    <span className="r2s__stepper-label">{t.title}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
 
@@ -127,7 +142,7 @@ export default function RiyadhToSaudi() {
         </div>
       </div>
 
-      <p className="source-note r2s__note container">{riyadhToSaudi.cumulativeNote}</p>
+      <p className="r2s__note container">{riyadhToSaudi.cumulativeNote}</p>
     </SectionShell>
   );
 }
