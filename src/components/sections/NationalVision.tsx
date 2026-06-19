@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import SaudiMap from "@/components/common/SaudiMap";
 import { Icon, type IconName } from "@/components/common/icons";
 import { useContent } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
+import { prefersReducedMotion } from "@/lib/hooks";
 import "./NationalVision.css";
 
 const SAT = [
@@ -35,6 +36,21 @@ function link(sx: number, sy: number) {
 export default function NationalVision() {
   const ref = useRef<HTMLElement>(null);
   const { vision } = useContent();
+
+  // radar pulse only runs while the section is in view and the tab is visible
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    const sec = document.getElementById("vision");
+    if (!sec) return;
+    let inView = false;
+    const apply = () => sec.setAttribute("data-radar", inView && !document.hidden ? "on" : "off");
+    const io = new IntersectionObserver(([e]) => { inView = e.isIntersecting; apply(); }, { threshold: 0.04 });
+    io.observe(sec);
+    const onVis = () => apply();
+    document.addEventListener("visibilitychange", onVis);
+    apply();
+    return () => { io.disconnect(); document.removeEventListener("visibilitychange", onVis); };
+  }, []);
 
   useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const lines = gsap.utils.toArray<SVGPathElement>(".vline");
@@ -95,9 +111,12 @@ export default function NationalVision() {
             <path key={i} className="vline" d={link(s.x, s.y)} />
           ))}
 
-          {/* core */}
+          {/* core — national radar signal */}
           <g className="vsat-core">
-            <circle cx={CORE.x} cy={CORE.y} r={86} fill="url(#v-core)" />
+            <circle className="vcore-breathe" cx={CORE.x} cy={CORE.y} r={86} fill="url(#v-core)" />
+            <circle className="vradar vradar--1" cx={CORE.x} cy={CORE.y} r={44} />
+            <circle className="vradar vradar--2" cx={CORE.x} cy={CORE.y} r={44} />
+            <circle className="vradar vradar--3" cx={CORE.x} cy={CORE.y} r={44} />
             <circle cx={CORE.x} cy={CORE.y} r={46} fill="rgba(6,16,34,0.85)" stroke="var(--teal)" strokeWidth={1.4} />
             <text className="vcore-label" x={CORE.x} y={CORE.y - 2} textAnchor="middle" fontSize={21} direction="rtl">
               السعودية

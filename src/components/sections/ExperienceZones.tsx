@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Icon, type IconName } from "@/components/common/icons";
-import { useContent } from "@/i18n";
+import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
 import { useReducedMotion, usePageVisible } from "@/lib/hooks";
 import "./ExperienceZones.css";
@@ -33,10 +33,15 @@ function placeAudiences(audiences: Aud[]) {
 export default function ExperienceZones() {
   const ref = useRef<HTMLElement>(null);
   const { experience, ui } = useContent();
+  const { lang } = useLang();
   const aud = placeAudiences(experience.audiences);
   const reduced = useReducedMotion();
   const visible = usePageVisible();
   const spin = !reduced && visible;
+  const [activeAud, setActiveAud] = useState<string | null>(null);
+  const activeA = experience.audiences.find((a) => a.id === activeAud);
+  const audState = (id: string) => (activeAud ? (id === activeAud ? " is-hot" : " is-dim") : "");
+  const dir = lang === "en" ? "ltr" : "rtl";
 
   useGsapScene(ref, ({ gsap, reduced: red, ScrollTrigger }) => {
     const links = gsap.utils.toArray<SVGPathElement>(".zorbit-link");
@@ -64,7 +69,7 @@ export default function ExperienceZones() {
   });
 
   return (
-    <section id="zones" data-section="05" ref={ref} className="section section--zones" data-spin={spin} aria-label="مناطق التجربة">
+    <section id="zones" data-section="05" ref={ref} className="section section--zones" data-spin={spin} aria-label={experience.title}>
       <div className="container sec-header" data-reveal>
         <p className="eyebrow"><span className="sec-index">05</span>{experience.eyebrow}</p>
         <h2 className="heading-xl sec-title">{experience.title}</h2>
@@ -72,7 +77,7 @@ export default function ExperienceZones() {
       </div>
 
       <div className="zones__orbit-wrap container">
-        <svg className="zones__orbit" viewBox="0 0 1000 480" role="img" aria-label="نواة السعودية تلعب متصلة بالجماهير وفئات التجربة">
+        <svg className="zones__orbit" viewBox="0 0 1000 480" role="img" aria-label={experience.coreSub}>
           <defs>
             <linearGradient id="z-link" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor="rgba(56,224,205,0.7)" />
@@ -86,7 +91,7 @@ export default function ExperienceZones() {
           </defs>
           <ellipse className="zorbit-ring" cx={CORE.x} cy={CORE.y} rx={RX} ry={RY} />
           {aud.map((a) => (
-            <path key={`l-${a.id}`} className="zorbit-link" d={`M${CORE.x} ${CORE.y} L${a.x.toFixed(1)} ${a.y.toFixed(1)}`} />
+            <path key={`l-${a.id}`} className={`zorbit-link${audState(a.id)}`} data-id={a.id} d={`M${CORE.x} ${CORE.y} L${a.x.toFixed(1)} ${a.y.toFixed(1)}`} />
           ))}
           <g className="zorbit-core">
             <circle cx={CORE.x} cy={CORE.y} r={92} fill="url(#z-core)" />
@@ -95,13 +100,34 @@ export default function ExperienceZones() {
           <text className="zorbit-core-label" x={CORE.x} y={CORE.y - 4} textAnchor="middle" fontSize={22} direction="rtl">السعودية</text>
           <text className="zorbit-core-label" x={CORE.x} y={CORE.y + 22} textAnchor="middle" fontSize={22} direction="rtl">تلعب</text>
           {aud.map((a) => (
-            <g className="zaud" key={a.id}>
-              <circle cx={a.x} cy={a.y} r={26} fill="rgba(56,224,205,0.1)" stroke="var(--line-strong)" strokeWidth={1} />
+            <g
+              className={`zaud${audState(a.id)}`}
+              key={a.id}
+              data-id={a.id}
+              tabIndex={0}
+              role="button"
+              aria-label={`${a.ar} — ${a.desc}`}
+              onMouseEnter={() => setActiveAud(a.id)}
+              onMouseLeave={() => setActiveAud(null)}
+              onFocus={() => setActiveAud(a.id)}
+              onBlur={() => setActiveAud(null)}
+            >
+              <circle className="zaud-hit" cx={a.x} cy={a.y} r={26} fill="rgba(56,224,205,0.1)" stroke="var(--line-strong)" strokeWidth={1} />
               <circle className="zaud-dot" cx={a.x} cy={a.y} r={4.5} />
-              <text className="zaud-label" x={a.lx} y={a.ly + 5} textAnchor="middle" fontSize={17} direction="rtl">{a.ar}</text>
+              <text className="zaud-label" x={a.lx} y={a.ly + 5} textAnchor="middle" fontSize={17} direction={dir}>{a.ar}</text>
             </g>
           ))}
         </svg>
+        <div className="zones__detail" aria-live="polite">
+          {activeA ? (
+            <>
+              <strong>{activeA.ar}</strong>
+              <span>{activeA.desc}</span>
+            </>
+          ) : (
+            <span className="zones__detail-hint">{experience.detailDefault}</span>
+          )}
+        </div>
       </div>
 
       <div className="container zones__seq-head" data-reveal>
@@ -109,7 +135,7 @@ export default function ExperienceZones() {
         <h3 className="heading-lg">{experience.zonesSub}</h3>
       </div>
 
-      <div className="zones__row" role="list" aria-label="مناطق التجربة الخمس">
+      <div className="zones__row" role="list" aria-label={experience.zonesTitle}>
         {experience.zones.map((z, i) => (
           <article className="zone-card" data-accent={z.accent} key={z.id} role="listitem" tabIndex={0}>
             <div className="zone-card__viz" aria-hidden="true">

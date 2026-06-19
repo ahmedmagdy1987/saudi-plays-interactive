@@ -9,12 +9,40 @@
 .zorbit-ring { fill: none; stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 9; transform-origin: center; }
 .section--zones[data-spin="true"] .zorbit-ring { animation: zspin 60s linear infinite; }
 @keyframes zspin { to { transform: rotate(360deg); } }
-.zorbit-link { stroke: url(#z-link); stroke-width: 1.2; fill: none; vector-effect: non-scaling-stroke; }
+.zorbit-link { stroke: url(#z-link); stroke-width: 1.2; fill: none; vector-effect: non-scaling-stroke;
+  transition: opacity var(--dur-fast) var(--ease-out), stroke-width var(--dur-fast) var(--ease-out); }
+.zorbit-link.is-hot { stroke-width: 2.6; filter: drop-shadow(0 0 5px var(--teal)); }
+.zorbit-link.is-dim { opacity: 0.16; }
 .zorbit-core { fill: rgba(6,16,34,0.9); stroke: var(--teal); stroke-width: 1.5; }
 .zorbit-core-label { fill: var(--teal-bright); font-family: var(--font-ar); font-weight: 700; paint-order: stroke; stroke: rgba(2,6,15,0.85); stroke-width: 4px; }
-.zaud { transform-box: fill-box; transform-origin: center; }
-.zaud-dot { fill: var(--node); }
+.zaud { transform-box: fill-box; transform-origin: center; cursor: pointer; outline: none;
+  transition: filter var(--dur-fast) var(--ease-out); }
+.zaud-hit { transition: fill var(--dur-fast) var(--ease-out), stroke var(--dur-fast) var(--ease-out); }
+.zaud-dot { fill: var(--node); transition: fill var(--dur-fast) var(--ease-out); }
+.zaud.is-hot .zaud-hit { fill: rgba(56,224,205,0.24); stroke: var(--teal); stroke-width: 1.6; }
+.zaud.is-hot .zaud-dot { fill: var(--teal-bright); }
+.zaud.is-dim { filter: brightness(0.5) saturate(0.6); }
+.zaud:focus-visible .zaud-hit { stroke: var(--teal-bright); stroke-width: 2; }
 .zaud-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 500; paint-order: stroke; stroke: rgba(2,6,15,0.8); stroke-width: 3px; }
+
+/* one shared contextual detail panel */
+.zones__detail {
+  margin: 0.9rem auto 0;
+  max-width: 640px;
+  min-height: 2.2rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6rem;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: rgba(8, 18, 40, 0.5);
+}
+.zones__detail strong { font-weight: 600; color: var(--teal-bright); }
+.zones__detail span { font-size: var(--fz-label); color: var(--ink-soft); }
+.zones__detail-hint { color: var(--ink-mute); }
 
 /* ---- zones sequence ---- */
 .zones__seq-head { margin: clamp(2.4rem, 6vh, 4rem) 0 1.4rem; }
