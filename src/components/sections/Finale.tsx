@@ -50,9 +50,9 @@ export default function Finale() {
   });
 
   return (
-    <section id="finale" data-section="10" ref={ref} className="section section--finale" aria-label={finale.title}>
+    <section id="finale" data-section="11" ref={ref} className="section section--finale" aria-label={finale.title}>
       <div className="container sec-header" data-reveal>
-        <p className="eyebrow"><span className="sec-index">10</span>{finale.eyebrow}</p>
+        <p className="eyebrow"><span className="sec-index">11</span>{finale.eyebrow}</p>
         <h2 className="heading-xl sec-title">{finale.title}</h2>
         <p className="lede sec-lede">{finale.sub}</p>
       </div>

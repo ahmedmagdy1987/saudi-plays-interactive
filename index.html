@@ -55,7 +55,10 @@
         // armed by main.tsx at app start (so a slow network never trips it)
         window.__spArm = function () {
           if (wd) return;
-          wd = setTimeout(function () { if (!ok) revealAll(); }, 2200);
+          // generous enough that a slow-but-healthy first paint (heavy mobile,
+          // slow CPU/network) is not mistaken for a stalled motion pipeline, while
+          // still guaranteeing content can never stay blank for long.
+          wd = setTimeout(function () { if (!ok) revealAll(); }, 3500);
         };
         // called by App once a live motion frame is confirmed -> cancel the watchdog
         window.__spMotionOK = function () { ok = true; if (wd) { clearTimeout(wd); wd = 0; } };

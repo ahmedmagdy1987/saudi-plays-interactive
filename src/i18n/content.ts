@@ -68,7 +68,8 @@ export const ar = {
     { id: "governance", index: "07", label: "الحوكمة والشراكات" },
     { id: "revenue", index: "08", label: "نموذج الإيرادات" },
     { id: "impact", index: "09", label: "المستهدفات والأثر" },
-    { id: "finale", index: "10", label: "لماذا ملاهي" },
+    { id: "journey", index: "10", label: "رحلة داخل المدن" },
+    { id: "finale", index: "11", label: "لماذا ملاهي" },
   ],
   hero: {
     eyebrow: "منصة وطنية للترفيه المجتمعي",
@@ -333,7 +334,8 @@ export const en: Content = {
     { id: "governance", index: "07", label: "Governance" },
     { id: "revenue", index: "08", label: "Revenue Model" },
     { id: "impact", index: "09", label: "Targets & Impact" },
-    { id: "finale", index: "10", label: "Why Malahi" },
+    { id: "journey", index: "10", label: "Inside the Cities" },
+    { id: "finale", index: "11", label: "Why Malahi" },
   ],
   hero: {
     eyebrow: "SAUDI PLAYS · NATIONAL ENTERTAINMENT PLATFORM",
