@@ -167,9 +167,7 @@ export const ar = {
     platformTitle: "منصة التقنية",
     platform: [
       { id: "rpay", ar: "RPay", desc: "نظام مدفوعات رقمي موحّد." },
-      { id: "remote", ar: "تشغيل الأجهزة عن بُعد", desc: "إدارة وتشغيل المعدّات عن بُعد." },
       { id: "analytics", ar: "التحليلات", desc: "بيانات لحظية لدعم القرار." },
-      { id: "dashboard", ar: "لوحة الإدارة", desc: "تحكّم مركزي في المواقع والتجارب." },
       { id: "monitoring", ar: "مراقبة حيّة 24/7", desc: "متابعة تشغيلية مستمرة." },
     ],
     dashboardTitle: "لوحة العمليات",
@@ -434,9 +432,7 @@ export const en: Content = {
     platformTitle: "Technology platform",
     platform: [
       { id: "rpay", ar: "RPay", desc: "A unified digital payments system." },
-      { id: "remote", ar: "Remote device operation", desc: "Managing and running equipment remotely." },
       { id: "analytics", ar: "Analytics", desc: "Real-time data for decision support." },
-      { id: "dashboard", ar: "Management dashboard", desc: "Central control of sites and experiences." },
       { id: "monitoring", ar: "24/7 live monitoring", desc: "Continuous operational oversight." },
     ],
     dashboardTitle: "Operations dashboard",

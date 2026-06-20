@@ -48,8 +48,17 @@
   gap: clamp(1.6rem, 3.5vw, 3rem);
   padding-block: clamp(0.4rem, 1vh, 0.9rem);
 }
-.footer__logos .brandmark--logo { height: 52px; max-width: 190px; }
-.footer__logos .brandmark--light { height: 58px; }     /* offset the backing padding */
+/* official marks, noticeably larger. Square 600×600 artwork → height drives the
+   size (proportions preserved, never cropped/stretched); the light-backed Vision
+   2030 mark carries a touch more height to offset its backing padding. */
+.footer__logos .brandmark--logo { height: 80px; max-width: 240px; }
+.footer__logos .brandmark--light { height: 86px; }     /* offset the backing padding */
+@media (max-width: 560px) {
+  /* keep the footer clean on narrow phones — large but not overflowing */
+  .footer__logos { gap: clamp(1.4rem, 6vw, 2.2rem); }
+  .footer__logos .brandmark--logo { height: 64px; }
+  .footer__logos .brandmark--light { height: 70px; }
+}
 
 .footer__entities { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; }
 /* the entity chip / logo container is provided by <BrandMark>; the li is a plain

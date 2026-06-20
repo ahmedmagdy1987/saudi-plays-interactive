@@ -132,7 +132,13 @@
   .r2s__scrolly { grid-template-columns: 1fr; gap: 1.4rem; }
   .r2s__mapwrap { position: relative; top: 0; margin-bottom: 1.2rem; }
   .r2s__steps { gap: 1.4rem; }
-  .r2s__step { min-height: auto; align-items: stretch; }
+  /* override the desktop first/last `min-height: 42vh/46vh` too (those
+     :first/:last-child selectors out-specify a bare `.r2s__step`), so on mobile
+     every step is content-height and the cards no longer stretch to a viewport
+     fraction — the first (الرياض) and last (20+) cards now fit their content. */
+  .r2s__step,
+  .r2s__step:first-child,
+  .r2s__step:last-child { min-height: auto; align-items: stretch; }
   .r2s__card { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {

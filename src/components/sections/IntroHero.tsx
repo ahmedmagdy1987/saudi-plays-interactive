@@ -128,10 +128,14 @@ export default function IntroHero() {
       return () => setWC(false);
     });
     mm.add("(max-width: 900px)", () => {
-      // condensed, un-pinned journey on mobile: same beats, auto-played quickly
-      // (no scroll-hijack) so the title + network arrive within a couple seconds
+      // un-pinned journey on mobile: the SAME approved beats, auto-played — but at a
+      // calm, readable cinematic pace. (Previously timeScale 2.3 raced the whole
+      // sequence to ~2s and felt rushed; ~0.85 stretches it to ~5s so ignition →
+      // dive → enter → title → settle each read clearly.) A short lead-in holds the
+      // deep-space opening before the journey begins.
       const tl = buildJourney(false);
-      tl.timeScale(2.3);
+      tl.timeScale(0.85);
+      tl.delay(0.4);
       setWC(true);
       tl.eventCallback("onComplete", () => setWC(false));  // static afterwards → free the layers
       return () => { setWC(false); tl.kill(); };
