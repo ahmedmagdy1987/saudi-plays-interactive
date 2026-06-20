@@ -53,6 +53,7 @@ export default function SectionBackgroundStage() {
     const setT = imgs.map((el) => gsap.quickSetter(el, "transform") as (v: string) => void);
     const loaded = new Array(N).fill(false);
     const vloaded = new Array(N).fill(false);
+    const vtimer = new Array<number>(N).fill(0);
 
     let sections: { center: number }[] = [];
     const recache = () => {
@@ -84,18 +85,26 @@ export default function SectionBackgroundStage() {
       loaded[i] = true;
       imgs[i].style.backgroundImage = `url(${base(MEDIA[i].img + ".webp")})`;
     };
+    const startVideo = (i: number) => {
+      const v = videos[i]!;
+      if (!vloaded[i]) {
+        vloaded[i] = true;
+        v.querySelectorAll("source").forEach((s) => { const d = s.getAttribute("data-src"); if (d) s.setAttribute("src", d); });
+        v.load();
+      }
+      const p = v.play?.();
+      if (p) p.then(() => layers[i].classList.add("is-playing")).catch(() => {});
+    };
     const activateVideo = (i: number, on: boolean) => {
       const v = videos[i];
       if (!v || reduced || lite) return;
       if (on) {
-        if (!vloaded[i]) {
-          vloaded[i] = true;
-          v.querySelectorAll("source").forEach((s) => { const d = s.getAttribute("data-src"); if (d) s.setAttribute("src", d); });
-          v.load();
-        }
-        const p = v.play?.();
-        if (p) p.then(() => layers[i].classList.add("is-playing")).catch(() => {});
+        if (vloaded[i]) { startVideo(i); return; }
+        // debounce the FIRST fetch — only load if the section is still active after a
+        // short dwell, so a fast scroll-by never starts (and then aborts) a request
+        if (!vtimer[i]) vtimer[i] = window.setTimeout(() => { vtimer[i] = 0; startVideo(i); }, 320);
       } else {
+        if (vtimer[i]) { clearTimeout(vtimer[i]); vtimer[i] = 0; }
         layers[i].classList.remove("is-playing");
         if (!v.paused) v.pause();
       }
@@ -144,6 +153,7 @@ export default function SectionBackgroundStage() {
     return () => {
       trig.kill();
       document.removeEventListener("visibilitychange", onVis);
+      vtimer.forEach((t) => t && clearTimeout(t));
       videos.forEach((v) => v && v.pause());
     };
   }, []);
