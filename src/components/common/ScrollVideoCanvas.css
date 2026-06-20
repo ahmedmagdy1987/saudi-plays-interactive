@@ -1,0 +1,28 @@
+/* Scroll-scrubbed cinematic canvas — fills its positioned parent (the §01 stage).
+   The canvas backing store is sized in device pixels (DPR-capped) by JS, so the
+   image is drawn sharp and never CSS-upscaled. */
+.svc {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #01030a;        /* deep space base under the first decode */
+}
+.svc__poster,
+.svc__canvas,
+.svc__fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.svc__canvas { display: block; }
+.svc__poster {
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 0.7s ease;
+  will-change: opacity;
+}
+.svc__fallback {
+  object-fit: cover;
+  display: none;             /* revealed only if the 2D canvas is unavailable */
+}

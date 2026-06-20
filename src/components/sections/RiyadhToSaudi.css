@@ -31,18 +31,22 @@
    sticky frame stays in view through the whole sequence. */
 .r2s__scrolly { display: grid; grid-template-columns: 1.04fr 1fr; gap: clamp(1.2rem, 3vw, 3rem); align-items: stretch; }
 .r2s__mapcol { position: relative; }
+/* The map panel is positioned ONLY by the JS pin (scoped to .r2s__scrolly) on
+   desktop — no sticky offset / transform that could pull it up into the header.
+   Static base so before/after the pinned range it simply sits in its column. */
 .r2s__mapwrap {
-  position: sticky;
-  top: 50%;
-  transform: translateY(-50%);
-  max-height: 92vh;
+  position: relative;
   border-radius: var(--radius-lg);
   border: 1px solid var(--line-strong);
   background: linear-gradient(180deg, rgba(10, 22, 50, 0.5), rgba(4, 10, 26, 0.6));
   box-shadow: var(--shadow-card);
   padding: clamp(0.8rem, 1.6vw, 1.4rem);
   overflow: hidden;
-  z-index: 1;
+}
+/* reduced motion (no JS pin): a plain positive sticky keeps the map in view,
+   still contained inside the scrolly, never overlapping the header */
+@media (prefers-reduced-motion: reduce) {
+  .r2s__mapwrap { position: sticky; top: 10vh; }
 }
 .r2s__mapwrap .saudimap { max-width: 100%; }
 /* the map lives in its OWN clipped box; overflow:hidden stops the Saudi outline,

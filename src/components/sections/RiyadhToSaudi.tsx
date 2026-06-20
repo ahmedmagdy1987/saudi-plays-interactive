@@ -72,6 +72,24 @@ export default function RiyadhToSaudi() {
         onEnterBack: () => render(i, true),
       });
     });
+
+    // DESKTOP ONLY: pin the map panel for the duration of the inner .r2s__scrolly
+    // wrapper — which itself begins BELOW the header + proof row. The pin starts
+    // at the scrolly's top and ends at its bottom, so the map can never travel up
+    // into the eyebrow / heading / paragraph / proof cards. No transforms or
+    // negative offsets are used to position it. (Mobile gets the stacked layout.)
+    const mm = gsap.matchMedia();
+    mm.add("(min-width: 821px)", () => {
+      const pin = ScrollTrigger.create({
+        trigger: ".r2s__scrolly",
+        start: "top top",
+        end: "bottom bottom",
+        pin: ".r2s__mapwrap",
+        pinSpacing: false,
+        anticipatePin: 1,
+      });
+      return () => pin.kill();
+    });
     ScrollTrigger.refresh();
   });
 
