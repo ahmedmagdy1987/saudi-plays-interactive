@@ -64,7 +64,7 @@ export default function MarketOpportunity() {
     `M${tipX.toFixed(1)} ${tipY.toFixed(1)} L${(tipX - aHead * Math.cos(aAng - 0.5)).toFixed(1)} ${(tipY - aHead * Math.sin(aAng - 0.5)).toFixed(1)} ` +
     `M${tipX.toFixed(1)} ${tipY.toFixed(1)} L${(tipX - aHead * Math.cos(aAng + 0.5)).toFixed(1)} ${(tipY - aHead * Math.sin(aAng + 0.5)).toFixed(1)}`;
 
-  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const line = scope.querySelector(".curve__line") as SVGPathElement | null;
     const segUnder = scope.querySelector(".donut__seg--under") as SVGCircleElement | null;
     const segOver = scope.querySelector(".donut__seg--over") as SVGCircleElement | null;
@@ -110,8 +110,6 @@ export default function MarketOpportunity() {
         },
       })
       .to(segOver, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" }, "-=0.2");
-
-    ScrollTrigger.refresh();
   });
 
   return (

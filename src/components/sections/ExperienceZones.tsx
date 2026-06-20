@@ -60,7 +60,7 @@ export default function ExperienceZones() {
     return () => { ro.disconnect(); window.removeEventListener("resize", check); };
   }, [lang]);
 
-  useGsapScene(ref, ({ gsap, reduced: red, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, reduced: red }) => {
     const links = gsap.utils.toArray<SVGPathElement>(".zorbit-link");
     const auds = gsap.utils.toArray<SVGGElement>(".zaud");
     links.forEach((l) => {
@@ -82,7 +82,6 @@ export default function ExperienceZones() {
       opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power3.out",
       scrollTrigger: { trigger: ".zones__row", start: "top 84%", toggleActions: "play none none none" },
     });
-    ScrollTrigger.refresh();
   });
 
   return (

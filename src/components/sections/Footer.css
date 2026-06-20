@@ -1,6 +1,8 @@
 .site-footer {
   position: relative;
-  border-block-start: 1px solid var(--line);
+  /* No top border: the finale scene above now ends in opaque var(--abyss), the
+     exact colour the footer starts with, so the two meet seamlessly. A 1px line
+     here would be the visible "hard cut" between the cinematic finale and footer. */
   background: linear-gradient(180deg, var(--abyss), #01040b);
   padding-block: clamp(3rem, 7vh, 5rem) clamp(1.8rem, 4vh, 2.6rem);
 }

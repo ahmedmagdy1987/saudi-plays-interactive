@@ -69,11 +69,24 @@ export default function IntroHero() {
     gsap.set(".intro__veil", { opacity: 0 });
     gsap.timeline({ delay: 0.2 }).to(".intro__eyebrow", { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" });
 
+    // These four layers are full-viewport (some oversized: stars inset:-20%, nebula
+    // 96vmax). They only move during the one-shot opening journey, so promote them
+    // to their own compositor layer ONLY while the journey is active and release that
+    // GPU memory once it's done — instead of a permanent CSS will-change that pins
+    // several full-screen backing stores for the whole page. (.sec-rest pauses the
+    // animation but never drops will-change.)
+    const heavyLayers = [".intro__stars", ".intro__nebula", ".intro__region", ".intro__map"];
+    const setWC = (on: boolean) => gsap.set(heavyLayers, { willChange: on ? "transform, opacity" : "auto" });
+
     const buildJourney = (scrub: boolean) => {
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: scrub
-          ? { trigger: scope, start: "top top", end: "+=300%", scrub: 0.7, pin: ".intro__stage", anticipatePin: 1 }
+          ? {
+              trigger: scope, start: "top top", end: "+=300%", scrub: 0.7, pin: ".intro__stage", anticipatePin: 1,
+              // promote while the pinned journey is on screen, release when scrolled past
+              onToggle: (self) => setWC(self.isActive),
+            }
           : undefined,
       });
 
@@ -109,13 +122,19 @@ export default function IntroHero() {
     };
 
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 901px)", () => { buildJourney(true); });
+    mm.add("(min-width: 901px)", () => {
+      buildJourney(true);
+      setWC(true);                                  // hero is the active scene at desktop load
+      return () => setWC(false);
+    });
     mm.add("(max-width: 900px)", () => {
       // condensed, un-pinned journey on mobile: same beats, auto-played quickly
       // (no scroll-hijack) so the title + network arrive within a couple seconds
       const tl = buildJourney(false);
       tl.timeScale(2.3);
-      return () => tl.kill();
+      setWC(true);
+      tl.eventCallback("onComplete", () => setWC(false));  // static afterwards → free the layers
+      return () => { setWC(false); tl.kill(); };
     });
   });
 

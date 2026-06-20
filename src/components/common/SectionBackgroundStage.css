@@ -8,7 +8,15 @@
    ========================================================================== */
 .ms {
   position: fixed;
-  inset: 0;
+  /* Bleed the clip box 2px past the left/right viewport edges. The backdrop's
+     composited children (.ms__img translateZ/will-change, .ms__video) are clipped
+     by this overflow:hidden box; at fractional device-pixel ratios (e.g. Windows
+     125%/150% scaling) a clip landing exactly on the viewport edge leaves a 1-device-px
+     partially-covered column that blends with the dark base / body glow behind — the
+     reported far-left (and right) vertical seam. Moving the clip edge off-screen makes
+     every on-screen column fully interior, so no edge column is ever partial. A fixed
+     element does not add scrollable overflow, and html{overflow-x:clip} is a backstop. */
+  inset: 0 -2px;
   z-index: var(--z-bg);          /* true backdrop — content sits above (see below) */
   pointer-events: none;
   overflow: hidden;

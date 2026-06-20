@@ -90,7 +90,6 @@ export default function RiyadhToSaudi() {
       });
       return () => pin.kill();
     });
-    ScrollTrigger.refresh();
   });
 
   return (

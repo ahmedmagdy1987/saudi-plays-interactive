@@ -32,7 +32,9 @@
   /* keep the centre clear (map + title) so stars only frame the edges */
   -webkit-mask-image: radial-gradient(86% 80% at 50% 46%, transparent 10%, #000 64%);
   mask-image: radial-gradient(86% 80% at 50% 46%, transparent 10%, #000 64%);
-  will-change: transform, opacity;   /* the scroll journey scales it past the camera */
+  /* will-change is set imperatively (IntroHero.tsx) only while the opening journey
+     is active, then released — so this full-screen layer doesn't hold GPU memory
+     for the whole page. */
 }
 .intro__stars--far {
   background-size: 300px 300px;
@@ -52,7 +54,7 @@
     radial-gradient(closest-side at 64% 58%, rgba(138, 120, 240, 0.18), transparent 56%),
     radial-gradient(closest-side at 52% 50%, rgba(30, 70, 142, 0.22), transparent 64%);
   mix-blend-mode: screen;
-  will-change: transform, opacity;
+  /* will-change managed imperatively during the journey only (see IntroHero.tsx) */
 }
 
 .intro__region {
@@ -66,7 +68,7 @@
   filter: saturate(1.02) contrast(1.02) brightness(0.9);
   -webkit-mask-image: radial-gradient(120% 96% at 50% 30%, #000 36%, transparent 82%);
   mask-image: radial-gradient(120% 96% at 50% 30%, #000 36%, transparent 82%);
-  will-change: opacity, transform;
+  /* will-change managed imperatively during the journey only (see IntroHero.tsx) */
 }
 .intro__map {
   position: absolute;
@@ -74,7 +76,7 @@
   display: grid;
   place-items: center;
   z-index: 2;
-  will-change: transform, opacity;
+  /* will-change managed imperatively during the journey only (see IntroHero.tsx) */
 }
 .intro__map .saudimap {
   max-width: min(78vw, 820px);

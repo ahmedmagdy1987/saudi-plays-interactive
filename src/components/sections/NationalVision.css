@@ -16,6 +16,11 @@
   filter: blur(2px) saturate(0.9);
   pointer-events: none;
   z-index: 0;
+  /* this faint blurred map never changes; cache its raster on its own layer so the
+     sibling GSAP line-draw (and the backdrop behind) can't force it to re-blur.
+     Output is byte-identical — containment/isolation only change caching. */
+  contain: paint;
+  isolation: isolate;
 }
 .vision__map .saudimap { max-width: min(70%, 620px); }
 .vision__converge {
@@ -109,8 +114,11 @@
   padding: clamp(1.1rem, 2.4vh, 1.9rem) clamp(1.6rem, 4vw, 3rem);
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(12, 26, 56, 0.42), rgba(6, 14, 32, 0.5));
-  backdrop-filter: blur(6px);
+  /* denser panel fill replaces the live backdrop-blur: the wide partner band sat
+     over the moving cinematic backdrop and re-sampled+re-blurred it every frame.
+     At 0.62/0.7 alpha the band reads the same calm dark frost the logos need, with
+     no per-frame backdrop filter. */
+  background: linear-gradient(180deg, rgba(12, 26, 56, 0.62), rgba(6, 14, 32, 0.72));
 }
 .vision__partners-row .brandmark--logo { height: 70px; max-width: 230px; }
 .vision__partners-row .brandmark--light { height: 78px; }

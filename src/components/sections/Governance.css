@@ -52,8 +52,11 @@
   padding: 0.7rem 1.1rem;
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: rgba(6, 14, 30, 0.78);
-  backdrop-filter: blur(8px);
+  /* near-opaque panel — the live backdrop-blur it used to carry was barely visible
+     behind 0.78 alpha, but it forced a per-frame backdrop re-sample+re-blur over the
+     moving cinematic stage for an always-mounted, full-width panel. Bumped to 0.9 so
+     the frost is unnecessary; output is visually indistinguishable. */
+  background: rgba(7, 15, 32, 0.9);
 }
 .gov__detail-icon { color: var(--teal-bright); display: grid; place-items: center; flex: none; }
 .gov__detail strong { font-size: var(--fz-label); font-weight: 600; }

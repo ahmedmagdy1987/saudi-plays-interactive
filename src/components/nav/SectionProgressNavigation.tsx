@@ -27,20 +27,28 @@ export default function SectionProgressNavigation() {
   // top progress bar
   useEffect(() => {
     let raf = 0;
+    const doc = document.documentElement;
+    // `scrollHeight`/`clientHeight` are layout-flushing reads; cache the scroll
+    // range and refresh it only when the page can actually change size (resize /
+    // load), so the per-frame scroll tick reads `scrollTop` alone (no forced layout).
+    let max = doc.scrollHeight - doc.clientHeight;
+    const measure = () => { max = doc.scrollHeight - doc.clientHeight; };
     const update = () => {
       raf = 0;
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - doc.clientHeight;
       const p = max > 0 ? Math.min(1, doc.scrollTop / max) : 0;
       barRef.current?.style.setProperty("--p", `${(p * 100).toFixed(2)}%`);
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    // tab hidden → nothing is visible; skip the (potentially programmatic) scroll work
+    const onScroll = () => { if (!raf && !document.hidden) raf = requestAnimationFrame(update); };
+    const onResize = () => { measure(); onScroll(); };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("load", onResize);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("load", onResize);
       cancelAnimationFrame(raf);
     };
   }, []);

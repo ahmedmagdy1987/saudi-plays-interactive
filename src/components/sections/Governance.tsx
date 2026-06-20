@@ -101,7 +101,7 @@ export default function Governance() {
   const [active, setActive] = useState<string | null>(null);
   const activeEntity = governance.entities.find((e) => e.id === active);
 
-  useGsapScene(ref, ({ gsap, reduced, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, reduced }) => {
     const links = gsap.utils.toArray<SVGPathElement>(".gov-link");
     links.forEach((l) => {
       const len = l.getTotalLength?.() ?? 300;
@@ -118,7 +118,6 @@ export default function Governance() {
       if (stepNodes.length) tl.to(stepNodes, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.08, ease: "back.out(1.5)" }, step === 0 ? 0 : "+=0.05");
       if (stepLinks.length) tl.to(stepLinks, { strokeDashoffset: 0, duration: 0.6, stagger: 0.05, ease: "power2.out" }, "-=0.3");
     }
-    ScrollTrigger.refresh();
   });
 
   // the active node's full route through the operating tree (graph traversal)

@@ -54,9 +54,12 @@
   stroke-dasharray: 6 94;
   stroke-dashoffset: 100;
   opacity: 0;
+  /* invisible at rest — keep it OUT of the paint pass (and don't hold its
+     drop-shadow filter region) until it actually animates. Identical output. */
+  visibility: hidden;
   filter: drop-shadow(0 0 4px var(--teal-bright));
 }
-.saudimap[data-animate="true"] .saudimap__flow { animation: sm-flow 3.6s linear infinite; }
+.saudimap[data-animate="true"] .saudimap__flow { visibility: visible; animation: sm-flow 3.6s linear infinite; }
 @keyframes sm-flow {
   0%   { stroke-dashoffset: 100; opacity: 0; }
   12%  { opacity: 0.9; }
@@ -89,8 +92,9 @@
   transform-box: fill-box;
   transform-origin: center;
   opacity: 0;
+  visibility: hidden;            /* invisible at rest — skip painting until animated */
 }
-.saudimap[data-animate="true"] .saudimap__radar { animation: sm-radar 4.6s ease-out infinite; }
+.saudimap[data-animate="true"] .saudimap__radar { visibility: visible; animation: sm-radar 4.6s ease-out infinite; }
 .saudimap[data-animate="true"] .saudimap__radar--2 { animation-delay: 2.3s; }
 @keyframes sm-radar {
   0%   { transform: scale(0.5); opacity: 0.55; }

@@ -52,7 +52,7 @@ export default function RevenueEcosystem() {
     return { ...s, start, len, dash: Math.max(len - GAP, 0.5), rotate: -90 + (start / 100) * 360 };
   });
 
-  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, scope, reduced }) => {
     // base stroke-dasharray comes from JSX; here we only set the hidden→shown
     // offset so a StrictMode/context revert can never leave the ring un-segmented.
     const arcs = gsap.utils.toArray<SVGCircleElement>(".rev__seg");
@@ -72,7 +72,6 @@ export default function RevenueEcosystem() {
       if (row) tl.fromTo(row, { opacity: 0.35, x: 14 }, { opacity: 1, x: 0, duration: 0.4 }, "<");
     });
     tl.to(".rev__center", { opacity: 1, duration: 0.5 }, "+=0.1");
-    ScrollTrigger.refresh();
   });
 
   const dim = (id: string) => active !== null && active !== id;

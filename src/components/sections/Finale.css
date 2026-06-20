@@ -1,6 +1,11 @@
 .section--finale {
   background: linear-gradient(180deg, var(--abyss), var(--night));
   overflow: clip;
+  /* The full-bleed climax scene is the section's last child; drop the section's
+     bottom padding so the scene's (now opaque-abyss) lower edge meets the footer
+     directly — removes the bright un-scrimmed media strip that used to sit in the
+     padding gap between the scrim and the footer. */
+  padding-block-end: 0;
 }
 .why__grid {
   display: grid;
@@ -63,9 +68,13 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
+  /* Bottom of the veil ramps from the existing 0.9 dark to FULLY OPAQUE --abyss at
+     100% — the scene's lower edge becomes the exact colour of the footer's top
+     (var(--abyss)), so the cinematic scrim meets the footer with no opacity step,
+     bright strip, or hard cut. The mid-section stays clear so the map/title read. */
   background:
     radial-gradient(60% 40% at 50% 86%, rgba(2, 6, 15, 0.7), transparent 70%),
-    linear-gradient(180deg, rgba(2, 6, 15, 0.5) 0%, transparent 26%, transparent 52%, rgba(2, 6, 15, 0.9) 90%);
+    linear-gradient(180deg, rgba(2, 6, 15, 0.5) 0%, transparent 26%, transparent 50%, rgba(2, 6, 15, 0.9) 86%, var(--abyss) 100%);
 }
 .finale__content {
   position: absolute;

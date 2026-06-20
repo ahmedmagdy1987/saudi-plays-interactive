@@ -65,7 +65,7 @@ export default function NationalVision() {
     return () => { io.disconnect(); document.removeEventListener("visibilitychange", onVis); };
   }, []);
 
-  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const lines = gsap.utils.toArray<SVGPathElement>(".vline");
     const sats = gsap.utils.toArray<SVGGElement>(".vsat");
     lines.forEach((l) => {
@@ -90,8 +90,6 @@ export default function NationalVision() {
       opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "power3.out",
       scrollTrigger: { trigger: ".vision__forces", start: "top 84%", toggleActions: "play none none none" },
     });
-
-    ScrollTrigger.refresh();
   });
 
   return (

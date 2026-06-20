@@ -16,7 +16,7 @@ export default function Finale() {
   const ref = useRef<HTMLElement>(null);
   const { finale, ui } = useContent();
 
-  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const border = scope.querySelector(".finale__map [data-map-border]") as SVGPathElement | null;
     const nodes = Array.from(scope.querySelectorAll<SVGGElement>(".finale__map .saudimap__node"));
     const links = Array.from(scope.querySelectorAll<SVGPathElement>(".finale__map .saudimap__link"));
@@ -47,7 +47,6 @@ export default function Finale() {
       .to(labels, { opacity: 1, duration: 0.5, stagger: 0.05 }, "-=0.3")
       // title + statement only after the network is established
       .to(".finale__content > *", { opacity: 1, y: 0, duration: 0.8, stagger: 0.16, ease: "power3.out" }, "+=0.1");
-    ScrollTrigger.refresh();
   });
 
   return (

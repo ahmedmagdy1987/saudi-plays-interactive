@@ -44,6 +44,7 @@ export default function CountUp({
   const final = display ?? numeric;
   const reduced = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
+  const valRef = useRef<HTMLSpanElement>(null);
   const [text, setText] = useState(reduced ? final : `${prefix}${fmt(0, decimals)}${suffix}`);
   const started = useRef(false);
 
@@ -61,11 +62,22 @@ export default function CountUp({
       started.current = true;
       const t0 = performance.now();
       const tick = (now: number) => {
+        // tab hidden → don't spend CPU formatting/committing intermediate ticks
+        // (this is a JS rAF loop, so the CSS-only .sec-rest motion gate can't pause
+        // it). Reschedule; elapsed wall-time still advances so it lands on the
+        // correct eased value when the tab returns.
+        if (document.hidden) { raf = requestAnimationFrame(tick); return; }
         const p = Math.min(1, (now - t0) / (duration * 1000));
         const eased = 1 - Math.pow(1 - p, 3);
-        setText(`${prefix}${fmt(value * eased, decimals)}${suffix}`);
-        if (p < 1) raf = requestAnimationFrame(tick);
-        else setText(final);
+        // Write intermediate frames straight to the DOM text node — one React
+        // commit at the end instead of ~100/count (×14 count-ups). Output is
+        // byte-identical; only the write path changes.
+        if (p < 1) {
+          if (valRef.current) valRef.current.textContent = `${prefix}${fmt(value * eased, decimals)}${suffix}`;
+          raf = requestAnimationFrame(tick);
+        } else {
+          setText(final);
+        }
       };
       raf = requestAnimationFrame(tick);
     };
@@ -95,7 +107,7 @@ export default function CountUp({
 
   return (
     <span ref={ref} className={className}>
-      <span aria-hidden="true">{text}</span>
+      <span ref={valRef} aria-hidden="true">{text}</span>
       {/* real text node for assistive tech: the final value, not the ticks */}
       <span className="sr-only">{final}</span>
     </span>

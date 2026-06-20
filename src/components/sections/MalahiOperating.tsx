@@ -32,7 +32,7 @@ export default function MalahiOperating() {
   const sparkLine = series.map((v, i) => `${i ? "L" : "M"}${sx(i, series.length).toFixed(1)} ${sy(v).toFixed(1)}`).join(" ");
   const sparkArea = `${sparkLine} L${sx(series.length - 1, series.length).toFixed(1)} ${SH - SP} L${sx(0, series.length).toFixed(1)} ${SH - SP} Z`;
 
-  useGsapScene(ref, ({ gsap, scope, reduced: red, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, scope, reduced: red }) => {
     const arc = scope.querySelector(".mo-gauge__arc") as SVGCircleElement | null;
     const line = scope.querySelector(".mo-spark__line") as SVGPathElement | null;
     const bar = scope.querySelector(".mo-bar__fill") as HTMLElement | null;
@@ -60,7 +60,6 @@ export default function MalahiOperating() {
       opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out",
       scrollTrigger: { trigger: ".mo__pillars", start: "top 84%", toggleActions: "play none none none" },
     });
-    ScrollTrigger.refresh();
   });
 
   return (
