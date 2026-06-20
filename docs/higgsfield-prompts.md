@@ -1,75 +1,65 @@
-# Higgsfield cinematic background — generation record
+# Media Generation — Higgsfield
 
-The Section 01 cinematic background is a **real Higgsfield-generated** scroll-scrubbed
-sequence (Earth → Arabian Peninsula → Saudi city-light network), not a code-only
-approximation. This file records the exact models, prompts and settings so the asset
-is fully reproducible.
+A local Higgsfield **CLI** was not installed, but the Higgsfield service was
+available via its MCP tools (plan: `ultra`). Three **textless** cinematic images
+were generated and used as optimized, lazy, decorative backgrounds with full CSS
+fallbacks. No video backgrounds were generated (kept under the 3-heavy-video
+limit; lossless local video transcoding tooling was unavailable, so still images
+— which we can verify and optimize — were preferred).
 
-Account: Higgsfield **Ultra** plan (verified via `balance`). All generations silent
-(audio irrelevant — we deliver a frame sequence, not a `<video>` with sound).
+All prompts explicitly forbid text, letters, signage, logos, watermarks, foreign
+landmarks, and distorted architecture, and request modest, respectful, distant
+crowds — per the cultural-accuracy rules.
 
-## Pipeline overview
+## Assets
 
-1. **Start image** (geographic anchor) — `nano_banana_pro`, vetted for accurate geography.
-2. **Image-to-video** zoom — `veo3_1` (Google Veo 3.1, quality `high`) from the vetted image.
-3. **Upscale** — `bytedance` video upscale → 2K (source veo output is 1344 px on the long edge).
-4. **FFmpeg** deterministic frame extraction → WebP sequence (`scripts/extract-frames.mjs`).
-5. **`ScrollVideoCanvas`** renders the sequence, mapped frame-accurately to scroll progress.
+### 1. Hero atmosphere — `/public/media/hero.webp`
+- **Model:** `soul_location` · 16:9 · 2048×1152 · seed 247614 · → 144 KB WebP.
+- **Used in:** §01 opening (background behind the map/title, opacity ~0.34, radial mask).
+- **Prompt:**
+  > Cinematic wide aerial of a modern Saudi public entertainment plaza at blue
+  > hour, contemporary Gulf architecture, warm festival string-lights and glowing
+  > pavilions, palm trees, distant ambient families and youth as soft
+  > silhouettes, deep midnight-navy sky, luminous teal and warm gold accent
+  > lighting, premium national initiative mood, volumetric haze, shallow depth,
+  > ultra detailed, photoreal. Absolutely no text, no letters, no signage, no
+  > logos, no watermark, no readable writing. Undistorted realistic architecture,
+  > no foreign landmarks.
+- **QA:** verified — Saudi-style plaza, festival lights in brand palette, modest
+  distant crowds, no text/logos.
 
-Doing the geography as an **image first** lets us reject bad geography *before* spending a
-video generation, and keeps the Kingdom's real coastline / city-light distribution correct.
+### 2. National finale — `/public/media/finale.webp`
+- **Model:** `soul_location` · 16:9 · 2048×1152 · seed 808377 · → 193 KB WebP.
+- **Used in:** §10 finale (background behind the fully-illuminated national map).
+- **Prompt:**
+  > Cinematic night-time aerial of the Kingdom of Saudi Arabia as a connected
+  > nation: glowing city clusters linked by faint luminous network lines across
+  > dark desert and coastline, deep navy atmosphere from a high orbital-like
+  > perspective, teal and gold city glows, subtle aurora-like light, premium,
+  > epic, photoreal, volumetric. No text, no letters, no labels, no logos, no
+  > watermark. Realistic geography, no foreign landmarks.
+- **QA:** verified — orbital connected-nation night scene, light arcs, no text.
 
-## 1 — Start image (model `nano_banana_pro`)
+### 3. Experience energy field — `/public/media/zones.webp`
+- **Model:** `recraft-v4-1` (standard, 2k) · 16:9 · 2688×1536 · → 109 KB WebP.
+- **Brand palette passed in:** `#071330 #38e0cd #8a78f0 #ecc578 #eef3fb`, bg `#040a1a`.
+- **Available for:** experience/atmosphere texture (decorative).
+- **Prompt:**
+  > Abstract premium motion-energy field representing mixed entertainment:
+  > flowing light trails, particle sparks, digital and sporting energy, soft
+  > bokeh, layered depth, midnight navy background with luminous teal, violet and
+  > gold streaks, elegant and restrained, cinematic, high-end. No text, no
+  > letters, no logos, no watermark.
+- **QA:** verified — abstract teal/violet/gold energy, on-palette, no text.
 
-Desktop 16:9 (job `4307989f-…`, 1376×768) and mobile 9:16 (job `2d438b6e-…`, 768×1376).
+## Optimization & delivery
+- Used Higgsfield's pre-optimized `*_min.webp` variants (109–193 KB each).
+- Wired through `src/data/media.ts` — an empty `src` renders **nothing** (no
+  broken requests); the manifest can be cleared to fall back to pure CSS/SVG.
+- Hero is `loading="eager"`; non-hero media is `loading="lazy"`.
+- All decorative (`aria-hidden`, empty `alt`), masked, and low-opacity so HTML
+  text remains the source of all on-screen wording.
 
-**Desktop prompt**
-> Photorealistic view of planet Earth from orbit at night, looking down toward the Arabian
-> Peninsula. The distinctive Arabian Peninsula is clearly visible, framed by the Red Sea on
-> the west and the Persian Gulf on the east, with Saudi Arabia near the centre glowing with
-> warm golden clusters of city lights (Riyadh, Jeddah and the coasts). Deep black space all
-> around, scattered faint stars, a thin glowing blue atmospheric rim along the curved Earth
-> horizon, soft sparse high clouds. Cinematic, premium, government-grade, calm and realistic.
-> Dark navy and warm gold tones with a faint restrained teal aurora glow near the edges.
-> No text, no labels, no borders, no logos, no UI.
-
-**Mobile prompt** — same, "vertical … Arabian Peninsula centred in the frame … Saudi Arabia
-at the centre", `aspect_ratio: 9:16`.
-
-## 2 — Image-to-video zoom (model `veo3_1`, quality `high`, duration 8 s)
-
-Desktop 16:9 (job `2746f8cf-…`, 1344×768, 24 fps) from start image `4307989f`.
-Mobile 9:16 (job `64a363b9-…`, 768×1344, 24 fps) from start image `2d438b6e`.
-
-**Prompt (desktop)**
-> A very slow, smooth, perfectly stable cinematic push-in from orbit toward the Arabian
-> Peninsula at night. The camera gently zooms straight in toward central Saudi Arabia, the
-> warm golden city-light network growing gradually larger and brighter. Realistic geography
-> stays stable and undistorted; the blue atmospheric rim light along Earth's curved horizon
-> remains. Premium, calm, government-grade documentary space cinematography. No rotation,
-> no shake, no morphing, no fast motion, no text, no logos, no UI. One single continuous
-> slow zoom-in, clean stable first and last frames.
-
-(Mobile prompt identical, with "framed vertically with Saudi Arabia centred".)
-Veo's prompt-enhancer expanded these into the SHOT/SUBJECT/SCENE/CAMERA breakdown stored on
-each job. `start_image` role = the vetted nano_banana image. The recommended **"Earth zoom in"**
-preset (`f7561a2d-…`) was **declined** (`declined_preset_id`) in favour of the literal prompt so
-the motion + framing stayed under our control.
-
-## 3 — Upscale (model `bytedance` video upscale, preset `aigc`, 2K, 24 fps)
-
-Desktop job `b19939de-…`, mobile job `57af0524-…`. Brings each clip to ≥1920×1080 / ≥1080×1920.
-
-## Visual QA before integration (rejection criteria)
-
-Inspected start images + first/middle/last video frames. **Accepted** — geography is realistic
-(true Arabian Peninsula, Red Sea + Persian Gulf, Riyadh's radial network at the end), camera
-targets Saudi Arabia, no fictional borders, no generated text / logos / flags, motion is a single
-stable slow zoom with no jump or morph, and the final frame (city-light network) is a clean,
-content-safe handoff into the site's SVG Saudi map + title. No regeneration was required.
-
-## Reproduce
-
-`scripts/extract-frames.mjs` pulls the upscaled job URLs, runs the bundled `ffmpeg-static`
-to emit `public/cinematic/{desk,mob}/frame-####.webp` (120 frames each) + a poster, and the
-fallback `cinematic-{desk,mob}.mp4`.
+## Regeneration
+Re-run the same prompts via `generate_image` (models above), download the
+`min.webp` result, drop into `/public/media`, keep the manifest paths.
