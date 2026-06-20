@@ -76,7 +76,7 @@ export default function Finale() {
           <img className="finale__media" src={media.finale.src} alt="" aria-hidden="true" loading="lazy" decoding="async" />
         )}
         <div className="finale__map" aria-hidden="true">
-          <SaudiMap stage={3} connections="fromRiyadh" labels="stage1" armed pulse ariaLabel={ui.mapAria} />
+          <SaudiMap stage={3} connections="fromRiyadh" labels="stage1" armed pulse flow ariaLabel={ui.mapAria} />
         </div>
         <div className="finale__scrim" />
         <div className="finale__content">

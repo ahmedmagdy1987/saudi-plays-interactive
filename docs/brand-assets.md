@@ -21,21 +21,42 @@ footer legal note.
 | ملاهي — Malahi (presenter) | central operator node + footer | _none_ | — | ❌ Not verified | Presenter mark not supplied as an asset; rendered as the localized brand text (the central operating node and footer brand line). |
 | Municipal sector — الأمانات والبلديات | §07 node + footer | _none_ | — | ❌ Not verified / no single mark | As the brief notes, there is **no single universal "الأمانات والبلديات" logo**. The responsible entity (e.g. the Ministry of Municipalities and Housing) was **not** assumed or fabricated. Rendered as a localized text label only. |
 
-## How to add a verified logo later
+## Asset-ready integration (already wired)
 
-1. Obtain the **official** file from the organization's site or official brand kit
-   (prefer SVG; otherwise a high‑resolution transparent PNG). Do not hotlink.
-2. Optimize losslessly (e.g. SVGO for SVG) **without** changing geometry or color.
-3. Save it under `public/brand/` (e.g. `public/brand/gea.svg`).
-4. Reference it with root‑relative paths (`/brand/gea.svg`) and provide localized
-   `alt` text. On the dark UI, use the organization's official white/negative
-   variant if one exists, otherwise place the original mark inside a clean neutral
-   container. **Do not** add glow effects to government logos.
-5. Update the table above (organization, filename, source URL, format, "confirmed
-   official: ✅", any usage limitation).
+The UI ships a config-driven, **asset-ready** integration via
+`src/components/common/BrandMark.tsx`, used by the footer entity row:
 
-## Current decision
+- When a verified file exists, it renders the official logo at its exact
+  appearance inside a clean neutral container (so colour/negative artwork reads
+  on the dark UI), with a subtle reveal — **no glow on government marks**.
+- When no verified file exists, it renders the localized text label and **does
+  not request the file** (so there are never any 404s).
 
-No external logo files are bundled in this build because none could be verified to
-the required standard. The UI uses verified‑safe **localized text labels** for all
-five entities, which is the explicitly permitted fallback.
+To activate a logo (do all of this once you have the verified file):
+
+1. Obtain the **official** file from the organization's site / official brand kit
+   (prefer SVG; otherwise high-resolution transparent PNG). Do not hotlink, trace,
+   AI-generate, recolor, or reproportion.
+2. Optimize losslessly (e.g. SVGO) **without** changing geometry or colour.
+3. Save it under `public/brand/` with the matching name: `gea.svg`, `qlp.svg`,
+   `vision2030.svg`.
+4. In `src/components/sections/Footer.tsx`, flip that entity's `available: true`
+   in `ENTITY_LOGOS`. (For Vision 2030 in §02, add a `BrandMark` there similarly.)
+5. Update the table above to "confirmed official: ✅" with the source URL.
+
+## Files found locally but NOT used (and why)
+
+While looking for the owner's "official transparent logos", the only local
+candidates discovered were **not** usable under these rules and were deliberately
+rejected:
+
+- A GEA image named like `png-transparent-general-authority-for-entertainment-…-thumbnail.png`
+  — this is a low-resolution **aggregator/clip-art thumbnail** (unverifiable
+  provenance), which the rules forbid.
+- Several `Gemini_Generated_Image_*.png` files — **AI-generated**, explicitly
+  forbidden for logos.
+
+No verified official files were present in the repo or attached to the request, so
+the verified-safe **localized text labels** remain in place. Drop the genuine
+official files into `public/brand/` (names above) and flip `available: true` to
+light them up — the integration is already built and waiting.

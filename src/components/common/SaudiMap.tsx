@@ -31,6 +31,10 @@ interface SaudiMapProps {
   simple?: boolean;
   /** ambient node pulse on/off */
   pulse?: boolean;
+  /** flowing "energy" that travels Riyadh→cities along the connection arcs
+   *  (used for the cinematic climax; off by default to avoid pre-reveal flicker
+   *  on pinned/at-top instances) */
+  flow?: boolean;
   className?: string;
   ariaLabel?: string;
 }
@@ -61,6 +65,7 @@ export default function SaudiMap({
   armed = false,
   simple = false,
   pulse = true,
+  flow = false,
   className,
   ariaLabel = "خريطة المملكة العربية السعودية وشبكة المدن",
 }: SaudiMapProps) {
@@ -184,6 +189,24 @@ export default function SaudiMap({
             ))}
           </g>
 
+          {/* flowing energy travelling Riyadh→cities along each arc (climax only).
+              pathLength=100 normalises every arc so one dash definition travels
+              all of them; per-arc delay keeps the network organically alive. */}
+          {flow && (
+            <g className="saudimap__flows">
+              {links.map((l, i) => (
+                <path
+                  key={l.id}
+                  className="saudimap__flow"
+                  data-link={l.id}
+                  d={l.d}
+                  pathLength={100}
+                  style={{ animationDelay: `${(i % 7) * 0.42}s` }}
+                />
+              ))}
+            </g>
+          )}
+
           {/* city nodes */}
           <g className="saudimap__nodes">
             {nodes.map((n) => {
@@ -222,12 +245,18 @@ export default function SaudiMap({
                     r={coreR}
                   />
                   {n.origin && (
-                    <circle
-                      className="saudimap__node-ring"
-                      cx={n.x}
-                      cy={n.y}
-                      r={9}
-                    />
+                    <>
+                      {/* national signal radar from the capital — slow, wide,
+                          restrained expanding rings (paused on reduced motion) */}
+                      <circle className="saudimap__radar" cx={n.x} cy={n.y} r={9} />
+                      <circle className="saudimap__radar saudimap__radar--2" cx={n.x} cy={n.y} r={9} />
+                      <circle
+                        className="saudimap__node-ring"
+                        cx={n.x}
+                        cy={n.y}
+                        r={9}
+                      />
+                    </>
                   )}
                 </g>
               );

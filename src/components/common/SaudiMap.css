@@ -26,6 +26,13 @@
   stroke-linejoin: round;
   filter: drop-shadow(0 0 6px rgba(56, 224, 205, 0.5));
 }
+/* the national outline gently breathes its glow so it feels alive even at rest
+   (filter only — never touched by the GSAP draw, so no conflict) */
+.saudimap[data-animate="true"] .saudimap__border { animation: sm-border-glow 6s ease-in-out infinite; }
+@keyframes sm-border-glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(56, 224, 205, 0.4)); }
+  50%      { filter: drop-shadow(0 0 11px rgba(95, 243, 226, 0.7)); }
+}
 
 /* connection links */
 .saudimap__link {
@@ -36,6 +43,26 @@
   opacity: 0.6;
 }
 .saudimap__link--armed { opacity: 0; }
+
+/* travelling energy along the arcs — a short bright dash that runs Riyadh→city */
+.saudimap__flow {
+  fill: none;
+  stroke: var(--teal-bright);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 6 94;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px var(--teal-bright));
+}
+.saudimap[data-animate="true"] .saudimap__flow { animation: sm-flow 3.6s linear infinite; }
+@keyframes sm-flow {
+  0%   { stroke-dashoffset: 100; opacity: 0; }
+  12%  { opacity: 0.9; }
+  88%  { opacity: 0.9; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
 
 /* nodes */
 .saudimap__node-core {
@@ -52,6 +79,28 @@
 }
 .saudimap__node--origin .saudimap__node-ring { stroke: var(--gold-bright); }
 .saudimap__node--armed { opacity: 0; }
+
+/* capital radar — wide, slow expanding rings from Riyadh (national signal) */
+.saudimap__radar {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+.saudimap[data-animate="true"] .saudimap__radar { animation: sm-radar 4.6s ease-out infinite; }
+.saudimap[data-animate="true"] .saudimap__radar--2 { animation-delay: 2.3s; }
+@keyframes sm-radar {
+  0%   { transform: scale(0.5); opacity: 0.55; }
+  80%  { opacity: 0; }
+  100% { transform: scale(7); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .saudimap__radar, .saudimap__flow { animation: none !important; opacity: 0; }
+  .saudimap__border { animation: none !important; }
+}
 
 /* ambient pulse (paused when reduced-motion or tab hidden) */
 .saudimap[data-animate="true"] .saudimap__node-pulse {

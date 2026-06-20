@@ -1,0 +1,42 @@
+/* Partner / entity mark — logo (verified) or elegant text fallback. */
+.brandmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* text fallback keeps the existing footer chip look (incl. the small dot) */
+.brandmark--text {
+  gap: 0.5rem;
+  padding: 0.55em 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(14, 30, 64, 0.45);
+  font-size: var(--fz-label);
+  color: var(--ink-soft);
+}
+.brandmark--text::before {
+  content: "";
+  width: 7px; height: 7px; border-radius: 50%;
+  background: linear-gradient(var(--teal), var(--violet));
+  flex: none;
+}
+
+/* verified-logo container: a clean neutral panel so official artwork (colour or
+   negative) always reads on the dark UI — no glow added to government marks */
+.brandmark--logo {
+  height: 46px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 12px;
+  background: rgba(244, 247, 252, 0.94);
+  border: 1px solid var(--line-strong);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.brandmark--logo:hover { transform: translateY(-2px); }
+.brandmark__img {
+  height: 100%;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  display: block;
+}

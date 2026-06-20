@@ -35,24 +35,10 @@
 .footer__present { color: var(--ink-soft); font-size: var(--fz-label); max-width: 70ch; line-height: 1.7; }
 .footer__present-label { color: var(--teal); }
 .footer__present strong { color: var(--ink); font-weight: 600; }
-.footer__entities { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
-.footer__entity {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55em 1rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: rgba(14, 30, 64, 0.45);
-  font-size: var(--fz-label);
-  color: var(--ink-soft);
-}
-.footer__entity::before {
-  content: "";
-  width: 7px; height: 7px; border-radius: 50%;
-  background: linear-gradient(var(--teal), var(--violet));
-  flex: none;
-}
+.footer__entities { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; }
+/* the entity chip / logo container is now provided by <BrandMark>; the li is a
+   plain flex item so verified logos and text labels can sit side by side. */
+.footer__entity { display: inline-flex; }
 
 .footer__divider { width: min(560px, 70%); height: 1px; background: var(--line); }
 .footer__legal { font-size: var(--fz-eyebrow); color: var(--ink-faint); max-width: 70ch; line-height: 1.7; }

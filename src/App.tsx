@@ -5,6 +5,7 @@ import { prefersReducedMotion } from "@/lib/hooks";
 import { useContent, useLang } from "@/i18n";
 import SectionProgressNavigation from "@/components/nav/SectionProgressNavigation";
 import LanguageSwitcher from "@/components/nav/LanguageSwitcher";
+import AtmosphereBackground from "@/components/common/AtmosphereBackground";
 
 import IntroHero from "@/components/sections/IntroHero";
 import NationalVision from "@/components/sections/NationalVision";
@@ -81,6 +82,7 @@ export default function App() {
 
   return (
     <div className="app-root">
+      <AtmosphereBackground />
       <a href="#intro" className="sr-only">
         {ui.skip}
       </a>
