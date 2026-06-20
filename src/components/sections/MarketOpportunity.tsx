@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import CountUp from "@/components/common/CountUp";
 import { useContent, useLang } from "@/i18n";
@@ -8,11 +8,35 @@ import "./MarketOpportunity.css";
 const CW = 560, CH = 300, PL = 28, PR = 16, PT = 18, PB = 34;
 const R = 70;
 const C = 2 * Math.PI * R;
+const GAP2 = 3; // gap between the two demographic segments (viewBox units)
 
 export default function MarketOpportunity() {
   const ref = useRef<HTMLElement>(null);
   const { market, ui } = useContent();
   const { lang } = useLang();
+
+  // ---- demographic ring: TWO real segments (63 teal + 37 violet), cumulative
+  // so they never overlap; dash lengths are baked into the JSX so the segments
+  // exist in the DOM with no dependency on JS. Shared `activeYouth` drives the
+  // two-way legend↔segment interaction.
+  const ys = market.youthSplit;
+  let yacc = 0;
+  const ringSegs = ys.map((y) => {
+    const start = yacc;
+    yacc += y.value;
+    return {
+      ...y,
+      color: y.accent === "teal" ? "var(--teal)" : "var(--violet)",
+      dash: (y.value / 100) * C - GAP2,
+      rotate: -90 + (start / 100) * 360,
+      key: y.id === ys[0].id ? "under" : "over",
+    };
+  });
+  const pctWord = lang === "en" ? "percent" : "بالمئة";
+  const donutAria = `${market.demographicsTitle}: ${ys.map((y) => `${y.value} ${pctWord} ${y.label}`).join(lang === "en" ? ", " : "، ")}`;
+  const [activeYouth, setActiveYouth] = useState<string | null>(null);
+  const yState = (id: string) => (activeYouth ? (id === activeYouth ? " is-hot" : " is-dim") : "");
+  const toggleYouth = (id: string) => setActiveYouth((cur) => (cur === id ? null : id));
 
   const pts = market.demandTrend.points;
   const cx = (i: number) => PL + (i / (pts.length - 1)) * (CW - PL - PR);
@@ -21,7 +45,6 @@ export default function MarketOpportunity() {
   const areaPath = `${linePath} L${cx(pts.length - 1).toFixed(1)} ${CH - PB} L${cx(0).toFixed(1)} ${CH - PB} Z`;
   const endX = cx(pts.length - 1);
   const endY = cy(pts[pts.length - 1]);
-  const under = market.youthSplit[0].value / 100;
 
   // ---- "نمو متسارع" annotation — derived from the EXACT final point and
   // clamped so the label + leader always live inside the chart viewBox (and thus
@@ -43,16 +66,19 @@ export default function MarketOpportunity() {
 
   useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const line = scope.querySelector(".curve__line") as SVGPathElement | null;
-    const arc = scope.querySelector(".donut__arc--teal") as SVGCircleElement | null;
-    const arc2 = scope.querySelector(".donut__arc--violet") as SVGCircleElement | null;
+    const segUnder = scope.querySelector(".donut__seg--under") as SVGCircleElement | null;
+    const segOver = scope.querySelector(".donut__seg--over") as SVGCircleElement | null;
     const numEl = scope.querySelector(".donut__num") as SVGTextElement | null;
     const llen = line?.getTotalLength?.() ?? 800;
-    const pct = market.youthSplit[0].value;                 // 63
-    const tealLen = under * C;
+    const pct = ys[0].value;                                // 63
+    const dashUnder = (ys[0].value / 100) * C - GAP2;
+    const dashOver = (ys[1].value / 100) * C - GAP2;
 
     gsap.set(line, { strokeDasharray: llen, strokeDashoffset: reduced ? 0 : llen });
-    gsap.set(arc, { strokeDasharray: `${tealLen} ${C}`, strokeDashoffset: reduced ? 0 : tealLen });
-    gsap.set(arc2, { strokeDasharray: `${(1 - under) * C} ${C}`, strokeDashoffset: -tealLen, opacity: reduced ? 1 : 0 });
+    // dasharray is baked into the JSX; here we only drive the reveal offset, so a
+    // StrictMode/context revert can never collapse a segment into a full ring.
+    gsap.set(segUnder, { strokeDashoffset: reduced ? 0 : dashUnder });
+    gsap.set(segOver, { strokeDashoffset: reduced ? 0 : dashOver });
     if (reduced) {
       gsap.set([".curve__area", ".curve__dot", ".curve__annot"], { opacity: 1 });
       if (numEl) numEl.textContent = `${pct}%`;             // final value shown at once
@@ -69,28 +95,27 @@ export default function MarketOpportunity() {
       // annotation slides in only after the line finishes drawing, anchored to the endpoint
       .fromTo(".curve__annot", { opacity: 0, x: -6, y: 6 }, { opacity: 1, x: 0, y: 0, duration: 0.5, ease: "power2.out" });
 
-    // demographic donut (right card) — the 0→63% NUMBER and the teal ring draw
-    // are driven by ONE tween so they are perfectly synchronised. Plays once when
-    // the card reaches its reading position (toggleActions: play none none none,
-    // so small scroll jitter never restarts it). The count is written straight to
-    // the DOM (not React state) so assistive tech never hears the intermediate
-    // ticks — the accessible value lives on the donut's aria-label.
+    // demographic donut (right card) — the 0→63% NUMBER and the 63% teal arc draw
+    // are driven by ONE tween so they stay perfectly synchronised; then the 37%
+    // violet arc draws as its own distinct segment. Plays once at the reading
+    // position. The count is written straight to the DOM (not React state) so AT
+    // never hears the intermediate ticks — the spoken value lives on aria-label.
     const ring = { p: 0 };
     gsap.timeline({ scrollTrigger: { trigger: ".market__donut", start: "top 80%", toggleActions: "play none none none" } })
       .to(ring, {
         p: 1, duration: 1.5, ease: "power2.out",
         onUpdate: () => {
-          if (arc) gsap.set(arc, { strokeDashoffset: tealLen * (1 - ring.p) });
+          if (segUnder) gsap.set(segUnder, { strokeDashoffset: dashUnder * (1 - ring.p) });
           if (numEl) numEl.textContent = `${Math.round(pct * ring.p)}%`;
         },
       })
-      .to(arc2, { opacity: 1, duration: 0.5 }, "-=0.25");
+      .to(segOver, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" }, "-=0.2");
 
     ScrollTrigger.refresh();
   });
 
   return (
-    <SectionShell id="market" index="03" eyebrow={market.eyebrow} title={market.headline} lede={market.sub} label={market.headline}>
+    <SectionShell ref={ref} id="market" index="03" eyebrow={market.eyebrow} title={market.headline} lede={market.sub} label={market.headline}>
       <div className="market__figures container">
         {market.figures.map((f) => (
           <div className="mfig" key={f.label} data-reveal>
@@ -109,7 +134,7 @@ export default function MarketOpportunity() {
               <h3 className="chart-card__title">{market.demandTrend.label}</h3>
               <span className="chart-card__cap">{market.demandTrend.caption}</span>
             </div>
-            <svg className="curve" viewBox={`0 0 ${CW} ${CH}`} role="img" aria-label={`${market.demandTrend.label} — ${market.demandTrend.caption}`}>
+            <svg className="curve" viewBox={`0 0 ${CW} ${CH}`} role="img" aria-label={`${market.demandTrend.label}: ${market.demandTrend.caption}`}>
               <defs>
                 <linearGradient id="mk-line" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0" stopColor="var(--teal)" />
@@ -148,22 +173,51 @@ export default function MarketOpportunity() {
             <div className="chart-card__head">
               <h3 className="chart-card__title">{market.demographicsTitle}</h3>
             </div>
-            {/* role=img + aria-label means AT reads ONLY the spoken value
-                ("63 بالمئة / 63 percent"), never the animated tick digits */}
-            <svg className="donut" viewBox="0 0 200 200" role="img" aria-label={`${market.youthSplit[0].value} ${lang === "en" ? "percent" : "بالمئة"} — ${market.youthSplit[0].label}`}>
+            {/* role=img on the whole donut for AT; each segment is also a focusable
+                button so keyboard/touch users can select it. Hovering/focusing a
+                segment highlights its legend item and vice-versa (shared state). */}
+            <svg className="donut" viewBox="0 0 200 200" role="img" aria-label={donutAria}>
               <circle className="donut__track" cx="100" cy="100" r={R} />
-              <circle className="donut__arc donut__arc--violet" cx="100" cy="100" r={R} stroke="var(--violet)" />
-              <circle className="donut__arc donut__arc--teal" cx="100" cy="100" r={R} stroke="var(--teal)" />
-              <text className="donut__center donut__num" x="100" y="96" textAnchor="middle" fontSize="34" aria-hidden="true">{market.youthSplit[0].value}%</text>
+              {ringSegs.map((seg) => (
+                <circle
+                  key={seg.id}
+                  className={`donut__seg donut__seg--${seg.key}${yState(seg.id)}`}
+                  cx="100"
+                  cy="100"
+                  r={R}
+                  stroke={seg.color}
+                  strokeDasharray={`${seg.dash.toFixed(2)} ${(C - seg.dash).toFixed(2)}`}
+                  style={{ transform: `rotate(${seg.rotate}deg)`, transformBox: "view-box", transformOrigin: "center", color: seg.color }}
+                  data-id={seg.id}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${seg.value} ${pctWord} ${seg.label}`}
+                  onMouseEnter={() => setActiveYouth(seg.id)}
+                  onMouseLeave={() => setActiveYouth(null)}
+                  onFocus={() => setActiveYouth(seg.id)}
+                  onBlur={() => setActiveYouth(null)}
+                  onClick={() => toggleYouth(seg.id)}
+                />
+              ))}
+              <text className="donut__center donut__num" x="100" y="96" textAnchor="middle" fontSize="34" aria-hidden="true">{ys[0].value}%</text>
               <text className="donut__center" x="100" y="120" textAnchor="middle" fontSize="13" fill="var(--ink-soft)" style={{ fontFamily: "var(--font-ar)" }} direction={lang === "en" ? "ltr" : "rtl"} aria-hidden="true">
-                {market.youthSplit[0].label}
+                {ys[0].label}
               </text>
             </svg>
             <ul className="donut-legend">
-              {market.youthSplit.map((y) => (
-                <li key={y.id}>
-                  <span className="sw" style={{ background: y.accent === "teal" ? "var(--teal)" : "var(--violet)" }} />
-                  {y.label} — {y.value}%
+              {ringSegs.map((y) => (
+                <li
+                  key={y.id}
+                  className={`donut-legend__item${yState(y.id)}`}
+                  tabIndex={0}
+                  onMouseEnter={() => setActiveYouth(y.id)}
+                  onMouseLeave={() => setActiveYouth(null)}
+                  onFocus={() => setActiveYouth(y.id)}
+                  onBlur={() => setActiveYouth(null)}
+                  onClick={() => toggleYouth(y.id)}
+                >
+                  <span className="sw" style={{ background: y.color }} />
+                  <span className="donut-legend__txt">{y.label}: {y.value}%</span>
                 </li>
               ))}
             </ul>

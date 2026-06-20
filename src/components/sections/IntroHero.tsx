@@ -2,7 +2,7 @@ import { useRef } from "react";
 import SaudiMap from "@/components/common/SaudiMap";
 import CountUp from "@/components/common/CountUp";
 import { RIYADH } from "@/data/saudiGeo";
-import { useContent } from "@/i18n";
+import { useContent, useLang } from "@/i18n";
 import { media } from "@/data/media";
 import { useGsapScene } from "@/lib/scroll";
 import "./IntroHero.css";
@@ -17,7 +17,8 @@ import "./IntroHero.css";
  */
 export default function IntroHero() {
   const ref = useRef<HTMLElement>(null);
-  const { hero, ui } = useContent();
+  const { hero, ui, brand } = useContent();
+  const { lang } = useLang();
 
   useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const border = scope.querySelector(".intro__map [data-map-border]") as SVGPathElement | null;
@@ -87,7 +88,7 @@ export default function IntroHero() {
   });
 
   return (
-    <section id="intro" data-section="01" ref={ref} className="intro" aria-label="الافتتاحية — السعودية تلعب">
+    <section id="intro" data-section="01" ref={ref} className="intro" aria-label={`${ui.introAria}: ${lang === "en" ? brand.nameLatin : brand.name}`}>
       <div className="intro__stage">
         {media.hero.src && (
           <img className="intro__media" src={media.hero.src} alt="" aria-hidden="true" loading="eager" decoding="async" />
@@ -98,7 +99,7 @@ export default function IntroHero() {
             connections="fromRiyadh"
             labels="none"
             armed
-            ariaLabel="خريطة المملكة العربية السعودية والشبكة الوطنية للمدن"
+            ariaLabel={ui.mapAria}
           />
         </div>
         <div className="intro__veil" />

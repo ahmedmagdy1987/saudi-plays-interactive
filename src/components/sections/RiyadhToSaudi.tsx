@@ -47,7 +47,11 @@ export default function RiyadhToSaudi() {
         gsap.to(l, { opacity: on ? 0.55 : 0, strokeDashoffset: 0, duration: dur });
       });
       gsap.to(zoom, { scale: ZOOM[i], svgOrigin: `${RIYADH.x} ${RIYADH.y}`, duration: animate ? 1 : 0, ease: "power2.inOut" });
-      steps.forEach((s, si) => s.classList.toggle("is-active", si === i));
+      // active stage follows real scroll progress; earlier stages read as "done"
+      steps.forEach((s, si) => {
+        s.classList.toggle("is-active", si === i);
+        s.classList.toggle("is-done", si < i);
+      });
       setStepIdx(i);
     };
 
@@ -73,12 +77,13 @@ export default function RiyadhToSaudi() {
 
   return (
     <SectionShell
+      ref={ref}
       id="riyadh"
       index="04"
       eyebrow={riyadhToSaudi.eyebrow}
       title={riyadhToSaudi.title}
       lede={riyadhToSaudi.sub}
-      label="من الرياض إلى المملكة"
+      label={riyadhToSaudi.title}
     >
       <div className="r2s__proof container">
         {riyadhToSaudi.proofPoints.map((p) => (

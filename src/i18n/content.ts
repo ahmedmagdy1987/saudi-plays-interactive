@@ -52,7 +52,11 @@ export const ar = {
     sessionsFlow: "تدفّق الجلسات",
     locationsStatus: "حالة المواقع",
     skip: "تخطَّ إلى المحتوى",
-    sourceNote: "مؤشرات تقديرية — تجميع داخلي ملاهي 2026",
+    sourceNote: "مؤشرات تقديرية، تجميع داخلي ملاهي 2026",
+    mapAria: "خريطة المملكة العربية السعودية وشبكة المدن الوطنية",
+    sparkAria: "مخطط توضيحي لتدفّق الجلسات",
+    footerAria: "تذييل الصفحة",
+    introAria: "الافتتاحية",
   },
   NAV: [
     { id: "intro", index: "01", label: "الافتتاحية" },
@@ -67,11 +71,11 @@ export const ar = {
     { id: "finale", index: "10", label: "لماذا ملاهي" },
   ],
   hero: {
-    eyebrow: "SAUDI PLAYS · NATIONAL ENTERTAINMENT PLATFORM",
+    eyebrow: "منصة وطنية للترفيه المجتمعي",
     titleLines: ["السعودية", "تلعب"],
     supporting: "معًا نصنع تجربة ترفيهية وطنية تصل إلى كل مدينة وكل حي",
     caseStudyTag: "تجربة «الرياض تلعب» · 2024–2025",
-    caseStudyNote: "أرقام تجربة «الرياض تلعب» — مرحلة تجريبية مُثبتة، وليست أرقامًا وطنية.",
+    caseStudyNote: "أرقام تجربة «الرياض تلعب»، مرحلة تجريبية مُثبتة، وليست أرقامًا وطنية.",
     stats: [
       { prefix: "+", value: 100, suffix: "K", display: "+100K", label: "مشارك" },
       { prefix: "+", value: 200, suffix: "", display: "+200", label: "فعالية وتجربة" },
@@ -79,7 +83,7 @@ export const ar = {
     ] as Stat[],
   },
   vision: {
-    eyebrow: "WHY NOW · لماذا الآن",
+    eyebrow: "لماذا الآن",
     headline: "الترفيه للجميع، في كل مدينة، وكل حي",
     sub: "طموح وطني يتوسّع نحو أكثر من 20 مدينة، شبكة ترفيهية واحدة تنبض من الرياض إلى أطراف المملكة.",
     convergeStatement: "أربع قوى تلتقي عند منصة واحدة: السعودية تلعب.",
@@ -91,7 +95,7 @@ export const ar = {
     ],
   },
   market: {
-    eyebrow: "MARKET OPPORTUNITY · حجم الفرصة",
+    eyebrow: "حجم الفرصة",
     headline: "سوق شاب، وطلب متسارع",
     sub: "مؤشرات السوق المحلي تكشف عن قاعدة سكانية شابة وطلب متنامٍ على الترفيه القريب.",
     figures: [
@@ -107,7 +111,7 @@ export const ar = {
     demographicsTitle: "القاعدة السكانية",
   },
   riyadhToSaudi: {
-    eyebrow: "FROM RIYADH TO THE KINGDOM",
+    eyebrow: "من الرياض إلى المملكة",
     title: "من التجربة إلى الواقع",
     sub: "تجربة «الرياض تلعب» أثبتت النموذج. الآن نوسّعه إلى شبكة وطنية تنمو من الرياض إلى كل المملكة.",
     proofPoints: [
@@ -118,7 +122,7 @@ export const ar = {
     cumulativeNote: "أرقام 5 و10 و20+ تمثّل تغطية تراكمية عبر السنوات، ولا تُجمع.",
     beat: "تغطية تراكمية",
     timeline: [
-      { id: "pilot", period: "2024–2025", year: "2024–2025", title: "الرياض — المرحلة التجريبية", cities: "1", cumulative: 1, kind: "proven" as const, note: "أساس مُثبت" },
+      { id: "pilot", period: "2024–2025", year: "2024–2025", title: "الرياض: المرحلة التجريبية", cities: "1", cumulative: 1, kind: "proven" as const, note: "أساس مُثبت" },
       { id: "y1", period: "السنة الأولى", year: "2026", title: "خمس مدن", cities: "5", cumulative: 5, kind: "target" as const },
       { id: "y2", period: "السنة الثانية", year: "2027", title: "عشر مدن", cities: "10", cumulative: 10, kind: "target" as const },
       { id: "y3", period: "السنة الثالثة", year: "2028", title: "أكثر من 20 مدينة", cities: "20+", cumulative: 20, kind: "target" as const },
@@ -126,9 +130,9 @@ export const ar = {
     firstCities: ["الرياض", "جدة", "الدمام", "مكة المكرمة", "المدينة المنورة"],
   },
   experience: {
-    eyebrow: "THE DESTINATION · التجربة",
+    eyebrow: "وجهة التجربة",
     coreTitle: "السعودية تلعب",
-    title: "السعودية تلعب — نواة التجربة",
+    title: "السعودية تلعب: نواة التجربة",
     coreSub: "نواة حيّة تتفرّع منها الجماهير وفئات التجربة.",
     audiences: [
       { id: "games", ar: "الألعاب", desc: "ألعاب تفاعلية وتجارب تنافسية لكل المستويات." },
@@ -150,7 +154,7 @@ export const ar = {
     ],
   },
   malahi: {
-    eyebrow: "MALAHI OS · منظومة التشغيل والتقنية",
+    eyebrow: "منظومة التشغيل والتقنية",
     title: "منظومة تشغيل وتقنية متكاملة",
     sub: "خمس ركائز تشغيلية تُدار بمنصة تقنية واحدة.",
     pillars: [
@@ -171,7 +175,7 @@ export const ar = {
     dashboardTitle: "لوحة العمليات",
     dashboard: {
       label: "نموذج توضيحي للوحة العمليات",
-      disclaimer: "أرقام واجهة توضيحية لغرض العرض — وليست نتائج تشغيل فعلية.",
+      disclaimer: "أرقام واجهة توضيحية لغرض العرض، وليست نتائج تشغيل فعلية.",
       metrics: {
         uptime: { value: DASH.uptime, suffix: "%", label: "جاهزية التشغيل", en: "Uptime" },
         sessions: { value: DASH.sessions, label: "الجلسات", en: "Sessions" },
@@ -190,9 +194,9 @@ export const ar = {
     },
   },
   governance: {
-    eyebrow: "OPERATING MODEL · الحوكمة والشراكات",
+    eyebrow: "الحوكمة والشراكات",
     title: "منظومة تشغيل وطنية واضحة الأدوار",
-    sub: "من التنظيم إلى التشغيل إلى المستفيد — منظومة وطنية حيّة يعرف فيها كل طرف دوره.",
+    sub: "من التنظيم إلى التشغيل إلى المستفيد: منظومة وطنية حيّة يعرف فيها كل طرف دوره.",
     detailDefault: "مرّر على أي جهة لإبراز دورها ومساراتها في المنظومة.",
     entities: [
       { id: "gea", ar: "الهيئة العامة للترفيه", role: "المنظّم والسياسات", layer: "regulator" as const, icon: "shield" },
@@ -215,12 +219,12 @@ export const ar = {
     alignmentLabel: "متوائم مع:",
   },
   revenue: {
-    eyebrow: "REVENUE MODEL · نموذج الإيرادات",
+    eyebrow: "نموذج الإيرادات",
     title: "منظومة إيرادات متوازنة",
-    sub: "ست قنوات إيراد تتكامل حول نواة واحدة — بمجموع 100%.",
+    sub: "ست قنوات إيراد تتكامل حول نواة واحدة، بمجموع 100%.",
     centerCap: "إجمالي الإيرادات",
     detailDefault: "مرّر على أي قناة لإبراز حصتها في المنظومة.",
-    note: "المجموع 100% — نسب نموذج الإيرادات كما وردت دون أي تقريب.",
+    note: "المجموع 100%: نسب نموذج الإيرادات كما وردت دون أي تقريب.",
     streams: [
       { id: "sponsor", ar: "الرعاية", pct: REV.sponsor, accent: "teal", desc: "تفعيل الرعاة والعلامات داخل التجربة." },
       { id: "games", ar: "إيرادات الألعاب", pct: REV.games, accent: "violet", desc: "الألعاب والتجارب التفاعلية." },
@@ -231,9 +235,9 @@ export const ar = {
     ],
   },
   impact: {
-    eyebrow: "TARGETS & IMPACT · المستهدفات والأثر",
+    eyebrow: "المستهدفات والأثر",
     title: "مستهدفات وطنية وأثر متوقع",
-    sub: "أرقام مستهدفة وأثر متوقع خلال ثلاث سنوات — وليست نتائج محققة.",
+    sub: "أرقام مستهدفة وأثر متوقع خلال ثلاث سنوات، وليست نتائج محققة.",
     targetLabel: "المستهدف",
     projectedLabel: "الأثر المتوقع",
     horizonLabel: "خلال 3 سنوات",
@@ -261,7 +265,7 @@ export const ar = {
     ],
   },
   finale: {
-    eyebrow: "WHY MALAHI · لماذا ملاهي",
+    eyebrow: "لماذا ملاهي",
     title: "لماذا ملاهي",
     sub: "خمس نقاط قوة استراتيجية تجعل ملاهي الشريك الأقدر على التنفيذ الوطني.",
     strengths: [
@@ -271,7 +275,7 @@ export const ar = {
       { id: "excellence", ar: "تميز تشغيلي", desc: "معايير جودة وسلامة عالية ومراقبة تشغيلية مستمرة." },
       { id: "partners", ar: "شراكات استراتيجية", desc: "تكامل مع الجهات الوطنية والرعاة والمطورين." },
     ],
-    finaleEyebrow: "SAUDI PLAYS · ONE NATIONAL PLATFORM",
+    finaleEyebrow: "منصة وطنية واحدة",
     finaleTitle: "السعودية تلعب",
     finaleStatement: "منصة وطنية للترفيه المجتمعي تعزز جودة الحياة وتدعم مستهدفات رؤية المملكة 2030",
   },
@@ -282,7 +286,7 @@ export const ar = {
     collaboration: "بالتعاون مع الهيئة العامة للترفيه وعدد من الجهات الوطنية",
     entitiesLabel: "الجهات",
     entities: ["الهيئة العامة للترفيه", "ملاهي", "برنامج جودة الحياة", "الأمانات والبلديات"],
-    legal: "© 2026 السعودية تلعب — مادة عرض. الأرقام والمستهدفات لأغراض العرض ما لم يُذكر خلاف ذلك، وتُعرض أسماء الجهات نصيًا عند عدم توفر ملفات الشعارات الرسمية.",
+    legal: "© 2026 السعودية تلعب · مادة عرض. الأرقام والمستهدفات لأغراض العرض ما لم يُذكر خلاف ذلك، وتُعرض أسماء الجهات نصيًا عند عدم توفر ملفات الشعارات الرسمية.",
   },
 };
 
@@ -315,7 +319,11 @@ export const en: Content = {
     sessionsFlow: "Session flow",
     locationsStatus: "Location status",
     skip: "Skip to content",
-    sourceNote: "Indicative estimates — Malahi internal aggregation 2026",
+    sourceNote: "Indicative estimates: Malahi internal aggregation 2026",
+    mapAria: "Map of Saudi Arabia and the national city network",
+    sparkAria: "Illustrative session-flow chart",
+    footerAria: "Page footer",
+    introAria: "Opening",
   },
   NAV: [
     { id: "intro", index: "01", label: "Opening" },
@@ -334,7 +342,7 @@ export const en: Content = {
     titleLines: ["Saudi", "Plays"],
     supporting: "Together we build a national entertainment experience that reaches every city and every neighbourhood.",
     caseStudyTag: "“Riyadh Plays” pilot · 2024–2025",
-    caseStudyNote: "Figures from the “Riyadh Plays” pilot — a proven trial stage, not national results.",
+    caseStudyNote: "Figures from the “Riyadh Plays” pilot: a proven trial stage, not national results.",
     stats: [
       { prefix: "+", value: 100, suffix: "K", display: "+100K", label: "Participants" },
       { prefix: "+", value: 200, suffix: "", display: "+200", label: "Events & experiences" },
@@ -344,7 +352,7 @@ export const en: Content = {
   vision: {
     eyebrow: "WHY NOW",
     headline: "Entertainment for everyone, in every city and neighbourhood",
-    sub: "A national ambition expanding toward 20+ cities — one entertainment network pulsing from Riyadh to the edges of the Kingdom.",
+    sub: "A national ambition expanding toward 20+ cities: one entertainment network pulsing from Riyadh to the edges of the Kingdom.",
     convergeStatement: "Four forces converge on one platform: Saudi Plays.",
     forces: [
       { id: "v2030", ar: "Vision 2030", en: "Vision 2030", desc: "Entertainment is a pillar of quality of life and a national target we serve." },
@@ -378,10 +386,10 @@ export const en: Content = {
       { id: "multi", ar: "Multi-category experiences", desc: "For children, youth and families in one destination." },
       { id: "digital", ar: "Integrated payment & operations", desc: "Digital payments and fully managed operations." },
     ],
-    cumulativeNote: "5, 10 and 20+ represent cumulative coverage across the years — they are not additive.",
+    cumulativeNote: "5, 10 and 20+ represent cumulative coverage across the years; they are not additive.",
     beat: "Cumulative coverage",
     timeline: [
-      { id: "pilot", period: "2024–2025", year: "2024–2025", title: "Riyadh — pilot stage", cities: "1", cumulative: 1, kind: "proven" as const, note: "Proven foundation" },
+      { id: "pilot", period: "2024–2025", year: "2024–2025", title: "Riyadh: pilot stage", cities: "1", cumulative: 1, kind: "proven" as const, note: "Proven foundation" },
       { id: "y1", period: "Year One", year: "2026", title: "Five cities", cities: "5", cumulative: 5, kind: "target" as const },
       { id: "y2", period: "Year Two", year: "2027", title: "Ten cities", cities: "10", cumulative: 10, kind: "target" as const },
       { id: "y3", period: "Year Three", year: "2028", title: "More than 20 cities", cities: "20+", cumulative: 20, kind: "target" as const },
@@ -391,7 +399,7 @@ export const en: Content = {
   experience: {
     eyebrow: "THE DESTINATION",
     coreTitle: "Saudi Plays",
-    title: "Saudi Plays — the living core",
+    title: "Saudi Plays: the living core",
     coreSub: "A living core radiating to its audiences and experience categories.",
     audiences: [
       { id: "games", ar: "Games", desc: "Interactive games and competitive experiences for all levels." },
@@ -434,7 +442,7 @@ export const en: Content = {
     dashboardTitle: "Operations dashboard",
     dashboard: {
       label: "Demonstrative operations dashboard",
-      disclaimer: "Illustrative interface figures for presentation — not actual operating results.",
+      disclaimer: "Illustrative interface figures for presentation; not actual operating results.",
       metrics: {
         uptime: { value: DASH.uptime, suffix: "%", label: "Uptime", en: "Uptime" },
         sessions: { value: DASH.sessions, label: "Sessions", en: "Sessions" },
@@ -455,7 +463,7 @@ export const en: Content = {
   governance: {
     eyebrow: "OPERATING MODEL",
     title: "A national operating system with clear roles",
-    sub: "From regulation to operation to the beneficiary — a living national system where every party knows its role.",
+    sub: "From regulation to operation to the beneficiary: a living national system where every party knows its role.",
     detailDefault: "Hover any entity to highlight its role and pathways in the system.",
     entities: [
       { id: "gea", ar: "General Entertainment Authority", role: "Regulator & policy", layer: "regulator" as const, icon: "shield" },
@@ -480,10 +488,10 @@ export const en: Content = {
   revenue: {
     eyebrow: "REVENUE MODEL",
     title: "A balanced revenue system",
-    sub: "Six revenue channels integrate around one core — totalling 100%.",
+    sub: "Six revenue channels integrate around one core, totalling 100%.",
     centerCap: "Total revenue",
     detailDefault: "Hover any channel to highlight its share of the system.",
-    note: "Total 100% — revenue-model shares exactly as provided, with no rounding.",
+    note: "Total 100%: revenue-model shares exactly as provided, with no rounding.",
     streams: [
       { id: "sponsor", ar: "Sponsorship", pct: REV.sponsor, accent: "teal", desc: "Sponsor & brand activation inside the experience." },
       { id: "games", ar: "Games revenue", pct: REV.games, accent: "violet", desc: "Games and interactive experiences." },
@@ -496,7 +504,7 @@ export const en: Content = {
   impact: {
     eyebrow: "TARGETS & IMPACT",
     title: "National targets and projected impact",
-    sub: "Target figures and projected impact over three years — not achieved results.",
+    sub: "Target figures and projected impact over three years; not achieved results.",
     targetLabel: "Target",
     projectedLabel: "Projected impact",
     horizonLabel: "Over 3 years",
@@ -542,10 +550,10 @@ export const en: Content = {
     descriptor: "A national platform for community entertainment reaching every city and neighbourhood.",
     presentedByLabel: "Presented by",
     presentedBy: "Malahi",
-    collaboration: "In collaboration with the General Entertainment Authority and national stakeholders",
+    collaboration: "in collaboration with the General Entertainment Authority and national stakeholders",
     entitiesLabel: "Entities",
     entities: ["General Entertainment Authority", "Malahi", "Quality of Life Program", "Municipalities"],
-    legal: "© 2026 Saudi Plays — presentation material. Figures and targets are for presentation unless otherwise stated; entity names are shown as text where official logo files are not provided.",
+    legal: "© 2026 Saudi Plays · presentation material. Figures and targets are for presentation unless otherwise stated; entity names are shown as text where official logo files are not provided.",
   },
 };
 

@@ -56,10 +56,11 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: rgba(10, 22, 50, 0.4);
-  opacity: 0.55;
+  /* upcoming stages stay clearly readable (never below ~70% opacity) */
+  opacity: 0.72;
   transition: opacity var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
 }
-.r2s__stepper-item.is-done { opacity: 0.82; border-color: var(--line-strong); }
+.r2s__stepper-item.is-done { opacity: 0.9; border-color: var(--line-strong); }
 .r2s__stepper-item.is-active { opacity: 1; border-color: var(--teal); background: rgba(16, 34, 72, 0.6); box-shadow: var(--glow-teal-soft); }
 .r2s__stepper-cities { font-family: var(--font-en); font-size: 1.45rem; font-weight: 700; color: var(--teal-bright); direction: ltr; unicode-bidi: isolate; min-width: 2.6ch; text-align: center; }
 .r2s__stepper-item.is-proven .r2s__stepper-cities { color: var(--gold-bright); }
@@ -79,11 +80,14 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(16, 34, 72, 0.4), rgba(8, 18, 40, 0.5));
-  opacity: 0.5;
-  transform: translateY(10px);
+  /* inactive (upcoming/completed) cards stay readable: dates, counts, titles and
+     city names must remain legible — never dim below ~70% */
+  opacity: 0.72;
+  transform: translateY(8px);
   transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
 }
-.r2s__step.is-active .r2s__card { opacity: 1; transform: none; border-color: var(--line-strong); box-shadow: var(--shadow-card); }
+.r2s__step.is-active .r2s__card { opacity: 1; transform: none; border-color: var(--teal); box-shadow: var(--shadow-card), var(--glow-teal-soft); }
+.r2s__step.is-done .r2s__card { opacity: 0.88; }
 .r2s__card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .r2s__card .period { font-family: var(--font-en); letter-spacing: 0.12em; color: var(--ink-mute); font-size: var(--fz-label); direction: ltr; }
 .r2s__card .num { font-family: var(--font-en); font-size: clamp(2.6rem, 6vw, 4rem); font-weight: 700; line-height: 1; color: var(--teal-bright); direction: ltr; unicode-bidi: isolate; }
@@ -94,9 +98,14 @@
 
 @media (max-width: 820px) {
   .r2s__proof { grid-template-columns: 1fr; }
-  .r2s__scrolly { grid-template-columns: 1fr; }
-  .r2s__mapwrap { top: 7vh; }
-  .r2s__step { min-height: 64vh; }
+  /* MOBILE: a compact vertical story, NOT desktop scrollytelling. The map sits
+     statically above the stages (no sticky/pin spacer), and stage cards stack
+     ~22px apart with no viewport-sized gaps. All cards stay readable. */
+  .r2s__scrolly { grid-template-columns: 1fr; gap: 1.4rem; }
+  .r2s__mapwrap { position: relative; top: 0; margin-bottom: 1.2rem; }
+  .r2s__steps { gap: 1.4rem; }
+  .r2s__step { min-height: auto; align-items: stretch; }
+  .r2s__card { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .r2s__card { opacity: 1; transform: none; }

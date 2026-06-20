@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon, type IconName } from "@/components/common/icons";
 import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
@@ -32,7 +32,8 @@ function placeAudiences(audiences: Aud[]) {
  */
 export default function ExperienceZones() {
   const ref = useRef<HTMLElement>(null);
-  const { experience, ui } = useContent();
+  const rowRef = useRef<HTMLDivElement>(null);
+  const { experience, brand, ui } = useContent();
   const { lang } = useLang();
   const aud = placeAudiences(experience.audiences);
   const reduced = useReducedMotion();
@@ -42,6 +43,22 @@ export default function ExperienceZones() {
   const activeA = experience.audiences.find((a) => a.id === activeAud);
   const audState = (id: string) => (activeAud ? (id === activeAud ? " is-hot" : " is-dim") : "");
   const dir = lang === "en" ? "ltr" : "rtl";
+  // central project node, localized: "السعودية / تلعب" or "Saudi / Plays"
+  const coreLines = (lang === "en" ? brand.nameLatin : brand.name).split(" ");
+
+  // the horizontal "drag to explore" hint is shown ONLY when the zones row
+  // genuinely overflows (recomputed on mount, resize and language change).
+  const [overflow, setOverflow] = useState(false);
+  useEffect(() => {
+    const row = rowRef.current;
+    if (!row) return;
+    const check = () => setOverflow(row.scrollWidth > row.clientWidth + 4);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(row);
+    window.addEventListener("resize", check);
+    return () => { ro.disconnect(); window.removeEventListener("resize", check); };
+  }, [lang]);
 
   useGsapScene(ref, ({ gsap, reduced: red, ScrollTrigger }) => {
     const links = gsap.utils.toArray<SVGPathElement>(".zorbit-link");
@@ -97,8 +114,8 @@ export default function ExperienceZones() {
             <circle cx={CORE.x} cy={CORE.y} r={92} fill="url(#z-core)" />
             <circle className="zorbit-core" cx={CORE.x} cy={CORE.y} r={52} />
           </g>
-          <text className="zorbit-core-label" x={CORE.x} y={CORE.y - 4} textAnchor="middle" fontSize={22} direction="rtl">السعودية</text>
-          <text className="zorbit-core-label" x={CORE.x} y={CORE.y + 22} textAnchor="middle" fontSize={22} direction="rtl">تلعب</text>
+          <text className="zorbit-core-label" x={CORE.x} y={CORE.y - 4} textAnchor="middle" fontSize={22} direction={dir}>{coreLines[0]}</text>
+          <text className="zorbit-core-label" x={CORE.x} y={CORE.y + 22} textAnchor="middle" fontSize={22} direction={dir}>{coreLines[1]}</text>
           {aud.map((a) => (
             <g
               className={`zaud${audState(a.id)}`}
@@ -106,7 +123,7 @@ export default function ExperienceZones() {
               data-id={a.id}
               tabIndex={0}
               role="button"
-              aria-label={`${a.ar} — ${a.desc}`}
+              aria-label={`${a.ar}: ${a.desc}`}
               onMouseEnter={() => setActiveAud(a.id)}
               onMouseLeave={() => setActiveAud(null)}
               onFocus={() => setActiveAud(a.id)}
@@ -135,7 +152,7 @@ export default function ExperienceZones() {
         <h3 className="heading-lg">{experience.zonesSub}</h3>
       </div>
 
-      <div className="zones__row" role="list" aria-label={experience.zonesTitle}>
+      <div className="zones__row" role="list" aria-label={experience.zonesTitle} ref={rowRef}>
         {experience.zones.map((z, i) => (
           <article className="zone-card" data-accent={z.accent} key={z.id} role="listitem" tabIndex={0}>
             <div className="zone-card__viz" aria-hidden="true">
@@ -145,12 +162,11 @@ export default function ExperienceZones() {
             </div>
             <span className="zone-card__index">{String(i + 1).padStart(2, "0")} / 05</span>
             <h4 className="zone-card__ar">{z.ar}</h4>
-            <span className="zone-card__en">{z.en}</span>
             <p className="zone-card__desc">{z.desc}</p>
           </article>
         ))}
       </div>
-      <p className="zones__hint" aria-hidden="true">{ui.dragHint}</p>
+      {overflow && <p className="zones__hint" aria-hidden="true">{ui.dragHint}</p>}
     </section>
   );
 }

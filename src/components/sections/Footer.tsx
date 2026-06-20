@@ -8,9 +8,9 @@ import "./Footer.css";
  * placeholders), a single divider, and one concise centered legal note.
  */
 export default function Footer() {
-  const { brand, footer } = useContent();
+  const { brand, footer, ui } = useContent();
   return (
-    <footer className="site-footer" aria-label="footer">
+    <footer className="site-footer" aria-label={ui.footerAria}>
       <div className="container footer__inner">
         <div className="footer__identity">
           <p className="footer__name">{brand.name}</p>
@@ -21,7 +21,7 @@ export default function Footer() {
         <div className="footer__org">
           <p className="footer__present">
             <span className="footer__present-label">{footer.presentedByLabel}</span>{" "}
-            <strong>{footer.presentedBy}</strong> — {footer.collaboration}
+            <strong>{footer.presentedBy}</strong> {footer.collaboration}
           </p>
           <ul className="footer__entities">
             {footer.entities.map((e) => (

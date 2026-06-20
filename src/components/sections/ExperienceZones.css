@@ -25,6 +25,15 @@
 .zaud:focus-visible .zaud-hit { stroke: var(--teal-bright); stroke-width: 2; }
 .zaud-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 500; paint-order: stroke; stroke: rgba(2,6,15,0.8); stroke-width: 3px; }
 
+/* MOBILE: enlarge the central node + its six audience labels so the experience
+   orbit is readable on a narrow screen instead of a tiny thumbnail. (viewBox-unit
+   sizes override the SVG attributes.) */
+@media (max-width: 600px) {
+  .zones__orbit { min-height: 56vh; }
+  .zorbit-core-label { font-size: 30px; }
+  .zaud-label { font-size: 24px; font-weight: 600; }
+}
+
 /* one shared contextual detail panel */
 .zones__detail {
   margin: 0.9rem auto 0;
@@ -54,8 +63,31 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding: 0.4rem clamp(1.1rem, 3vw, 3.4rem) 1.4rem;
+  /* brand-compatible scroller — scoped to THIS row only (does not touch the
+     page/browser scrollbar). Dark navy track, teal→violet thumb. */
   scrollbar-width: thin;
+  scrollbar-color: var(--teal-deep) rgba(4, 10, 26, 0.6);
   -webkit-overflow-scrolling: touch;
+}
+.zones__row::-webkit-scrollbar { height: 8px; }
+.zones__row::-webkit-scrollbar-track { background: rgba(4, 10, 26, 0.6); border-radius: 999px; }
+.zones__row::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--teal-deep), var(--violet-deep));
+  border-radius: 999px;
+  border: 2px solid rgba(4, 10, 26, 0.6);
+}
+.zones__row::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, var(--teal), var(--violet)); }
+/* DESKTOP/TABLET: the five zones fit as a wrapping grid, so there is nothing to
+   scroll — no overflow, no scrollbar, and the drag hint stays hidden. Only the
+   narrow (mobile) base layout above keeps the horizontal snap scroller. */
+@media (min-width: 768px) {
+  .zones__row {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-auto-columns: auto;
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
 }
 .zone-card {
   scroll-snap-align: center;

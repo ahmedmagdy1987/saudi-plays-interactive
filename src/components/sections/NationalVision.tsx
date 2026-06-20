@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import SaudiMap from "@/components/common/SaudiMap";
 import { Icon, type IconName } from "@/components/common/icons";
-import { useContent } from "@/i18n";
+import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/hooks";
 import "./NationalVision.css";
@@ -35,7 +35,11 @@ function link(sx: number, sy: number) {
  */
 export default function NationalVision() {
   const ref = useRef<HTMLElement>(null);
-  const { vision } = useContent();
+  const { vision, brand } = useContent();
+  const { lang } = useLang();
+  // central project node, localized: "السعودية / تلعب" or "Saudi / Plays"
+  const coreLines = (lang === "en" ? brand.nameLatin : brand.name).split(" ");
+  const tdir = lang === "en" ? "ltr" : "rtl";
 
   // radar pulse only runs while the section is in view and the tab is visible
   useEffect(() => {
@@ -83,18 +87,19 @@ export default function NationalVision() {
 
   return (
     <SectionShell
+      ref={ref}
       id="vision"
       index="02"
       eyebrow={vision.eyebrow}
       title={vision.headline}
       lede={vision.sub}
-      label="الرؤية الوطنية"
+      label={vision.headline}
     >
       <div className="vision__stage container">
         <div className="vision__map" aria-hidden="true">
           <SaudiMap stage={3} connections="none" labels="none" pulse={false} ariaLabel="" />
         </div>
-        <svg className="vision__converge" viewBox="0 0 1000 610" role="img" aria-label="أربع قوى تلتقي عند منصة السعودية تلعب">
+        <svg className="vision__converge" viewBox="0 0 1000 610" role="img" aria-label={vision.convergeStatement}>
           <defs>
             <linearGradient id="v-link" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor="rgba(56,224,205,0.7)" />
@@ -118,11 +123,11 @@ export default function NationalVision() {
             <circle className="vradar vradar--2" cx={CORE.x} cy={CORE.y} r={44} />
             <circle className="vradar vradar--3" cx={CORE.x} cy={CORE.y} r={44} />
             <circle cx={CORE.x} cy={CORE.y} r={46} fill="rgba(6,16,34,0.85)" stroke="var(--teal)" strokeWidth={1.4} />
-            <text className="vcore-label" x={CORE.x} y={CORE.y - 2} textAnchor="middle" fontSize={21} direction="rtl">
-              السعودية
+            <text className="vcore-label" x={CORE.x} y={CORE.y - 2} textAnchor="middle" fontSize={21} direction={tdir}>
+              {coreLines[0]}
             </text>
-            <text className="vcore-label" x={CORE.x} y={CORE.y + 22} textAnchor="middle" fontSize={21} direction="rtl">
-              تلعب
+            <text className="vcore-label" x={CORE.x} y={CORE.y + 22} textAnchor="middle" fontSize={21} direction={tdir}>
+              {coreLines[1]}
             </text>
           </g>
 
@@ -139,7 +144,7 @@ export default function NationalVision() {
                   y={s.y > CORE.y ? s.y + 52 : s.y - 44}
                   textAnchor="middle"
                   fontSize={18}
-                  direction="rtl"
+                  direction={tdir}
                 >
                   {f.ar}
                 </text>
@@ -157,7 +162,6 @@ export default function NationalVision() {
             <span className="vforce__icon">
               <Icon name={FORCE_ICONS[f.id] ?? "spark"} size={22} />
             </span>
-            <span className="vforce__en">{f.en}</span>
             <h3 className="vforce__ar">{f.ar}</h3>
             <p className="vforce__desc">{f.desc}</p>
           </article>

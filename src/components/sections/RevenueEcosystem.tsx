@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import CountUp from "@/components/common/CountUp";
-import { useContent } from "@/i18n";
+import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
 import "./RevenueEcosystem.css";
 
@@ -21,8 +21,24 @@ const accentVar = (a: string) => (a === "violet" ? "var(--violet)" : a === "gold
  */
 export default function RevenueEcosystem() {
   const ref = useRef<HTMLElement>(null);
+  const layoutRef = useRef<HTMLDivElement>(null);
   const { revenue } = useContent();
+  const { lang } = useLang();
+  // ONE shared id drives the cards, the segments, the dim state and (on touch)
+  // the persistent selection — so card↔segment highlighting is always in sync.
   const [active, setActive] = useState<string | null>(null);
+  const toggle = (id: string) => setActive((cur) => (cur === id ? null : id));
+  const pctWord = lang === "en" ? "percent" : "بالمئة";
+
+  // tap/click outside the visualization clears a touch-selected segment
+  useEffect(() => {
+    if (!active) return;
+    const onDown = (e: PointerEvent) => {
+      if (layoutRef.current && !layoutRef.current.contains(e.target as Node)) setActive(null);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [active]);
 
   // cumulative starts (exact, never rounded). `dash` is the painted arc length
   // (minus a hair for the inter-segment gap); the dash/gap pair is baked into
@@ -62,8 +78,8 @@ export default function RevenueEcosystem() {
   const dim = (id: string) => active !== null && active !== id;
 
   return (
-    <SectionShell id="revenue" index="08" eyebrow={revenue.eyebrow} title={revenue.title} lede={revenue.sub} label={revenue.title}>
-      <div className="rev__layout container">
+    <SectionShell ref={ref} id="revenue" index="08" eyebrow={revenue.eyebrow} title={revenue.title} lede={revenue.sub} label={revenue.title}>
+      <div className="rev__layout container" ref={layoutRef}>
         <div className="rev__ring-wrap">
           <svg className="rev__ring" viewBox="0 0 200 200" role="img" aria-label={`${revenue.centerCap} 100%`}>
             {/* subtle dark track under the segments — never covers them */}
@@ -81,7 +97,17 @@ export default function RevenueEcosystem() {
                 strokeDasharray={`${s.dash.toFixed(2)} ${(C - s.dash).toFixed(2)}`}
                 data-id={s.id}
                 data-dash={s.dash.toFixed(2)}
-                style={{ transform: `rotate(${s.rotate}deg)`, transformBox: "view-box", transformOrigin: "center" }}
+                style={{ transform: `rotate(${s.rotate}deg)`, transformBox: "view-box", transformOrigin: "center", color: accentVar(s.accent) }}
+                /* REVERSE interaction: each segment is itself focusable/tappable
+                   and drives the SAME `active` id as the cards */
+                tabIndex={0}
+                role="button"
+                aria-label={`${s.ar}: ${s.pct} ${pctWord}`}
+                onMouseEnter={() => setActive(s.id)}
+                onMouseLeave={() => setActive(null)}
+                onFocus={() => setActive(s.id)}
+                onBlur={() => setActive(null)}
+                onClick={() => toggle(s.id)}
               />
             ))}
             <g className="rev__center">
@@ -103,6 +129,7 @@ export default function RevenueEcosystem() {
               onMouseLeave={() => setActive(null)}
               onFocus={() => setActive(s.id)}
               onBlur={() => setActive(null)}
+              onClick={() => toggle(s.id)}
             >
               <span className="rev-stream__sw" aria-hidden="true" />
               <div className="rev-stream__body">

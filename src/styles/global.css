@@ -116,12 +116,25 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--teal);
   direction: ltr;
 }
+/* Arabic eyebrows are now Arabic-only copy: drop the Latin uppercase + tracking
+   (which breaks Arabic shaping) and read right-to-left like the rest of the UI. */
+[dir="rtl"] .eyebrow {
+  font-family: var(--font-ar);
+  letter-spacing: normal;
+  text-transform: none;
+  direction: rtl;
+  font-size: var(--fz-label);
+  font-weight: 600;
+}
 .eyebrow::before {
   content: "";
   width: 1.8em;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--teal));
 }
+[dir="rtl"] .eyebrow::before { background: linear-gradient(270deg, transparent, var(--teal)); }
+[dir="rtl"] .eyebrow--violet::before { background: linear-gradient(270deg, transparent, var(--violet-bright)); }
+[dir="rtl"] .eyebrow--gold::before { background: linear-gradient(270deg, transparent, var(--gold)); }
 .eyebrow--violet { color: var(--violet-bright); }
 .eyebrow--violet::before { background: linear-gradient(90deg, transparent, var(--violet-bright)); }
 .eyebrow--gold { color: var(--gold); }
@@ -298,11 +311,19 @@ button { font-family: inherit; cursor: pointer; }
 }
 .no-select { user-select: none; }
 
-/* reveal helpers — JS adds .is-in when scrolled into view (CSS-only fallback) */
+/* reveal helpers — PROGRESSIVE ENHANCEMENT.
+   Content is VISIBLE BY DEFAULT. The hidden pre-reveal state is only applied
+   once JS has armed the reveal controller (html.reveal-armed) AND an element
+   is not yet revealed. This guarantees that if a trigger never fires — e.g.
+   after a language switch, on reduced motion, or if JS fails — content is never
+   left invisible. The controller re-arms and re-observes on every language
+   change (see App.tsx), so remounted/relocalized nodes are always handled. */
 [data-reveal] {
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+html.reveal-armed [data-reveal]:not(.is-in) {
   opacity: 0;
   transform: translateY(26px);
-  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
   will-change: opacity, transform;
 }
 [data-reveal].is-in { opacity: 1; transform: none; }

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { initSmoothScroll } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/hooks";
@@ -20,7 +20,9 @@ import Footer from "@/components/sections/Footer";
 
 export default function App() {
   const { ui } = useContent();
-  useLang(); // re-render App subtree on language change
+  const { lang } = useLang(); // re-render + remount the motion layer on language change
+
+  // smooth scroll + one-time geometry refresh (independent of language)
   useEffect(() => {
     const reduced = prefersReducedMotion();
     if (reduced) document.documentElement.classList.add("reduced");
@@ -33,31 +35,49 @@ export default function App() {
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
     window.addEventListener("load", refresh);
 
-    // Generic scroll-reveal for [data-reveal] (CSS handles the transition).
-    let obs: IntersectionObserver | null = null;
-    if (!reduced && typeof IntersectionObserver !== "undefined") {
-      obs = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              e.target.classList.add("is-in");
-              obs?.unobserve(e.target);
-            }
-          }
-        },
-        { threshold: 0.14, rootMargin: "0px 0px -8% 0px" },
-      );
-      document.querySelectorAll("[data-reveal]").forEach((el) => obs!.observe(el));
-    } else {
-      document.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-in"));
-    }
-
     return () => {
-      obs?.disconnect();
       window.removeEventListener("load", refresh);
       lenis?.destroy();
     };
   }, []);
+
+  // Reveal controller — re-armed on EVERY language change. Progressive
+  // enhancement: content is visible by default (see global.css); we add the
+  // `reveal-armed` hidden state only after marking already-in-view nodes as
+  // revealed, so nothing ever flashes or stays stuck. Runs in a layout effect
+  // (before paint) so the remounted, freshly-localized nodes are classified
+  // before the first frame. A brand-new IntersectionObserver is created each
+  // run and disconnected on cleanup, so triggers never stack across switches.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
+      root.classList.remove("reveal-armed");
+      els.forEach((el) => el.classList.add("is-in"));
+      return;
+    }
+    const vh = window.innerHeight;
+    // reveal everything already in (or near) view BEFORE arming → no flash
+    els.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add("is-in");
+      else el.classList.remove("is-in");
+    });
+    root.classList.add("reveal-armed");
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-in");
+            obs.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.14, rootMargin: "0px 0px -8% 0px" },
+    );
+    els.forEach((el) => { if (!el.classList.contains("is-in")) obs.observe(el); });
+    return () => obs.disconnect();
+  }, [lang]);
 
   return (
     <div className="app-root">
@@ -66,7 +86,11 @@ export default function App() {
       </a>
       <LanguageSwitcher />
       <SectionProgressNavigation />
-      <main>
+      {/* key={lang}: a controlled remount of the whole motion layer on language
+          change. Every section's GSAP scene cleans up (gsap.context revert) and
+          rebuilds against the new RTL/LTR layout — no stale timelines, no stale
+          ScrollTriggers, no inline opacity/transform surviving the switch. */}
+      <main key={lang}>
         <IntroHero />
         <NationalVision />
         <MarketOpportunity />

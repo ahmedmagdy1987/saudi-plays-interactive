@@ -44,13 +44,33 @@
 .curve__growth { fill: var(--gold-bright); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: rgba(2,6,15,0.6); stroke-width: 3px; }
 .curve__annot-arrow { fill: none; stroke: var(--gold-bright); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
-.donut { width: 100%; max-width: 260px; margin-inline: auto; height: auto; display: block; }
+.donut { width: 100%; max-width: 260px; margin-inline: auto; height: auto; display: block; overflow: visible; }
 .donut__track { fill: none; stroke: rgba(120,162,224,0.12); stroke-width: 22; }
-.donut__arc { fill: none; stroke-width: 22; stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; }
+.donut__seg {
+  fill: none;
+  stroke-width: 22;
+  stroke-linecap: butt;
+  cursor: pointer;
+  transform-origin: center;
+  transition: stroke-width var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+.donut__seg.is-hot { stroke-width: 27; filter: drop-shadow(0 0 8px currentColor); }
+.donut__seg.is-dim { opacity: 0.3; }
+.donut__seg:focus-visible { outline: none; stroke-width: 27; filter: drop-shadow(0 0 6px currentColor); }
 .donut__center { fill: var(--ink); font-family: var(--font-en); font-weight: 600; }
-.donut-legend { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 1.2rem; }
-.donut-legend li { display: flex; align-items: center; gap: 0.6rem; font-size: var(--fz-label); color: var(--ink-soft); }
+.donut-legend { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 1.2rem; }
+.donut-legend__item {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: var(--fz-label); color: var(--ink-soft);
+  padding: 0.3rem 0.5rem; border-radius: var(--radius-sm);
+  border: 1px solid transparent; cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.donut-legend__item.is-hot { color: var(--ink); border-color: var(--line-strong); background: rgba(20, 40, 82, 0.4); }
+.donut-legend__item.is-dim { opacity: 0.45; }
+.donut-legend__item:focus-visible { outline: 2px solid var(--teal-bright); outline-offset: 2px; }
 .donut-legend .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.donut-legend__txt { direction: inherit; unicode-bidi: isolate; }
 
 /* charts + source note form one attached editorial composition */
 .market__composition { margin-top: clamp(1.6rem, 4vh, 2.8rem); }

@@ -14,7 +14,7 @@ import "./Finale.css";
  */
 export default function Finale() {
   const ref = useRef<HTMLElement>(null);
-  const { finale } = useContent();
+  const { finale, ui } = useContent();
 
   useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const border = scope.querySelector(".finale__map [data-map-border]") as SVGPathElement | null;
@@ -51,7 +51,7 @@ export default function Finale() {
   });
 
   return (
-    <section id="finale" data-section="10" ref={ref} className="section section--finale" aria-label="لماذا ملاهي والخاتمة الوطنية">
+    <section id="finale" data-section="10" ref={ref} className="section section--finale" aria-label={finale.title}>
       <div className="container sec-header" data-reveal>
         <p className="eyebrow"><span className="sec-index">10</span>{finale.eyebrow}</p>
         <h2 className="heading-xl sec-title">{finale.title}</h2>
@@ -76,7 +76,7 @@ export default function Finale() {
           <img className="finale__media" src={media.finale.src} alt="" aria-hidden="true" loading="lazy" decoding="async" />
         )}
         <div className="finale__map" aria-hidden="true">
-          <SaudiMap stage={3} connections="fromRiyadh" labels="stage1" armed pulse ariaLabel="المملكة العربية السعودية مكتملة الإضاءة كشبكة ترفيه وطنية واحدة" />
+          <SaudiMap stage={3} connections="fromRiyadh" labels="stage1" armed pulse ariaLabel={ui.mapAria} />
         </div>
         <div className="finale__scrim" />
         <div className="finale__content">

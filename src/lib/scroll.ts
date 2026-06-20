@@ -6,6 +6,12 @@ import { prefersReducedMotion } from "./hooks";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// expose for debugging + the language-switch regression test (verifies that
+// remounting the motion layer does not leave duplicate/stacked ScrollTriggers)
+if (typeof window !== "undefined") {
+  (window as unknown as { ScrollTrigger?: typeof ScrollTrigger }).ScrollTrigger = ScrollTrigger;
+}
+
 let lenis: Lenis | null = null;
 
 /**

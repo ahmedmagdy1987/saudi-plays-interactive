@@ -9,7 +9,9 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(12, 26, 56, 0.4), rgba(6, 14, 32, 0.5));
-  padding: clamp(0.8rem, 1.6vw, 1.4rem) clamp(0.8rem, 1.6vw, 1.4rem) clamp(3.6rem, 7vh, 4.6rem);
+  /* the contextual panel now lives BELOW the diagram, so the frame no longer
+     reserves a tall bottom band that overlapped the beneficiary */
+  padding: clamp(0.8rem, 1.6vw, 1.4rem);
   overflow: hidden;
 }
 .gov__diagram { width: 100%; height: auto; overflow: visible; }
@@ -39,16 +41,15 @@
 .gov-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: rgba(2,6,15,0.85); stroke-width: 3.5px; }
 .gov-role { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 400; paint-order: stroke; stroke: rgba(2,6,15,0.8); stroke-width: 3px; }
 
-/* one shared contextual panel, pinned to the diagram frame */
+/* one shared contextual panel — full-width, in normal flow BELOW the diagram
+   (reserved layout space, never overlapping any SVG node or label) */
 .gov__detail {
-  position: absolute;
-  inset-block-end: clamp(0.7rem, 1.6vh, 1.1rem);
-  inset-inline: clamp(0.9rem, 2vw, 1.5rem);
-  min-height: 2.4rem;
+  margin-top: clamp(0.9rem, 2vh, 1.4rem);
+  min-height: 3rem;
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 0.55rem 1rem;
+  padding: 0.7rem 1.1rem;
   border-radius: var(--radius);
   border: 1px solid var(--line);
   background: rgba(6, 14, 30, 0.78);
@@ -65,6 +66,12 @@
 .gov__align .chip { border-color: var(--line-strong); }
 .gov__align .chip svg { color: var(--gold); }
 
+/* MOBILE: the diagram keeps its data-driven layout but its labels are scaled up
+   (these are viewBox-unit sizes, overriding the SVG attributes) so node names
+   stay legible when the wide diagram is fitted to a narrow screen. */
 @media (max-width: 640px) {
-  .gov-label { font-size: 15px; }
+  .gov__diagram { min-height: 78vh; }
+  .gov-label { font-size: 24px; font-weight: 700; }
+  .gov-role { font-size: 19px; }
+  .gov-disc { stroke-width: 2; }
 }

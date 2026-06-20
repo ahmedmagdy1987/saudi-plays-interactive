@@ -113,7 +113,6 @@ export default function MalahiOperating() {
                 </svg>
                 <div>
                   <div className="mo-tile__label">{d.metrics.uptime.label}</div>
-                  <div className="mo-tile__en">{d.metrics.uptime.en}</div>
                   <div className="mo-tile__val">
                     <CountUp value={d.metrics.uptime.value} decimals={1} suffix="%" />
                   </div>
@@ -121,17 +120,14 @@ export default function MalahiOperating() {
               </div>
               <div className="mo-tile">
                 <div className="mo-tile__label">{d.metrics.sessions.label}</div>
-                <div className="mo-tile__en">{d.metrics.sessions.en}</div>
                 <div className="mo-tile__val"><CountUp value={d.metrics.sessions.value} /></div>
               </div>
               <div className="mo-tile">
                 <div className="mo-tile__label">{d.metrics.visitors.label}</div>
-                <div className="mo-tile__en">{d.metrics.visitors.en}</div>
                 <div className="mo-tile__val"><CountUp value={d.metrics.visitors.value} /></div>
               </div>
               <div className="mo-tile" style={{ gridColumn: "1 / -1" }}>
                 <div className="mo-tile__label">{d.metrics.locations.label}</div>
-                <div className="mo-tile__en">{d.metrics.locations.en}</div>
                 <div className="mo-tile__val">
                   <CountUp value={d.metrics.locations.value} />/{d.metrics.locations.total}
                 </div>
@@ -145,7 +141,7 @@ export default function MalahiOperating() {
                   <span>{ui.sessionsFlow}</span>
                   <span className="mo-tile__en">{ui.last12h}</span>
                 </div>
-                <svg viewBox={`0 0 ${SW} ${SH}`} role="img" aria-label="مخطط توضيحي لتدفق الجلسات">
+                <svg viewBox={`0 0 ${SW} ${SH}`} role="img" aria-label={ui.sparkAria}>
                   <defs>
                     <linearGradient id="mo-spark-grad" x1="0" y1="0" x2="1" y2="0">
                       <stop offset="0" stopColor="var(--teal)" />

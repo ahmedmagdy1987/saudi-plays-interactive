@@ -28,26 +28,64 @@ const LINKS: [string, string][] = [
   ["malahi", "beneficiary"], ["sponsors", "beneficiary"], ["investors", "beneficiary"],
   ["strategic", "beneficiary"], ["developers", "beneficiary"],
 ];
-// Connector path anchored at each node's CIRCUMFERENCE (never through centres):
-// start/end are pushed out by the node radius (+ a small breathing gap) along
-// the line joining the two centres, then a vertical-tangent cubic curve links
-// them. This also guarantees horizontal links have a non-zero extent.
+// Data-driven connector: a straight segment that BEGINS on the source node's
+// circumference and ENDS on the target's, both points found by walking out from
+// each centre along the shared centre-to-centre vector (plus a small gap). So
+// every line approaches each node along its true radial direction and never
+// terminates above/below/beside it — recomputed from the geometry, no hand-
+// tuned paths, correct at any responsive scale.
 const EDGE_GAP = 5;
-const path = (a: Pos, b: Pos) => {
+const edgePoints = (a: Pos, b: Pos) => {
   const dx = b.x - a.x, dy = b.y - a.y;
   const dist = Math.hypot(dx, dy) || 1;
   const ux = dx / dist, uy = dy / dist;
-  const ax = a.x + ux * (a.r + EDGE_GAP), ay = a.y + uy * (a.r + EDGE_GAP);
-  const bx = b.x - ux * (b.r + EDGE_GAP), by = b.y - uy * (b.r + EDGE_GAP);
-  const my = (ay + by) / 2;
-  return `M${ax.toFixed(1)} ${ay.toFixed(1)} C${ax.toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
+  return {
+    ax: a.x + ux * (a.r + EDGE_GAP), ay: a.y + uy * (a.r + EDGE_GAP),
+    bx: b.x - ux * (b.r + EDGE_GAP), by: b.y - uy * (b.r + EDGE_GAP),
+  };
 };
-// nodes one hop away from `id` (so the connected hub visibly responds on hover)
-const NEIGHBORS: Record<string, Set<string>> = LINKS.reduce((m, [f, t]) => {
-  (m[f] ??= new Set()).add(t);
-  (m[t] ??= new Set()).add(f);
-  return m;
-}, {} as Record<string, Set<string>>);
+const path = (a: Pos, b: Pos) => {
+  const { ax, ay, bx, by } = edgePoints(a, b);
+  return `M${ax.toFixed(1)} ${ay.toFixed(1)} L${bx.toFixed(1)} ${by.toFixed(1)}`;
+};
+
+// ---- semantic graph model (data-driven, not a hand-listed "nearby nodes") ----
+// Every entity hubs through `malahi`; `gea` regulates malahi; the partners and
+// malahi itself deliver to the `beneficiary`. From this we compute, for any
+// hovered node, its COMPLETE meaningful route: up through its hub to the
+// regulator, and down the delivery path to the final beneficiary.
+const PARENT: Record<string, string> = {
+  malahi: "gea",
+  municipal: "malahi", qol: "malahi",
+  sponsors: "malahi", investors: "malahi", strategic: "malahi", developers: "malahi",
+};
+const ek = (a: string, b: string) => [a, b].sort().join("~");
+const ALL_NODES = Object.keys(POS);
+function routeFor(id: string): { nodes: Set<string>; edges: Set<string> } {
+  const nodes = new Set<string>();
+  const edges = new Set<string>();
+  const add = (a: string, b: string) => { nodes.add(a); nodes.add(b); edges.add(ek(a, b)); };
+  if (id === "beneficiary") {                 // show the entire incoming ecosystem
+    ALL_NODES.forEach((n) => nodes.add(n));
+    LINKS.forEach(([f, t]) => edges.add(ek(f, t)));
+    return { nodes, edges };
+  }
+  if (id === "malahi") {                       // all direct incoming + outgoing
+    nodes.add("malahi");
+    LINKS.forEach(([f, t]) => { if (f === "malahi" || t === "malahi") add(f, t); });
+    return { nodes, edges };
+  }
+  nodes.add(id);
+  // upstream: walk parents to the regulator (gea)
+  let cur = id;
+  while (PARENT[cur]) { add(cur, PARENT[cur]); cur = PARENT[cur]; }
+  if (id === "gea") add("gea", "malahi"); // regulator's primary route starts at the operator
+  // downstream: the operator always carries delivery to the beneficiary
+  add("malahi", "beneficiary");
+  // a direct deliverer also lights its own edge to the beneficiary
+  if (LINKS.some(([f, t]) => (f === id && t === "beneficiary") || (t === id && f === "beneficiary"))) add(id, "beneficiary");
+  return { nodes, edges };
+}
 
 /**
  * Section 07 — Governance as an interactive national operating system. The
@@ -83,17 +121,21 @@ export default function Governance() {
     ScrollTrigger.refresh();
   });
 
+  // the active node's full route through the operating tree (graph traversal)
+  const route = active ? routeFor(active) : null;
   const linkState = (f: string, t: string) =>
-    active ? (f === active || t === active ? " is-hot" : " is-dim") : "";
-  // active node lights up; the nodes it connects to "respond" (stay lit, softly
-  // emphasised); everything else dims.
+    route ? (route.edges.has(ek(f, t)) ? " is-hot" : " is-dim") : "";
+  // the hovered node is brightest; every other node ON the route stays lit; the
+  // rest dim. So Malahi, the regulator and the beneficiary all respond together.
   const nodeState = (id: string) =>
-    active ? (id === active ? " is-hot" : NEIGHBORS[active]?.has(id) ? " is-near" : " is-dim") : "";
+    route ? (id === active ? " is-hot" : route.nodes.has(id) ? " is-near" : " is-dim") : "";
 
   return (
-    <SectionShell id="governance" index="07" eyebrow={governance.eyebrow} title={governance.title} lede={governance.sub} label={governance.title}>
+    <SectionShell ref={ref} id="governance" index="07" eyebrow={governance.eyebrow} title={governance.title} lede={governance.sub} label={governance.title}>
       <div className="gov__diagram-wrap container">
-        <svg className="gov__diagram" viewBox="0 0 1000 720" role="img" aria-label={governance.title}>
+        {/* viewBox extended above gea (for its two stacked labels) and below the
+            beneficiary so neither set of labels is clipped or overlaps a circle */}
+        <svg className="gov__diagram" viewBox="0 -18 1000 756" role="img" aria-label={governance.title}>
           <defs>
             {/* userSpaceOnUse so HORIZONTAL links (zero-height bbox) don't get a
                 degenerate objectBoundingBox gradient and vanish — spans the whole
@@ -121,7 +163,12 @@ export default function Governance() {
           {governance.entities.map((e) => {
             const p = POS[e.id];
             if (!p) return null;
-            const ly = e.id === "gea" ? p.y - p.r - 12 : p.y + p.r + 22;
+            // gea is the TOP node: BOTH its lines sit fully above the circle
+            // (entity name on top, role just above the circle). Every other node
+            // labels below.
+            const isTop = e.id === "gea";
+            const ly = isTop ? p.y - p.r - 26 : p.y + p.r + 22;
+            const roleY = isTop ? p.y - p.r - 8 : ly + 19;
             const cls = `gov-node${p.hub ? " gov-node--hub" : ""}${e.layer === "operator" ? " gov-node--operator" : ""}${e.layer === "beneficiary" ? " gov-node--beneficiary" : ""}${nodeState(e.id)}`;
             return (
               <g
@@ -131,7 +178,7 @@ export default function Governance() {
                 data-layer={e.layer}
                 tabIndex={0}
                 role="button"
-                aria-label={`${e.ar} — ${e.role}`}
+                aria-label={`${e.ar}: ${e.role}`}
                 onMouseEnter={() => setActive(e.id)}
                 onMouseLeave={() => setActive(null)}
                 onFocus={() => setActive(e.id)}
@@ -144,7 +191,7 @@ export default function Governance() {
                   {e.ar}
                 </text>
                 {p.hub && (
-                  <text className="gov-role" x={p.x} y={ly + 19} textAnchor="middle" fontSize={12.5} direction={lang === "en" ? "ltr" : "rtl"}>
+                  <text className="gov-role" x={p.x} y={roleY} textAnchor="middle" fontSize={12.5} direction={lang === "en" ? "ltr" : "rtl"}>
                     {e.role}
                   </text>
                 )}
@@ -152,21 +199,22 @@ export default function Governance() {
             );
           })}
         </svg>
+      </div>
 
-        {/* one shared contextual panel */}
-        <div className="gov__detail" aria-live="polite">
-          {activeEntity ? (
-            <>
-              <span className="gov__detail-icon"><Icon name={activeEntity.icon as IconName} size={20} /></span>
-              <div>
-                <strong>{activeEntity.ar}</strong>
-                <span>{activeEntity.role}</span>
-              </div>
-            </>
-          ) : (
-            <span className="gov__detail-hint">{governance.detailDefault}</span>
-          )}
-        </div>
+      {/* shared contextual panel — OUTSIDE the diagram, in normal flow below it,
+          so it can never overlay the beneficiary node, its label or the chips */}
+      <div className="gov__detail container" aria-live="polite">
+        {activeEntity ? (
+          <>
+            <span className="gov__detail-icon"><Icon name={activeEntity.icon as IconName} size={20} /></span>
+            <div>
+              <strong>{activeEntity.ar}</strong>
+              <span>{activeEntity.role}</span>
+            </div>
+          </>
+        ) : (
+          <span className="gov__detail-hint">{governance.detailDefault}</span>
+        )}
       </div>
 
       <div className="gov__align container" data-reveal>

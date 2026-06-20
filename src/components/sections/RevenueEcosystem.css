@@ -14,11 +14,13 @@
   fill: none;
   stroke-width: 26;
   stroke-linecap: butt;
+  cursor: pointer;
   transform-origin: center;
   transition: opacity var(--dur-fast) var(--ease-out), stroke-width var(--dur-fast) var(--ease-out);
 }
 .rev__seg.is-active { stroke-width: 31; filter: drop-shadow(0 0 8px currentColor); }
 .rev__seg.is-dim { opacity: 0.28; }
+.rev__seg:focus-visible { outline: none; stroke-width: 31; filter: drop-shadow(0 0 6px currentColor); }
 .rev__center-total { fill: var(--ink); font-family: var(--font-en); font-weight: 700; }
 .rev__center-cap { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 500; }
 
@@ -33,7 +35,7 @@
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(18, 36, 74, 0.3), rgba(8, 18, 40, 0.42));
   --accent: var(--teal);
-  cursor: default;
+  cursor: pointer;
   transition: border-color var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
 }
@@ -54,5 +56,6 @@
 
 @media (max-width: 820px) {
   .rev__layout { grid-template-columns: 1fr; }
-  .rev__ring { max-width: 300px; }
+  /* donut sized for comfortable tapping of each segment on mobile */
+  .rev__ring { max-width: 270px; }
 }

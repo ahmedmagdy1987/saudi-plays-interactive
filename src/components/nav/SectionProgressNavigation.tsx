@@ -92,7 +92,7 @@ export default function SectionProgressNavigation() {
             className="navrail__item"
             data-nav={n.id}
             aria-current={active === n.id}
-            aria-label={`${n.index} — ${n.label}`}
+            aria-label={`${n.index}: ${n.label}`}
             onClick={() => scrollToId(n.id)}
             onMouseEnter={() => setHovered(n.id)}
             onMouseLeave={() => setHovered(null)}
