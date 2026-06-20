@@ -16,6 +16,11 @@ import "./styles/global.css";
 import App from "./App";
 import { I18nProvider } from "./i18n";
 
+// Arm the blank-page watchdog now that the bundle has loaded (so slow networks
+// don't trip it). The early guard in index.html reveals all content if the app
+// never confirms a live motion frame. App calls window.__spMotionOK() on success.
+window.__spArm?.();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <I18nProvider>

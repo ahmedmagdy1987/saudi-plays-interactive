@@ -25,18 +25,33 @@ export default function App() {
 
   // smooth scroll + one-time geometry refresh (independent of language)
   useEffect(() => {
+    // Confirm a live animation frame so the blank-page watchdog (index.html) stands
+    // down. If rAF never delivers two frames — a stalled ticker under iOS Low-Power
+    // Mode or a backgrounded in-app/WhatsApp webview — the watchdog reveals all
+    // content instead of leaving it hidden. Healthy loads confirm in ~1 frame.
+    let raf1 = 0, raf2 = 0;
+    raf1 = requestAnimationFrame(() => { raf2 = requestAnimationFrame(() => window.__spMotionOK?.()); });
+
     const reduced = prefersReducedMotion();
     if (reduced) document.documentElement.classList.add("reduced");
 
-    const lenis = initSmoothScroll();
+    let lenis: ReturnType<typeof initSmoothScroll> = null;
+    try {
+      lenis = initSmoothScroll();
+    } catch {
+      // smooth-scroll / GSAP init must never blank the page
+      window.__spRevealAll?.();
+    }
 
     // Recompute pin/trigger geometry once webfonts settle and after full load,
     // so measurements taken before fonts loaded don't leave pins misaligned.
-    const refresh = () => ScrollTrigger.refresh();
+    const refresh = () => { try { ScrollTrigger.refresh(); } catch { /* never throw on refresh */ } };
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
     window.addEventListener("load", refresh);
 
     return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
       window.removeEventListener("load", refresh);
       lenis?.destroy();
     };
@@ -50,34 +65,40 @@ export default function App() {
   // before the first frame. A brand-new IntersectionObserver is created each
   // run and disconnected on cleanup, so triggers never stack across switches.
   useLayoutEffect(() => {
-    const root = document.documentElement;
-    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
-      root.classList.remove("reveal-armed");
-      els.forEach((el) => el.classList.add("is-in"));
-      return;
-    }
-    const vh = window.innerHeight;
-    // reveal everything already in (or near) view BEFORE arming → no flash
-    els.forEach((el) => {
-      const r = el.getBoundingClientRect();
-      if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add("is-in");
-      else el.classList.remove("is-in");
-    });
-    root.classList.add("reveal-armed");
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-in");
-            obs.unobserve(e.target);
+    try {
+      const root = document.documentElement;
+      const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+      if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
+        root.classList.remove("reveal-armed");
+        els.forEach((el) => el.classList.add("is-in"));
+        return;
+      }
+      const vh = window.innerHeight;
+      // reveal everything already in (or near) view BEFORE arming → no flash
+      els.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add("is-in");
+        else el.classList.remove("is-in");
+      });
+      root.classList.add("reveal-armed");
+      const obs = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-in");
+              obs.unobserve(e.target);
+            }
           }
-        }
-      },
-      { threshold: 0.14, rootMargin: "0px 0px -8% 0px" },
-    );
-    els.forEach((el) => { if (!el.classList.contains("is-in")) obs.observe(el); });
-    return () => obs.disconnect();
+        },
+        { threshold: 0.14, rootMargin: "0px 0px -8% 0px" },
+      );
+      els.forEach((el) => { if (!el.classList.contains("is-in")) obs.observe(el); });
+      return () => obs.disconnect();
+    } catch {
+      // a failed reveal controller (e.g. IntersectionObserver quirk) must never
+      // leave content stuck hidden — show everything.
+      window.__spRevealAll?.();
+    }
   }, [lang]);
 
   // Motion gate — pause every decorative CSS animation inside a section once it

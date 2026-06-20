@@ -13,6 +13,7 @@ _geo/ne50.geojson
 npm-debug.log*
 yarn-error.log*
 __screenshots__/
+__ios__/
 
 # tsc -b (composite) emit artifacts for the node config
 vite.config.js

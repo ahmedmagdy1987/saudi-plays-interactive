@@ -23,6 +23,47 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Progressive-enhancement FAIL-SAFE (must run before the module bundle).
+         The cinematic experience hides content via JS motion (GSAP/reveal) and
+         only shows it once animations run. If that pipeline ever fails to advance
+         — an uncaught error, a stalled rAF ticker (iOS Low-Power Mode, a
+         backgrounded in-app/WhatsApp webview), or older-WebKit timing — the
+         content would otherwise stay invisible forever (the iPhone blank page).
+         This guard guarantees the page can NEVER stay blank: on any error, or if
+         the app does not confirm a live motion frame within the watchdog window,
+         every motion-hidden element is forced visible. Dependency-free + ES5-safe
+         so it runs even on the most constrained WebKit. -->
+    <script>
+      (function () {
+        var H = document.documentElement, done = false, ok = false, wd = 0;
+        function revealAll() {
+          if (done) return; done = true;
+          try {
+            H.classList.add("sp-revealed");      // CSS forces hidden content visible
+            H.classList.remove("reveal-armed");  // drop the pre-reveal hidden gate
+            // clear any inline opacity/visibility that GSAP wrote to hide content
+            var els = document.querySelectorAll("*");
+            for (var i = 0; i < els.length; i++) {
+              var s = els[i].style;
+              if (!s) continue;
+              if (s.opacity !== "" && parseFloat(s.opacity) < 1) s.opacity = "";
+              if (s.visibility === "hidden") s.visibility = "";
+            }
+          } catch (e) { /* never throw from the failsafe */ }
+        }
+        window.__spRevealAll = revealAll;
+        // armed by main.tsx at app start (so a slow network never trips it)
+        window.__spArm = function () {
+          if (wd) return;
+          wd = setTimeout(function () { if (!ok) revealAll(); }, 2200);
+        };
+        // called by App once a live motion frame is confirmed -> cancel the watchdog
+        window.__spMotionOK = function () { ok = true; if (wd) { clearTimeout(wd); wd = 0; } };
+        // an uncaught error / promise rejection must never leave a blank page
+        window.addEventListener("error", function () { revealAll(); });
+        window.addEventListener("unhandledrejection", function () { revealAll(); });
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

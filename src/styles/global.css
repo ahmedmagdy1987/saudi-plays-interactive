@@ -356,6 +356,30 @@ html.reveal-armed [data-reveal]:not(.is-in) {
 /* A page-level helper toggled when JS detects reduced motion / low power */
 html.reduced [data-reveal] { opacity: 1; transform: none; }
 
+/* ---- FAIL-SAFE (progressive enhancement) -------------------------------
+   `html.sp-revealed` is set by the early guard in index.html (and by the app's
+   error handlers) when the motion pipeline cannot run — an uncaught error or a
+   stalled rAF ticker (iOS Low-Power Mode, a backgrounded in-app/WhatsApp webview,
+   older-WebKit timing). It force-reveals everything the cinematic layer would
+   otherwise leave hidden, so the page can never stay blank. `!important` so it
+   defeats the inline opacity/transform GSAP writes. Healthy loads never add this
+   class, so the approved animation is completely unaffected. */
+html.sp-revealed [data-reveal],
+html.sp-revealed .intro__eyebrow,
+html.sp-revealed .intro__titlewrap,
+html.sp-revealed .intro__supporting,
+html.sp-revealed .intro__overlay,
+html.sp-revealed .finale__content,
+html.sp-revealed .finale__content > * {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+html.sp-revealed .intro__veil { opacity: 1 !important; }
+/* in the degraded state the hero map sits at its natural full size (GSAP would
+   otherwise have left it scaled down mid-journey) so the hero reads cleanly */
+html.sp-revealed .intro__map { opacity: 1 !important; transform: none !important; }
+
 /* prevent layout shift from late fonts */
 .app-root { min-height: 100vh; }
 

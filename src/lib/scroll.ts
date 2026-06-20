@@ -89,10 +89,18 @@ export function useGsapScene(
     const scope = scopeRef.current;
     if (!scope) return;
     const reduced = prefersReducedMotion();
-    const ctx = gsap.context(() => {
-      build({ gsap, ScrollTrigger, scope, reduced });
-    }, scope);
-    return () => ctx.revert();
+    let ctx: ReturnType<typeof gsap.context> | null = null;
+    try {
+      ctx = gsap.context(() => {
+        build({ gsap, ScrollTrigger, scope, reduced });
+      }, scope);
+    } catch {
+      // a single failed scene (e.g. an unsupported call on an older WebKit) must
+      // never leave its content — or the page — stuck hidden. gsap.set() may have
+      // already applied opacity:0 before the throw, so force everything visible.
+      window.__spRevealAll?.();
+    }
+    return () => { try { ctx?.revert(); } catch { /* never throw on cleanup */ } };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

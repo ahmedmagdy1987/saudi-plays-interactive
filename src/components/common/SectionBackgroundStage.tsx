@@ -56,6 +56,9 @@ export default function SectionBackgroundStage() {
   const recacheRef = useRef<() => void>(() => {});
 
   useEffect(() => {
+    // The cinematic media controller must never blank the page: any failure during
+    // setup falls through to the global fail-safe instead of unmounting the app.
+    try {
     const root = rootRef.current!;
     const reduced = prefersReducedMotion();
     const lite = window.matchMedia("(max-width: 820px)").matches; // mobile = no parallax (lighter)
@@ -241,6 +244,9 @@ export default function SectionBackgroundStage() {
       vtimer.forEach((t) => t && clearTimeout(t));
       videos.forEach((v) => v && v.pause());
     };
+    } catch {
+      window.__spRevealAll?.();
+    }
   }, []);
 
   useEffect(() => {
