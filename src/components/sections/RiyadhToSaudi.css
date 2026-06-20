@@ -45,17 +45,31 @@
   z-index: 1;
 }
 .r2s__mapwrap .saudimap { max-width: 100%; }
+/* the map lives in its OWN clipped box; overflow:hidden stops the Saudi outline,
+   node glows and southern tip from spilling down onto the stepper row below */
+.r2s__mapviz {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  padding-bottom: 0.4rem;
+}
 .r2s__stagebadge {
   position: absolute;
-  inset-block-start: 1.1rem; inset-inline-start: 1.1rem;
+  inset-block-start: 0.4rem; inset-inline-start: 0.4rem;
   z-index: 2;
   display: inline-flex; flex-direction: column; gap: 0.1rem;
 }
 .r2s__stagebadge .yr { font-family: var(--font-en); font-size: 1.4rem; font-weight: 600; color: var(--teal-bright); direction: ltr; }
 .r2s__stagebadge .cap { font-size: var(--fz-eyebrow); color: var(--ink-mute); }
 
-/* compact 4-stage stepper inside the sticky frame — all stages always visible */
-.r2s__stepper { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.9rem; }
+/* compact 4-stage stepper — sits ABOVE the map box with a clear gap, on its own
+   solid panel so no map graphic can read through behind it */
+.r2s__stepper {
+  position: relative;
+  z-index: 3;
+  display: flex; flex-direction: column; gap: 0.45rem;
+  margin-top: clamp(0.9rem, 2vh, 1.4rem);
+}
 .r2s__stepper-item {
   display: flex; align-items: center; gap: 0.85rem;
   padding: 0.5rem 0.8rem;

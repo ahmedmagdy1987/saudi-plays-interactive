@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import SaudiMap from "@/components/common/SaudiMap";
 import CountUp from "@/components/common/CountUp";
-import BrandMark from "@/components/common/BrandMark";
 import { RIYADH } from "@/data/saudiGeo";
 import { useContent, useLang } from "@/i18n";
 import { media } from "@/data/media";
@@ -10,24 +9,19 @@ import "./IntroHero.css";
 
 /**
  * Section 01 — a cinematic, scroll-driven Saudi journey. It opens in deep space:
- * a starfield with the Kingdom small and distant. Scrolling slowly zooms toward
- * the Arabian Peninsula (Beat 1), isolates Saudi as the surroundings darken
- * (Beat 2), enters as the national border draws and city lights / connections
- * ignite (Beat 3), the «السعودية تلعب» title rises into the established network
- * with the strategic-partner marks (Beat 4), then a gentle zoom-out releases
- * into §02 (Beat 5). The whole sequence uses only zoom-in / zoom-out / fade.
- * Desktop pins + scrubs the journey; mobile and reduced-motion get the same
- * beats statically/condensed without a pin.
+ * a starfield with the Kingdom small and distant. Scrolling flies inward toward
+ * the Arabian Peninsula (Beat 1) — the star/region depth layers rush past the
+ * camera — isolates Saudi as the surroundings dive away and darken (Beat 2),
+ * enters as the national border draws and city lights / connections ignite
+ * (Beat 3), the «السعودية تلعب» title rises into the established network (Beat 4),
+ * then a gentle zoom-out releases into §02 (Beat 5). Zoom-in / zoom-out / fade
+ * only. Desktop pins + scrubs; mobile / reduced-motion condense it without a pin.
+ * Official partner logos live in §02 + the footer, NOT over this map.
  */
 export default function IntroHero() {
   const ref = useRef<HTMLElement>(null);
   const { hero, ui, brand } = useContent();
   const { lang } = useLang();
-  const partners = [
-    { id: "gea", src: "/brand/gea.png", contrast: "dark" as const, label: lang === "en" ? "General Entertainment Authority" : "الهيئة العامة للترفيه" },
-    { id: "vision2030", src: "/brand/vision2030.png", contrast: "light" as const, label: lang === "en" ? "Saudi Vision 2030" : "رؤية السعودية 2030" },
-    { id: "qlp", src: "/brand/qlp.png", contrast: "dark" as const, label: lang === "en" ? "Quality of Life Program" : "برنامج جودة الحياة" },
-  ];
 
   useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const border = scope.querySelector(".intro__map [data-map-border]") as SVGPathElement | null;
@@ -48,25 +42,28 @@ export default function IntroHero() {
     gsap.set(titleSpans, { yPercent: 0 });
 
     if (reduced) {
-      // static destination: the established national network + title + partners
-      gsap.set(".intro__space", { opacity: 0.5 });
-      gsap.set(".intro__region", { opacity: 0.16 });
-      gsap.set(".intro__map", { scale: 1, opacity: 1 });
+      // static destination: the established national network + title
+      gsap.set(".intro__space", { opacity: 0.55 });
+      gsap.set([".intro__stars"], { scale: 1, opacity: 0.5 });
+      gsap.set(".intro__nebula", { scale: 1.2, opacity: 0.3 });
+      gsap.set(".intro__region", { opacity: 0.14, scale: 1.1 });
+      gsap.set(".intro__map", { scale: 1.04, opacity: 1 });
       gsap.set(border, { strokeDashoffset: 0 });
       gsap.set(nodes, { opacity: 1, scale: 1 });
       gsap.set(links, { strokeDashoffset: 0, opacity: 0.5 });
-      gsap.set([".intro__eyebrow", ".intro__titlewrap", ".intro__supporting", ".intro__partners", ".intro__veil"], { opacity: 1, y: 0 });
+      gsap.set([".intro__eyebrow", ".intro__titlewrap", ".intro__supporting", ".intro__veil"], { opacity: 1, y: 0 });
       return;
     }
 
-    // initial deep-space state: distant, dark, title held back; eyebrow eases in
+    // initial deep-space state: Saudi tiny + far, depth layers ready to rush past
     gsap.set(".intro__space", { opacity: 1 });
-    gsap.set(".intro__region", { opacity: 0, scale: 1.28 });
-    gsap.set(".intro__map", { scale: 0.42, opacity: 0.28, transformOrigin: "50% 46%" });
+    gsap.set(".intro__stars", { scale: 1, opacity: 0.5, transformOrigin: "50% 46%" });
+    gsap.set(".intro__nebula", { scale: 0.78, opacity: 0.28, transformOrigin: "50% 46%" });
+    gsap.set(".intro__region", { opacity: 0, scale: 1.3, transformOrigin: "50% 46%" });
+    gsap.set(".intro__map", { scale: 0.4, opacity: 0.34, transformOrigin: "50% 46%" });
     gsap.set(border, { strokeDashoffset: blen });
     gsap.set(nodes, { opacity: 0, scale: 0 });
     gsap.set(".intro__titlewrap", { opacity: 0, y: 30 });
-    gsap.set(".intro__partners", { opacity: 0, y: 18 });
     gsap.set(".intro__supporting", { opacity: 0, y: 16 });
     gsap.set(".intro__eyebrow", { opacity: 0, y: 12 });
     gsap.set(".intro__veil", { opacity: 0 });
@@ -76,36 +73,38 @@ export default function IntroHero() {
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: scrub
-          ? { trigger: scope, start: "top top", end: "+=260%", scrub: 0.7, pin: ".intro__stage", anticipatePin: 1 }
+          ? { trigger: scope, start: "top top", end: "+=300%", scrub: 0.7, pin: ".intro__stage", anticipatePin: 1 }
           : undefined,
       });
 
-      // BEAT 1 — approach: zoom toward the peninsula; the regional context emerges
-      tl.to(".intro__map", { scale: 0.74, opacity: 0.92, duration: 1.2 }, 0);
-      tl.fromTo(".intro__region", { opacity: 0, scale: 1.28 }, { opacity: 0.5, scale: 1.08, duration: 1.2 }, 0);
-      tl.to(".intro__space", { opacity: 0.78, duration: 1.2 }, 0);
+      // BEAT 1 — IGNITION / approach: begin flying inward; the depth field expands
+      tl.to(".intro__map", { scale: 0.62, opacity: 0.85, duration: 1.2 }, 0);
+      tl.fromTo(".intro__region", { opacity: 0, scale: 1.3 }, { opacity: 0.55, scale: 1.6, duration: 1.2 }, 0);
+      tl.fromTo(".intro__nebula", { scale: 0.78, opacity: 0.28 }, { scale: 1.7, opacity: 0.62, duration: 1.2 }, 0);
+      tl.to(".intro__stars", { scale: 1.9, opacity: 0.72, duration: 1.2 }, 0);
       tl.to(border, { strokeDashoffset: 0, duration: 1.2 }, 0.4);
 
-      // BEAT 2 — isolate: surroundings darken, Saudi becomes the sole focus
-      tl.to(".intro__region", { opacity: 0.12, scale: 1.0, duration: 0.9 }, 1.1);
-      tl.to(".intro__map", { scale: 0.95, duration: 0.9 }, 1.1);
-      tl.to(".intro__space", { opacity: 0.5, duration: 0.9 }, 1.1);
+      // BEAT 2 — DIVE: the surrounding world streams PAST the camera and darkens,
+      //   the Kingdom rushing up to fill the frame (the unmistakable "entering" beat)
+      tl.to(".intro__region", { scale: 2.5, opacity: 0, duration: 1.0 }, 1.2);
+      tl.to(".intro__nebula", { scale: 2.8, opacity: 0, duration: 1.0 }, 1.2);
+      tl.to(".intro__stars", { scale: 3.4, opacity: 0.14, duration: 1.0 }, 1.2);
+      tl.to(".intro__map", { scale: 0.98, duration: 1.0 }, 1.2);
+      tl.to(".intro__space", { opacity: 0.55, duration: 1.0 }, 1.2);
 
-      // BEAT 3 — enter: national light + connections ignite, push into the network
-      tl.to(nodes, { opacity: 1, scale: 1, stagger: 0.04, duration: 0.8, ease: "back.out(1.5)" }, 1.9);
-      tl.to(links, { strokeDashoffset: 0, opacity: 0.5, stagger: 0.03, duration: 0.7 }, 2.1);
-      tl.to(".intro__map", { scale: 1.06, duration: 0.9 }, 2.0);
-      tl.to(zoom, { scale: 1.12, svgOrigin: `${RIYADH.x} ${RIYADH.y}`, duration: 0.9, ease: "power1.inOut" }, 2.1);
+      // BEAT 3 — ENTER: national light blooms, connections ignite, push into the net
+      tl.to(nodes, { opacity: 1, scale: 1, stagger: 0.04, duration: 0.8, ease: "back.out(1.6)" }, 2.2);
+      tl.to(links, { strokeDashoffset: 0, opacity: 0.5, stagger: 0.03, duration: 0.7 }, 2.4);
+      tl.to(".intro__map", { scale: 1.14, duration: 0.9 }, 2.3);
+      tl.to(zoom, { scale: 1.1, svgOrigin: `${RIYADH.x} ${RIYADH.y}`, duration: 0.9, ease: "power1.inOut" }, 2.4);
 
       // BEAT 4 — the «السعودية تلعب» title rises into the established network
-      tl.to(".intro__veil", { opacity: 1, duration: 0.8 }, 2.7);
-      tl.to(".intro__titlewrap", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 2.75);
-      tl.to(".intro__supporting", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.1);
-      // partners reveal LAST, subtly, clearly secondary to the title
-      tl.to(".intro__partners", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.4);
+      tl.to(".intro__veil", { opacity: 1, duration: 0.8 }, 3.0);
+      tl.to(".intro__titlewrap", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 3.05);
+      tl.to(".intro__supporting", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.4);
 
       // BEAT 5 — release: a gentle zoom-out settle before §02
-      tl.to(".intro__map", { scale: 1.0, duration: 0.5 }, 3.9);
+      tl.to(".intro__map", { scale: 1.05, duration: 0.55 }, 4.0);
       return tl;
     };
 
@@ -123,12 +122,13 @@ export default function IntroHero() {
   return (
     <section id="intro" data-section="01" ref={ref} className="intro" aria-label={`${ui.introAria}: ${lang === "en" ? brand.nameLatin : brand.name}`}>
       <div className="intro__stage">
-        {/* deep space base — starfield + distant atmospheric glow */}
+        {/* deep space base — starfield + a colour nebula that rush past on the dive */}
         <div className="intro__space" aria-hidden="true">
+          <span className="intro__nebula" />
           <span className="intro__stars" />
           <span className="intro__stars intro__stars--far" />
         </div>
-        {/* regional context (distant night imagery) — emerges then darkens */}
+        {/* regional context (distant night imagery) — flies past the camera */}
         {media.hero.src && (
           <img className="intro__region" src={media.hero.src} alt="" aria-hidden="true" loading="eager" decoding="async" />
         )}
@@ -145,16 +145,6 @@ export default function IntroHero() {
               <span className="line line--2"><span>{hero.titleLines[1]}</span></span>
             </h1>
             <p className="intro__supporting">{hero.supporting}</p>
-            {/* strategic-partner marks — revealed only after the title + statement,
-                in a controlled band, kept clearly secondary to the title */}
-            <div className="intro__partners">
-              <span className="intro__partners-label">{lang === "en" ? "Strategic partners" : "شركاء استراتيجيون"}</span>
-              <span className="intro__partners-row">
-                {partners.map((p) => (
-                  <BrandMark key={p.id} label={p.label} src={p.src} contrast={p.contrast} available />
-                ))}
-              </span>
-            </div>
           </div>
         </div>
         <div className="intro__cue" aria-hidden="true">

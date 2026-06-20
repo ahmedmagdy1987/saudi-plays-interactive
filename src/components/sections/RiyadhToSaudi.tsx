@@ -98,11 +98,15 @@ export default function RiyadhToSaudi() {
       <div className="r2s__scrolly container">
         <div className="r2s__mapcol">
           <div className="r2s__mapwrap">
-            <div className="r2s__stagebadge" aria-hidden="true">
-              <span className="yr">{stepYear.year}</span>
-              <span className="cap">{stepYear.title}</span>
+            {/* map is clipped to its own viz box so its outline/glow can never
+                bleed down behind the stepper row */}
+            <div className="r2s__mapviz">
+              <div className="r2s__stagebadge" aria-hidden="true">
+                <span className="yr">{stepYear.year}</span>
+                <span className="cap">{stepYear.title}</span>
+              </div>
+              <SaudiMap stage={3} connections="fromRiyadh" labels="origin" armed pulse ariaLabel={riyadhToSaudi.title} />
             </div>
-            <SaudiMap stage={3} connections="fromRiyadh" labels="origin" armed pulse ariaLabel={riyadhToSaudi.title} />
             {/* compact stepper — ALL stages stay visible, active is prominent */}
             <ol className="r2s__stepper">
               {riyadhToSaudi.timeline.map((t, i) => (

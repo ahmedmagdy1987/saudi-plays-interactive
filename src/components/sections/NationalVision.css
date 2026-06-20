@@ -84,11 +84,48 @@
   margin: clamp(1.4rem, 3vh, 2.6rem) auto 0;
   max-width: 30ch;
 }
+/* official strategic-partner band — centered, prominent, premium. The marks sit
+   on a subtle dark band (NOT white tiles); white-on-transparent logos read
+   directly on it, only the dark Vision 2030 mark carries a small neutral backing. */
+.vision__partners {
+  margin-top: clamp(2.4rem, 5vh, 3.6rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.9rem, 2vh, 1.4rem);
+  text-align: center;
+}
+.vision__partners-label {
+  font-size: var(--fz-label);
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+}
+.vision__partners-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  padding: clamp(1.1rem, 2.4vh, 1.9rem) clamp(1.6rem, 4vw, 3rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(12, 26, 56, 0.42), rgba(6, 14, 32, 0.5));
+  backdrop-filter: blur(6px);
+}
+.vision__partners-row .brandmark--logo { height: 70px; max-width: 230px; }
+.vision__partners-row .brandmark--light { height: 78px; }
+
 .vision__forces {
   margin-top: clamp(2rem, 5vh, 3.4rem);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(0.9rem, 1.6vw, 1.4rem);
+}
+
+@media (max-width: 560px) {
+  .vision__partners-row { gap: 1.6rem; padding: 1rem 1.2rem; }
+  .vision__partners-row .brandmark--logo { height: 50px; }
+  .vision__partners-row .brandmark--light { height: 56px; }
 }
 .vforce {
   padding: clamp(1.2rem, 2vw, 1.7rem);

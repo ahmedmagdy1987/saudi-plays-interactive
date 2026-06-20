@@ -30,17 +30,30 @@
   background-size: 440px 440px;
   opacity: 0.55;
   /* keep the centre clear (map + title) so stars only frame the edges */
-  -webkit-mask-image: radial-gradient(82% 72% at 50% 46%, transparent 14%, #000 62%);
-  mask-image: radial-gradient(82% 72% at 50% 46%, transparent 14%, #000 62%);
-  animation: intro-stars 70s linear infinite;
+  -webkit-mask-image: radial-gradient(86% 80% at 50% 46%, transparent 10%, #000 64%);
+  mask-image: radial-gradient(86% 80% at 50% 46%, transparent 10%, #000 64%);
+  will-change: transform, opacity;   /* the scroll journey scales it past the camera */
 }
 .intro__stars--far {
   background-size: 300px 300px;
   background-position: 80px 40px;
   opacity: 0.3;
-  animation-duration: 110s;
 }
-@keyframes intro-stars { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -46px, 0); } }
+
+/* colour nebula — a soft cloud of national light that rushes past on the dive */
+.intro__nebula {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 96vmax; height: 96vmax;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side at 38% 42%, rgba(56, 224, 205, 0.20), transparent 58%),
+    radial-gradient(closest-side at 64% 58%, rgba(138, 120, 240, 0.18), transparent 56%),
+    radial-gradient(closest-side at 52% 50%, rgba(30, 70, 142, 0.22), transparent 64%);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
 
 .intro__region {
   position: absolute;
@@ -131,34 +144,6 @@
   color: var(--ink-soft);
 }
 
-/* strategic-partner marks — a controlled, readable band beneath the statement.
-   Secondary to the title; logos shown at exact appearance (no per-logo tiles). */
-.intro__partners {
-  margin: clamp(1.6rem, 3.4vh, 2.6rem) auto 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.9rem clamp(1rem, 3vw, 2rem);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(132, 178, 240, 0.12);
-  background: rgba(3, 9, 22, 0.42);
-  backdrop-filter: blur(6px);
-  width: fit-content;
-  max-width: 100%;
-}
-.intro__partners-label {
-  font-family: var(--font-en);
-  font-size: var(--fz-eyebrow);
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-}
-[dir="rtl"] .intro__partners-label { font-family: var(--font-ar); letter-spacing: normal; text-transform: none; font-size: var(--fz-label); }
-.intro__partners-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(1.2rem, 3vw, 2.4rem); }
-.intro__partners-row .brandmark--logo { height: 40px; max-width: 150px; }
-.intro__partners-row .brandmark--light { height: 44px; }
-
 .intro__cue {
   position: absolute;
   inset-block-end: 1.5rem;
@@ -201,13 +186,7 @@
   .intro__stats { grid-template-columns: 1fr; }
   .intro__map .saudimap { max-width: 94vw; opacity: 0.85; }
   .intro__overlay::before { inset: -6% -10%; }
-  .intro__partners { padding: 0.8rem 1rem; }
-  .intro__partners-row { gap: 1.4rem; }
-  .intro__partners-row .brandmark--logo { height: 34px; }
-  .intro__partners-row .brandmark--light { height: 38px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .intro__cue i { animation: none; }
-  .intro__stars { animation: none !important; }
 }
-html.reduced .intro__stars { animation: none !important; }

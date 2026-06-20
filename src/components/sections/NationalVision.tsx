@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import SaudiMap from "@/components/common/SaudiMap";
+import BrandMark from "@/components/common/BrandMark";
 import { Icon, type IconName } from "@/components/common/icons";
 import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
@@ -40,6 +41,14 @@ export default function NationalVision() {
   // central project node, localized: "السعودية / تلعب" or "Saudi / Plays"
   const coreLines = (lang === "en" ? brand.nameLatin : brand.name).split(" ");
   const tdir = lang === "en" ? "ltr" : "rtl";
+  // official strategic partners — shown prominently in this national-vision
+  // section (exact artwork; contrast per logo; white-on-transparent on the dark
+  // band, only the dark Vision 2030 mark gets a minimal neutral backing).
+  const partners = [
+    { id: "gea", src: "/brand/gea.png", contrast: "dark" as const, label: lang === "en" ? "General Entertainment Authority" : "الهيئة العامة للترفيه" },
+    { id: "vision2030", src: "/brand/vision2030.png", contrast: "light" as const, label: lang === "en" ? "Saudi Vision 2030" : "رؤية السعودية 2030" },
+    { id: "qlp", src: "/brand/qlp.png", contrast: "dark" as const, label: lang === "en" ? "Quality of Life Program" : "برنامج جودة الحياة" },
+  ];
 
   // radar pulse only runs while the section is in view and the tab is visible
   useEffect(() => {
@@ -155,6 +164,18 @@ export default function NationalVision() {
       </div>
 
       <p className="vision__converge-note container text-grad-teal">{vision.convergeStatement}</p>
+
+      {/* official strategic-partner marks — a prominent, centered national band */}
+      <div className="vision__partners container" data-reveal>
+        <span className="vision__partners-label">
+          {lang === "en" ? "Strategic national partners" : "شركاء وطنيون استراتيجيون"}
+        </span>
+        <div className="vision__partners-row">
+          {partners.map((p) => (
+            <BrandMark key={p.id} label={p.label} src={p.src} contrast={p.contrast} available />
+          ))}
+        </div>
+      </div>
 
       <div className="vision__forces container">
         {vision.forces.map((f) => (
