@@ -1,28 +1,24 @@
-import { useContent } from "@/i18n";
+import { useContent, useLang } from "@/i18n";
 import BrandMark from "@/components/common/BrandMark";
 import "./Footer.css";
-
-// Logo-ready mapping for the footer entities (same order as footer.entities:
-// GEA · Malahi · Quality of Life Program · Municipalities). `available` flips to
-// true ONLY when a verified official file has been added under public/brand/.
-// Until then the localized text label is shown (and no file is requested).
-// See docs/brand-assets.md.
-const ENTITY_LOGOS: { src?: string; available?: boolean }[] = [
-  { src: "/brand/gea.svg", available: false },
-  {},
-  { src: "/brand/qlp.svg", available: false },
-  {},
-];
 
 /**
  * Footer — composed inside the same centered content grid as the rest of the
  * site. One clear identity (Arabic title + secondary Latin line), a balanced
- * presented-by group, a logo-ready entity row (verified official logos when
- * present, elegant localized text otherwise), a single divider, and one concise
- * centered legal note.
+ * presented-by group, the official partner logos (shown exactly as supplied in
+ * clean neutral containers) with the localized entity names kept as supporting
+ * text, a single divider, and one concise centered legal note.
  */
 export default function Footer() {
   const { brand, footer, ui } = useContent();
+  const { lang } = useLang();
+  // verified official partner marks (files live in public/brand/). Alt text is
+  // localized; the artwork is shown exactly as supplied (no recolor/crop/glow).
+  const partnerLogos = [
+    { id: "gea", src: "/brand/gea.png", label: lang === "en" ? "General Entertainment Authority" : "الهيئة العامة للترفيه" },
+    { id: "vision2030", src: "/brand/vision2030.png", label: lang === "en" ? "Saudi Vision 2030" : "رؤية السعودية 2030" },
+    { id: "qlp", src: "/brand/qlp.png", label: lang === "en" ? "Quality of Life Program" : "برنامج جودة الحياة" },
+  ];
   return (
     <footer className="site-footer" aria-label={ui.footerAria}>
       <div className="container footer__inner">
@@ -37,10 +33,17 @@ export default function Footer() {
             <span className="footer__present-label">{footer.presentedByLabel}</span>{" "}
             <strong>{footer.presentedBy}</strong> {footer.collaboration}
           </p>
+          {/* official partner marks, shown exactly as supplied in neutral containers */}
+          <div className="footer__logos">
+            {partnerLogos.map((l) => (
+              <BrandMark key={l.id} label={l.label} src={l.src} available />
+            ))}
+          </div>
+          {/* full localized entity names kept as supporting text */}
           <ul className="footer__entities">
-            {footer.entities.map((e, i) => (
+            {footer.entities.map((e) => (
               <li className="footer__entity" key={e}>
-                <BrandMark label={e} src={ENTITY_LOGOS[i]?.src} available={ENTITY_LOGOS[i]?.available} />
+                <BrandMark label={e} />
               </li>
             ))}
           </ul>

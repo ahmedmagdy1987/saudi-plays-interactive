@@ -61,7 +61,18 @@
 .gov__detail div span { font-size: var(--fz-eyebrow); color: var(--ink-mute); }
 .gov__detail-hint { font-size: var(--fz-label); color: var(--ink-mute); }
 
-.gov__align { margin-top: clamp(1.6rem, 4vh, 2.6rem); display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; }
+/* official entity logos (GEA + QLP) — neutral containers, exact artwork */
+.gov__partners {
+  margin-top: clamp(1.2rem, 3vh, 2rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(0.7rem, 1.5vw, 1.1rem);
+}
+.gov__partners-label { color: var(--ink-mute); font-size: var(--fz-label); margin-inline-end: 0.3rem; }
+.gov__partners .brandmark--logo { height: 60px; min-width: 88px; }
+
+.gov__align { margin-top: clamp(1.4rem, 3.5vh, 2.4rem); display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; }
 .gov__align-label { color: var(--ink-mute); font-size: var(--fz-label); margin-inline-end: 0.4rem; }
 .gov__align .chip { border-color: var(--line-strong); }
 .gov__align .chip svg { color: var(--gold); }

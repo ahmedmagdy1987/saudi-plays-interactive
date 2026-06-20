@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import SectionShell from "@/components/common/SectionShell";
 import SaudiMap from "@/components/common/SaudiMap";
+import BrandMark from "@/components/common/BrandMark";
 import { Icon, type IconName } from "@/components/common/icons";
 import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
@@ -155,6 +156,19 @@ export default function NationalVision() {
       </div>
 
       <p className="vision__converge-note container text-grad-teal">{vision.convergeStatement}</p>
+
+      {/* national alignment — the official Saudi Vision 2030 mark, shown exactly
+          as supplied in a clean neutral container */}
+      <div className="vision__align container" data-reveal>
+        <BrandMark
+          label={lang === "en" ? "Saudi Vision 2030" : "رؤية السعودية 2030"}
+          src="/brand/vision2030.png"
+          available
+        />
+        <span className="vision__align-cap">
+          {lang === "en" ? "In alignment with Saudi Vision 2030" : "انسجامًا مع رؤية السعودية 2030"}
+        </span>
+      </div>
 
       <div className="vision__forces container">
         {vision.forces.map((f) => (

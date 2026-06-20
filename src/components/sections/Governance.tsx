@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import SectionShell from "@/components/common/SectionShell";
+import BrandMark from "@/components/common/BrandMark";
 import { Icon, type IconName } from "@/components/common/icons";
 import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
@@ -100,6 +101,10 @@ export default function Governance() {
   const { lang } = useLang();
   const [active, setActive] = useState<string | null>(null);
   const activeEntity = governance.entities.find((e) => e.id === active);
+  // official marks for the two entities that have supplied logos: the regulator
+  // (GEA) and the alignment programme (QLP = the `qol` node)
+  const geaName = governance.entities.find((e) => e.id === "gea")?.ar ?? "";
+  const qlpName = governance.entities.find((e) => e.id === "qol")?.ar ?? "";
 
   useGsapScene(ref, ({ gsap, reduced, ScrollTrigger }) => {
     const links = gsap.utils.toArray<SVGPathElement>(".gov-link");
@@ -215,6 +220,14 @@ export default function Governance() {
         ) : (
           <span className="gov__detail-hint">{governance.detailDefault}</span>
         )}
+      </div>
+
+      {/* official entity marks present in the operating system (regulator +
+          alignment programme), shown exactly as supplied in neutral containers */}
+      <div className="gov__partners container" data-reveal>
+        <span className="gov__partners-label">{lang === "en" ? "Official entities" : "جهات رسمية"}</span>
+        <BrandMark label={geaName} src="/brand/gea.png" available />
+        <BrandMark label={qlpName} src="/brand/qlp.png" available />
       </div>
 
       <div className="gov__align container" data-reveal>

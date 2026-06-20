@@ -35,9 +35,19 @@
 .footer__present { color: var(--ink-soft); font-size: var(--fz-label); max-width: 70ch; line-height: 1.7; }
 .footer__present-label { color: var(--teal); }
 .footer__present strong { color: var(--ink); font-weight: 600; }
+/* official partner logos — clean neutral containers, exact artwork, no glow */
+.footer__logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.7rem, 1.6vw, 1.1rem);
+}
+.footer__logos .brandmark--logo { height: 66px; min-width: 92px; padding: 0.45rem 0.8rem; }
+
 .footer__entities { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; }
-/* the entity chip / logo container is now provided by <BrandMark>; the li is a
-   plain flex item so verified logos and text labels can sit side by side. */
+/* the entity chip / logo container is provided by <BrandMark>; the li is a plain
+   flex item so verified logos and text labels can sit side by side. */
 .footer__entity { display: inline-flex; }
 
 .footer__divider { width: min(560px, 70%); height: 1px; background: var(--line); }
