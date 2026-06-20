@@ -20,13 +20,17 @@ export const media: Record<string, MediaAsset> = {
     decorative: true,
   },
   finale: {
-    src: "/media/finale.webp",
+    // retired: the §10 background is now supplied by the cinematic media backdrop
+    // (SectionBackgroundStage, s10-finale) — an empty src renders nothing here, so
+    // the finale no longer double-stacks two near-identical night-nation images.
+    src: "",
     video: "",
     alt: "مشهد ليلي وطني يربط مدن المملكة بشبكة من الأضواء",
     decorative: true,
   },
   zones: {
-    src: "/media/zones.webp",
+    // retired: section experience visuals now come from the cinematic media backdrop
+    src: "",
     alt: "حقل طاقة بصري يمثل تنوع تجارب الترفيه",
     decorative: true,
   },

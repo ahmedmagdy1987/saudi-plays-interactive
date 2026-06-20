@@ -6,31 +6,36 @@ import { prefersReducedMotion } from "@/lib/hooks";
 import "./SectionBackgroundStage.css";
 
 /**
- * One persistent, lightweight background stage for the whole site. It is a
- * non-interactive, EDGE-MASKED overlay (pointer-events:none; the centre reading
- * zone is fully cleared by a radial mask) that sits just over the opaque section
- * bases — so it adds cinematic atmosphere in the viewport margins and NEVER
- * covers cards, headings or charts.
+ * One persistent cinematic media backdrop for Sections 02–10. Each section owns a
+ * real Higgsfield still (and three of them a short looping clip); a SINGLE
+ * ScrollTrigger maps the live scroll position to a continuous "section float" and
+ * each layer's opacity / scale / vertical drift is derived from its distance to
+ * that float (gsap.quickSetters). So scrolling down makes the current scene fade +
+ * recede (zoom-out) while the next fades + zooms toward the viewer, and scrolling
+ * up reverses the exact same values (pure function of scrollY — no hysteresis).
  *
- * The ten sections are grouped into five "atmospheres" (01‑02 national, 03‑04
- * data/expansion, 05‑06 entertainment, 07‑08 governance, 09‑10 national impact).
- * A SINGLE ScrollTrigger maps the live scroll position to a continuous "group
- * float"; each group layer's opacity / scale / vertical drift is derived from its
- * distance to that float via gsap.quickSetters. So as you cross a group boundary
- * the current atmosphere fades + zooms out (recedes) while the next fades + zooms
- * in (toward the viewer) — and scrolling back up reverses the exact same values.
- * No autoplay timeline, no per-frame DOM thrash, no rAF when the page is idle.
+ * Performance: images are lazy-loaded only within a window of the active section;
+ * the ≤3 video loops only fetch + play while their section is active and pause
+ * otherwise + when the tab is hidden; there is NO idle requestAnimationFrame (the
+ * controller runs only inside ScrollTrigger.onUpdate, i.e. while scrolling). A
+ * readability scrim keeps the centre content column calm; the imagery reads at the
+ * sides + as depth. Mobile drops the video loops + parallax; reduced-motion drops
+ * zoom/drift and never autoplays a loop.
  */
-
-// section id → group index (five groups of two)
-const SECTION_GROUP: ReadonlyArray<readonly [string, number]> = [
-  ["intro", 0], ["vision", 0],
-  ["market", 1], ["riyadh", 1],
-  ["zones", 2], ["malahi", 2],
-  ["governance", 3], ["revenue", 3],
-  ["impact", 4], ["finale", 4],
+interface MediaItem { id: string; img: string; loop?: string }
+const MEDIA: MediaItem[] = [
+  { id: "vision", img: "s02-vision" },
+  { id: "market", img: "s03-market" },
+  { id: "riyadh", img: "s04-expansion" },
+  { id: "zones", img: "s05-entertainment", loop: "loop-entertainment" },
+  { id: "malahi", img: "s06-energy" },
+  { id: "governance", img: "s07-governance" },
+  { id: "revenue", img: "s08-revenue" },
+  { id: "impact", img: "s09-impact", loop: "loop-impact" },
+  { id: "finale", img: "s10-finale", loop: "loop-finale" },
 ];
-const GROUPS = 5;
+const N = MEDIA.length;
+const base = (f: string) => `/media/sections/${f}`;
 
 export default function SectionBackgroundStage() {
   const { lang } = useLang();
@@ -40,53 +45,80 @@ export default function SectionBackgroundStage() {
   useEffect(() => {
     const root = rootRef.current!;
     const reduced = prefersReducedMotion();
-    const layers = Array.from(root.querySelectorAll<HTMLElement>(".sbg__layer"));
+    const lite = window.matchMedia("(max-width: 820px)").matches;
+    const layers = Array.from(root.querySelectorAll<HTMLElement>(".ms__layer"));
+    const imgs = layers.map((l) => l.querySelector<HTMLElement>(".ms__img")!);
+    const videos = layers.map((l) => l.querySelector<HTMLVideoElement>(".ms__video"));
     const setO = layers.map((l) => gsap.quickSetter(l, "opacity") as (v: number) => void);
-    const setT = layers.map((l) => gsap.quickSetter(l, "transform") as (v: string) => void);
+    const setT = imgs.map((el) => gsap.quickSetter(el, "transform") as (v: string) => void);
+    const loaded = new Array(N).fill(false);
+    const vloaded = new Array(N).fill(false);
 
-    // cached section centres (absolute document Y) + their group
-    let sections: { center: number; group: number }[] = [];
+    let sections: { center: number }[] = [];
     const recache = () => {
       const y = window.scrollY || 0;
-      sections = SECTION_GROUP
-        .map(([id, group]) => {
-          const el = document.getElementById(id);
-          if (!el) return null;
-          const r = el.getBoundingClientRect();
-          return { center: r.top + y + r.height / 2, group };
-        })
-        .filter((s): s is { center: number; group: number } => s !== null);
+      sections = MEDIA.map((m) => {
+        const el = document.getElementById(m.id);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { center: r.top + y + r.height / 2 };
+      }).filter((s): s is { center: number } => s !== null);
     };
     recacheRef.current = recache;
 
-    // continuous group position from the viewport centre (monotonic, reversible)
-    const groupFloat = () => {
-      if (!sections.length) return 0;
+    const floatPos = () => {
+      if (sections.length < N) return -1;
       const c = (window.scrollY || 0) + window.innerHeight / 2;
-      if (c <= sections[0].center) return sections[0].group;
-      const last = sections[sections.length - 1];
-      if (c >= last.center) return last.group;
-      for (let i = 0; i < sections.length - 1; i++) {
+      if (c <= sections[0].center) return -Math.min(1.2, (sections[0].center - c) / window.innerHeight);
+      const last = sections[N - 1];
+      if (c >= last.center) return N - 1;
+      for (let i = 0; i < N - 1; i++) {
         const a = sections[i], b = sections[i + 1];
-        if (c >= a.center && c <= b.center) {
-          const t = (c - a.center) / (b.center - a.center || 1);
-          return a.group + (b.group - a.group) * t;
-        }
+        if (c >= a.center && c <= b.center) return i + (c - a.center) / (b.center - a.center || 1);
       }
       return 0;
     };
 
+    const loadImg = (i: number) => {
+      if (loaded[i]) return;
+      loaded[i] = true;
+      imgs[i].style.backgroundImage = `url(${base(MEDIA[i].img + ".webp")})`;
+    };
+    const activateVideo = (i: number, on: boolean) => {
+      const v = videos[i];
+      if (!v || reduced || lite) return;
+      if (on) {
+        if (!vloaded[i]) {
+          vloaded[i] = true;
+          v.querySelectorAll("source").forEach((s) => { const d = s.getAttribute("data-src"); if (d) s.setAttribute("src", d); });
+          v.load();
+        }
+        const p = v.play?.();
+        if (p) p.then(() => layers[i].classList.add("is-playing")).catch(() => {});
+      } else {
+        layers[i].classList.remove("is-playing");
+        if (!v.paused) v.pause();
+      }
+    };
+
     const render = () => {
-      const g = groupFloat();
-      for (let i = 0; i < GROUPS; i++) {
-        const d = g - i;                         // <0 upcoming, >0 receded
+      const f = floatPos();
+      for (let i = 0; i < N; i++) {
+        const d = f - i;
         const ad = Math.abs(d);
-        const op = ad >= 1 ? 0 : 1 - ad;         // triangular crossfade between neighbours
+        const op = ad >= 1.1 ? 0 : Math.max(0, 1 - ad / 1.1);
         setO[i](op);
-        if (reduced) { setT[i]("none"); continue; }
-        const sc = 1 - 0.06 * Math.min(ad, 1.6); // distant = smaller → zoom-out on recede
-        const ty = d * 26;                        // receded drifts down, upcoming drifts up
-        setT[i](`translate3d(0,${ty.toFixed(1)}px,0) scale(${sc.toFixed(4)})`);
+        // drop fully-faded layers out of the compositor (only ~2 ever paint)
+        const vis = op > 0.001 ? "visible" : "hidden";
+        if (layers[i].style.visibility !== vis) layers[i].style.visibility = vis;
+        if (!reduced && !lite) {
+          const sc = 1 - 0.05 * Math.min(ad, 1.6);   // recede = zoom out, active = 1
+          setT[i](`translate3d(0,${(d * 20).toFixed(1)}px,0) scale(${sc.toFixed(4)})`);
+        } else {
+          setT[i]("none");
+        }
+        if (ad < 1.8) loadImg(i);                    // lazy-load within the window
+        if (MEDIA[i].loop) activateVideo(i, ad < 0.5);
       }
     };
 
@@ -97,71 +129,45 @@ export default function SectionBackgroundStage() {
       trigger: document.documentElement,
       start: "top top",
       end: "bottom bottom",
-      onUpdate: render,                          // fires only while scrolling
-      onRefresh: () => { recache(); render(); }, // resize / font-load / lang refresh
+      onUpdate: render,
+      onRefresh: () => { recache(); render(); },
     });
 
-    // pause the (already subtle) ambient CSS motion when the tab is hidden
-    const onVis = () => root.classList.toggle("sbg--paused", document.hidden);
+    const onVis = () => {
+      const hidden = document.hidden;
+      root.classList.toggle("ms--paused", hidden);
+      if (hidden) videos.forEach((v) => v && !v.paused && v.pause());
+      else render();
+    };
     document.addEventListener("visibilitychange", onVis);
 
     return () => {
       trig.kill();
       document.removeEventListener("visibilitychange", onVis);
+      videos.forEach((v) => v && v.pause());
     };
   }, []);
 
-  // re-measure after the language remount changes section geometry (one rAF so
-  // the freshly-mounted, re-localized sections have laid out first)
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      recacheRef.current();
-      ScrollTrigger.refresh();
-    });
+    const id = requestAnimationFrame(() => { recacheRef.current(); ScrollTrigger.refresh(); });
     return () => cancelAnimationFrame(id);
   }, [lang]);
 
   return (
-    <div className="sbg" ref={rootRef} aria-hidden="true">
-      {/* 01–02 · national: dark geographic depth, teal + controlled gold */}
-      <div className="sbg__layer sbg__layer--g0">
-        <span className="sbg__signal sbg__signal--a" />
-        <span className="sbg__signal sbg__signal--b" />
+    <div className="ms" ref={rootRef} aria-hidden="true">
+      <div className="ms__layers">
+        {MEDIA.map((m, i) => (
+          <div className={`ms__layer ms__layer--g${Math.min(4, Math.floor(i / 2))}`} key={m.id} data-i={i}>
+            <div className="ms__img" style={{ backgroundImage: i === 0 ? `url(${base(m.img + ".webp")})` : undefined }} />
+            {m.loop && (
+              <video className="ms__video" muted loop playsInline preload="none">
+                <source data-src={base(m.loop + ".mp4")} type="video/mp4" />
+              </video>
+            )}
+          </div>
+        ))}
       </div>
-
-      {/* 03–04 · data / national expansion: chart-grid depth + city-network lines */}
-      <div className="sbg__layer sbg__layer--g1">
-        <svg className="sbg__net" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <path className="sbg__trace" d="M20 250 L120 180 L210 210 L330 120" />
-          <path className="sbg__trace sbg__trace--d2" d="M40 60 L150 110 L260 80 L380 150" />
-        </svg>
-      </div>
-
-      {/* 05–06 · entertainment: controlled violet/teal light fields + light traces */}
-      <div className="sbg__layer sbg__layer--g2">
-        <span className="sbg__field sbg__field--v" />
-        <span className="sbg__field sbg__field--t" />
-        <span className="sbg__spark s1" /><span className="sbg__spark s2" />
-        <span className="sbg__spark s3" /><span className="sbg__spark s4" />
-      </div>
-
-      {/* 07–08 · governance: structured network geometry + slow data-flow traces */}
-      <div className="sbg__layer sbg__layer--g3">
-        <svg className="sbg__grid" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <path className="sbg__flow" d="M30 80 H180 V200 H360" />
-          <path className="sbg__flow sbg__flow--d2" d="M40 230 H140 V120 H330" />
-          <circle className="sbg__nodept" cx="180" cy="80" r="3" />
-          <circle className="sbg__nodept" cx="180" cy="200" r="3" />
-          <circle className="sbg__nodept" cx="140" cy="120" r="3" />
-        </svg>
-      </div>
-
-      {/* 09–10 · national impact: rising city lights + connection energy (finale) */}
-      <div className="sbg__layer sbg__layer--g4">
-        <span className="sbg__city c1" /><span className="sbg__city c2" />
-        <span className="sbg__city c3" /><span className="sbg__city c4" />
-        <span className="sbg__city c5" /><span className="sbg__city c6" />
-      </div>
+      <div className="ms__scrim" />
     </div>
   );
 }

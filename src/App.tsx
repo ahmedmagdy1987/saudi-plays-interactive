@@ -80,6 +80,23 @@ export default function App() {
     return () => obs.disconnect();
   }, [lang]);
 
+  // Motion gate — pause every decorative CSS animation inside a section once it
+  // scrolls well out of view (profiling showed 120–200 infinite animations all
+  // running at once, most in off-screen sections). A section gets `.sec-rest`
+  // (CSS: animation-play-state:paused) when it leaves the viewport + a 150px
+  // buffer, and resumes before it returns. Re-armed on each language remount; a
+  // fresh observer is created/disconnected so triggers never stack.
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section, footer"));
+    const obs = new IntersectionObserver(
+      (entries) => { for (const e of entries) e.target.classList.toggle("sec-rest", !e.isIntersecting); },
+      { rootMargin: "150px 0px 150px 0px" },
+    );
+    sections.forEach((s) => obs.observe(s));
+    return () => obs.disconnect();
+  }, [lang]);
+
   return (
     <div className="app-root">
       <SectionBackgroundStage />
