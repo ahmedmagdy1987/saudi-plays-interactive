@@ -24,19 +24,25 @@
 .r2s__proof-card h3 { font-size: var(--fz-lead); font-weight: 600; }
 .r2s__proof-card p { font-size: var(--fz-body); color: var(--ink-soft); }
 
-/* align-items: stretch (default) so the map column is as tall as the steps —
-   this is what lets the sticky map stay in view through the whole scrollytelling
-   sequence instead of releasing early and leaving an empty column. */
-.r2s__scrolly { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(1rem, 3vw, 3rem); align-items: stretch; }
+/* Balanced two-column composition: the map frame is sticky and VERTICALLY
+   CENTERED in the viewport, and the stage cards are centered in their steps, so
+   the active stage and the map always read as one aligned pair (never the map
+   sitting under/above a card). The map column is as tall as the steps so the
+   sticky frame stays in view through the whole sequence. */
+.r2s__scrolly { display: grid; grid-template-columns: 1.04fr 1fr; gap: clamp(1.2rem, 3vw, 3rem); align-items: stretch; }
 .r2s__mapcol { position: relative; }
 .r2s__mapwrap {
   position: sticky;
-  top: 11vh;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 92vh;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   background: linear-gradient(180deg, rgba(10, 22, 50, 0.5), rgba(4, 10, 26, 0.6));
+  box-shadow: var(--shadow-card);
   padding: clamp(0.8rem, 1.6vw, 1.4rem);
   overflow: hidden;
+  z-index: 1;
 }
 .r2s__mapwrap .saudimap { max-width: 100%; }
 .r2s__stagebadge {
@@ -70,10 +76,14 @@
 
 .r2s__steps { display: flex; flex-direction: column; }
 .r2s__step {
-  min-height: 62vh;
+  /* shorter than before: enough travel to drive the stage trigger without the
+     large empty viewport-sized gaps the owner flagged */
+  min-height: 50vh;
   display: flex;
   align-items: center;
 }
+.r2s__step:first-child { min-height: 42vh; }
+.r2s__step:last-child { min-height: 46vh; }
 .r2s__card {
   width: 100%;
   padding: clamp(1.4rem, 2.6vw, 2.2rem);

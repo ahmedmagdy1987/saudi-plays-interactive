@@ -1,8 +1,11 @@
 .intro {
   position: relative;
+  /* deep space base for the cinematic opening (near-black with a faint high
+     atmospheric glow — the distant-planet edge) */
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(16, 40, 90, 0.5), transparent 60%),
-    linear-gradient(180deg, var(--abyss), var(--night));
+    radial-gradient(120% 80% at 50% -8%, rgba(20, 52, 104, 0.42), transparent 55%),
+    radial-gradient(100% 70% at 50% 120%, rgba(34, 22, 78, 0.3), transparent 60%),
+    linear-gradient(180deg, #01030a, #02060f 55%, var(--night));
 }
 .intro__stage {
   position: relative;
@@ -12,23 +15,53 @@
   overflow: hidden;
   isolation: isolate;
 }
-.intro__media {
+/* ---- cinematic depth layers ---- */
+.intro__space { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.intro__stars {
+  position: absolute; inset: -20%;
+  background-image:
+    radial-gradient(1.4px 1.4px at 25% 15%, rgba(255, 255, 255, 0.95), transparent 60%),
+    radial-gradient(1px 1px at 70% 22%, rgba(205, 230, 255, 0.75), transparent 60%),
+    radial-gradient(1.5px 1.5px at 85% 60%, rgba(255, 255, 255, 0.9), transparent 60%),
+    radial-gradient(1px 1px at 12% 72%, rgba(220, 235, 255, 0.65), transparent 60%),
+    radial-gradient(1.2px 1.2px at 48% 88%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1.3px 1.3px at 60% 6%, rgba(255, 255, 255, 0.8), transparent 60%);
+  background-repeat: repeat;
+  background-size: 440px 440px;
+  opacity: 0.55;
+  /* keep the centre clear (map + title) so stars only frame the edges */
+  -webkit-mask-image: radial-gradient(82% 72% at 50% 46%, transparent 14%, #000 62%);
+  mask-image: radial-gradient(82% 72% at 50% 46%, transparent 14%, #000 62%);
+  animation: intro-stars 70s linear infinite;
+}
+.intro__stars--far {
+  background-size: 300px 300px;
+  background-position: 80px 40px;
+  opacity: 0.3;
+  animation-duration: 110s;
+}
+@keyframes intro-stars { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -46px, 0); } }
+
+.intro__region {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   object-fit: cover;
   width: 100%;
   height: 100%;
-  opacity: 0.32;
-  filter: saturate(1.05) contrast(1.02);
-  mask-image: radial-gradient(130% 100% at 50% 28%, #000 40%, transparent 84%);
+  opacity: 0;
+  filter: saturate(1.02) contrast(1.02) brightness(0.9);
+  -webkit-mask-image: radial-gradient(120% 96% at 50% 30%, #000 36%, transparent 82%);
+  mask-image: radial-gradient(120% 96% at 50% 30%, #000 36%, transparent 82%);
+  will-change: opacity, transform;
 }
 .intro__map {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  z-index: 1;
+  z-index: 2;
+  will-change: transform, opacity;
 }
 .intro__map .saudimap {
   max-width: min(78vw, 820px);
@@ -38,14 +71,14 @@
 .intro__veil {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   pointer-events: none;
   background: radial-gradient(78% 60% at 50% 52%, transparent 32%, rgba(2, 6, 15, 0.5) 100%);
   opacity: 0;
 }
 .intro__overlay {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   text-align: center;
   padding-inline: var(--gut);
   max-width: 920px;
@@ -98,11 +131,39 @@
   color: var(--ink-soft);
 }
 
+/* strategic-partner marks — a controlled, readable band beneath the statement.
+   Secondary to the title; logos shown at exact appearance (no per-logo tiles). */
+.intro__partners {
+  margin: clamp(1.6rem, 3.4vh, 2.6rem) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.9rem clamp(1rem, 3vw, 2rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(132, 178, 240, 0.12);
+  background: rgba(3, 9, 22, 0.42);
+  backdrop-filter: blur(6px);
+  width: fit-content;
+  max-width: 100%;
+}
+.intro__partners-label {
+  font-family: var(--font-en);
+  font-size: var(--fz-eyebrow);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+[dir="rtl"] .intro__partners-label { font-family: var(--font-ar); letter-spacing: normal; text-transform: none; font-size: var(--fz-label); }
+.intro__partners-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(1.2rem, 3vw, 2.4rem); }
+.intro__partners-row .brandmark--logo { height: 40px; max-width: 150px; }
+.intro__partners-row .brandmark--light { height: 44px; }
+
 .intro__cue {
   position: absolute;
   inset-block-end: 1.5rem;
   inset-inline: 0;
-  z-index: 4;
+  z-index: 5;
   display: flex;
   justify-content: center;
   color: var(--ink-mute);
@@ -138,9 +199,15 @@
 
 @media (max-width: 720px) {
   .intro__stats { grid-template-columns: 1fr; }
-  .intro__map .saudimap { max-width: 94vw; opacity: 0.8; }
+  .intro__map .saudimap { max-width: 94vw; opacity: 0.85; }
   .intro__overlay::before { inset: -6% -10%; }
+  .intro__partners { padding: 0.8rem 1rem; }
+  .intro__partners-row { gap: 1.4rem; }
+  .intro__partners-row .brandmark--logo { height: 34px; }
+  .intro__partners-row .brandmark--light { height: 38px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .intro__cue i { animation: none; }
+  .intro__stars { animation: none !important; }
 }
+html.reduced .intro__stars { animation: none !important; }

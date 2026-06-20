@@ -22,27 +22,30 @@
   transform: translateZ(0);
 }
 
-/* teal field — drifts up the right, the dominant "slow upward" motion */
+/* teal field — drifts up the right, the dominant "slow upward" motion. Edge-
+   weighted (off-screen origin) so the glow frames the content, never fogs it. */
 .atmos__aura--teal {
-  width: 82vmax; height: 82vmax;
-  top: -24vmax; right: -16vmax;
-  background: radial-gradient(closest-side, rgba(56, 224, 205, 0.30), rgba(56, 224, 205, 0.10) 42%, transparent 72%);
+  width: 86vmax; height: 86vmax;
+  top: -26vmax; right: -18vmax;
+  background: radial-gradient(closest-side, rgba(56, 224, 205, 0.46), rgba(56, 224, 205, 0.15) 42%, transparent 72%);
   animation: atmos-teal 34s ease-in-out infinite;
 }
 
 /* violet field — counter-drifts from the lower left, deeper and slower */
 .atmos__aura--violet {
-  width: 74vmax; height: 74vmax;
-  bottom: -26vmax; left: -18vmax;
-  background: radial-gradient(closest-side, rgba(138, 120, 240, 0.27), rgba(138, 120, 240, 0.09) 44%, transparent 72%);
+  width: 78vmax; height: 78vmax;
+  bottom: -28vmax; left: -20vmax;
+  background: radial-gradient(closest-side, rgba(138, 120, 240, 0.42), rgba(138, 120, 240, 0.14) 44%, transparent 72%);
   animation: atmos-violet 46s ease-in-out infinite;
 }
 
-/* deep navy core — a faint breathing centre that adds depth behind content */
+/* deep navy depth — a breathing centre that adds real depth behind content.
+   NOT screen-blended (a genuine base wash), kept low + wide so text stays clear. */
 .atmos__aura--deep {
-  width: 100vmax; height: 66vmax;
+  width: 110vmax; height: 72vmax;
   top: 50%; left: 50%;
-  background: radial-gradient(closest-side, rgba(30, 70, 142, 0.30), rgba(20, 48, 100, 0.10) 46%, transparent 74%);
+  mix-blend-mode: normal;
+  background: radial-gradient(closest-side, rgba(28, 66, 134, 0.34), rgba(18, 44, 94, 0.12) 48%, transparent 76%);
   animation: atmos-deep 40s ease-in-out infinite;
 }
 
@@ -58,22 +61,22 @@
 
 /* slow zoom in/out + gentle upward drift + fade — the cinematic mood */
 @keyframes atmos-teal {
-  0%   { transform: translate3d(0, 4vmax, 0) scale(1.0);  opacity: 0.0; }
-  30%  { opacity: 0.55; }
-  50%  { transform: translate3d(-2vmax, -3vmax, 0) scale(1.16); opacity: 0.7; }
-  70%  { opacity: 0.5; }
-  100% { transform: translate3d(0, 4vmax, 0) scale(1.0);  opacity: 0.0; }
+  0%   { transform: translate3d(0, 5vmax, 0) scale(1.0);  opacity: 0.12; }
+  30%  { opacity: 0.7; }
+  50%  { transform: translate3d(-3vmax, -4vmax, 0) scale(1.18); opacity: 0.88; }
+  70%  { opacity: 0.6; }
+  100% { transform: translate3d(0, 5vmax, 0) scale(1.0);  opacity: 0.12; }
 }
 @keyframes atmos-violet {
-  0%   { transform: translate3d(0, 0, 0) scale(1.12); opacity: 0.0; }
-  35%  { opacity: 0.5; }
-  55%  { transform: translate3d(3vmax, -2vmax, 0) scale(1.0); opacity: 0.62; }
-  100% { transform: translate3d(0, 0, 0) scale(1.12); opacity: 0.0; }
+  0%   { transform: translate3d(0, 0, 0) scale(1.14); opacity: 0.14; }
+  35%  { opacity: 0.62; }
+  55%  { transform: translate3d(4vmax, -3vmax, 0) scale(1.0); opacity: 0.8; }
+  100% { transform: translate3d(0, 0, 0) scale(1.14); opacity: 0.14; }
 }
 @keyframes atmos-deep {
-  0%   { transform: translate3d(-50%, -50%, 0) scale(1.0);  opacity: 0.18; }
-  50%  { transform: translate3d(-50%, -52%, 0) scale(1.12); opacity: 0.5; }
-  100% { transform: translate3d(-50%, -50%, 0) scale(1.0);  opacity: 0.18; }
+  0%   { transform: translate3d(-50%, -50%, 0) scale(1.0);  opacity: 0.28; }
+  50%  { transform: translate3d(-50%, -53%, 0) scale(1.14); opacity: 0.62; }
+  100% { transform: translate3d(-50%, -50%, 0) scale(1.0);  opacity: 0.28; }
 }
 
 /* Reduced motion / low power: freeze everything at a calm static glow. */

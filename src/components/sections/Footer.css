@@ -35,15 +35,19 @@
 .footer__present { color: var(--ink-soft); font-size: var(--fz-label); max-width: 70ch; line-height: 1.7; }
 .footer__present-label { color: var(--teal); }
 .footer__present strong { color: var(--ink); font-weight: 600; }
-/* official partner logos — clean neutral containers, exact artwork, no glow */
+/* official partner logos — a clean horizontal row, exact artwork, no tiles/glow.
+   White-on-transparent marks sit directly on the dark footer; only the dark
+   Vision 2030 mark carries a small neutral backing. */
 .footer__logos {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.7rem, 1.6vw, 1.1rem);
+  gap: clamp(1.6rem, 3.5vw, 3rem);
+  padding-block: clamp(0.4rem, 1vh, 0.9rem);
 }
-.footer__logos .brandmark--logo { height: 66px; min-width: 92px; padding: 0.45rem 0.8rem; }
+.footer__logos .brandmark--logo { height: 52px; max-width: 190px; }
+.footer__logos .brandmark--light { height: 58px; }     /* offset the backing padding */
 
 .footer__entities { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; }
 /* the entity chip / logo container is provided by <BrandMark>; the li is a plain

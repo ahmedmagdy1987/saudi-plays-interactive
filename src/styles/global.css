@@ -169,10 +169,18 @@ button { font-family: inherit; cursor: pointer; }
 /* ---- Global section-header system: one consistent spacing rhythm --------
    eyebrow→title ≈ 12–18px · title→subtitle ≈ 18–26px · header→visual ≈ 40–64px
    subtitle line-height ≈ 1.8 · paragraph width ≤ 760px. No negative margins. */
-.sec-header { max-width: min(840px, 94%); margin-bottom: clamp(2.5rem, 5vh, 4rem); }
-.sec-header[data-align="center"] { margin-inline: auto; text-align: center; }
+/* The header div spans the FULL centered content grid (it carries `.container`);
+   the heading block is width-constrained but ANCHORED to the grid's inline-start
+   edge — the exact line where the section content begins (RTL: right edge, LTR:
+   left edge). Only `data-align="center"` opts into centering (cinematic uses). */
+.sec-header { margin-bottom: clamp(2.5rem, 5vh, 4rem); }
+.sec-header .eyebrow,
+.sec-header .sec-title,
+.sec-header .sec-lede { max-width: min(840px, 94%); }
+.sec-header[data-align="center"] { text-align: center; }
 .sec-header[data-align="center"] .eyebrow { justify-content: center; }
-.sec-header[data-align="center"] .lede,
+.sec-header[data-align="center"] .eyebrow,
+.sec-header[data-align="center"] .sec-title,
 .sec-header[data-align="center"] .sec-lede { margin-inline: auto; }
 .sec-header .eyebrow { margin-bottom: clamp(0.78rem, 1vw, 1.12rem); }
 .sec-title { margin: 0; }

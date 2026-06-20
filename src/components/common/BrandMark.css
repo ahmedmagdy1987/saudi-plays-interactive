@@ -1,11 +1,12 @@
-/* Partner / entity mark — logo (verified) or elegant text fallback. */
+/* Partner / entity mark — official logo (exact artwork) or text fallback.
+   No glow, border, drop-shadow or decorative effects on official logos. */
 .brandmark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-/* text fallback keeps the existing footer chip look (incl. the small dot) */
+/* text fallback keeps the footer entity chip look (incl. the small dot) */
 .brandmark--text {
   gap: 0.5rem;
   padding: 0.55em 1rem;
@@ -22,21 +23,23 @@
   flex: none;
 }
 
-/* verified-logo container: a clean neutral panel so official artwork (colour or
-   negative) always reads on the dark UI — no glow added to government marks */
-.brandmark--logo {
-  height: 46px;
-  padding: 0.5rem 0.9rem;
-  border-radius: 12px;
-  background: rgba(244, 247, 252, 0.94);
-  border: 1px solid var(--line-strong);
-  transition: transform var(--dur-fast) var(--ease-out);
-}
-.brandmark--logo:hover { transform: translateY(-2px); }
+/* logo: shown at exact appearance; size is set by the placement (height) */
+.brandmark--logo { height: 100%; }
 .brandmark__img {
   height: 100%;
   width: auto;
-  max-width: 150px;
+  max-width: 100%;
   object-fit: contain;
   display: block;
+}
+
+/* WHITE/light artwork → transparent, directly on the dark partner band */
+.brandmark--dark { background: none; padding: 0; }
+
+/* DARK artwork → the smallest possible subtle neutral backing (this logo only),
+   kept light enough to read but never a big white tile and never any glow */
+.brandmark--light {
+  background: rgba(238, 243, 251, 0.92);
+  border-radius: 10px;
+  padding: 0.4rem 0.6rem;
 }

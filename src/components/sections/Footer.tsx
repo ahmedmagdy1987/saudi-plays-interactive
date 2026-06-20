@@ -12,12 +12,13 @@ import "./Footer.css";
 export default function Footer() {
   const { brand, footer, ui } = useContent();
   const { lang } = useLang();
-  // verified official partner marks (files live in public/brand/). Alt text is
-  // localized; the artwork is shown exactly as supplied (no recolor/crop/glow).
+  // verified official partner marks (files in public/brand/). Shown exactly as
+  // supplied; contrast per artwork (GEA/QLP are white-on-transparent → dark band;
+  // Vision 2030 is dark artwork → a small neutral backing). Localized alt text.
   const partnerLogos = [
-    { id: "gea", src: "/brand/gea.png", label: lang === "en" ? "General Entertainment Authority" : "الهيئة العامة للترفيه" },
-    { id: "vision2030", src: "/brand/vision2030.png", label: lang === "en" ? "Saudi Vision 2030" : "رؤية السعودية 2030" },
-    { id: "qlp", src: "/brand/qlp.png", label: lang === "en" ? "Quality of Life Program" : "برنامج جودة الحياة" },
+    { id: "gea", src: "/brand/gea.png", contrast: "dark" as const, label: lang === "en" ? "General Entertainment Authority" : "الهيئة العامة للترفيه" },
+    { id: "vision2030", src: "/brand/vision2030.png", contrast: "light" as const, label: lang === "en" ? "Saudi Vision 2030" : "رؤية السعودية 2030" },
+    { id: "qlp", src: "/brand/qlp.png", contrast: "dark" as const, label: lang === "en" ? "Quality of Life Program" : "برنامج جودة الحياة" },
   ];
   return (
     <footer className="site-footer" aria-label={ui.footerAria}>
@@ -33,10 +34,10 @@ export default function Footer() {
             <span className="footer__present-label">{footer.presentedByLabel}</span>{" "}
             <strong>{footer.presentedBy}</strong> {footer.collaboration}
           </p>
-          {/* official partner marks, shown exactly as supplied in neutral containers */}
+          {/* official strategic-partner marks, shown exactly as supplied */}
           <div className="footer__logos">
             {partnerLogos.map((l) => (
-              <BrandMark key={l.id} label={l.label} src={l.src} available />
+              <BrandMark key={l.id} label={l.label} src={l.src} contrast={l.contrast} available />
             ))}
           </div>
           {/* full localized entity names kept as supporting text */}
