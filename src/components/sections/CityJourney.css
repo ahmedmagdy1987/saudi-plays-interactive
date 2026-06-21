@@ -9,8 +9,12 @@
 /* ---- Cinematic stage -------------------------------------------------- */
 .cj__track {
   position: relative;
-  /* one viewport-ish of scroll per scene; lighter on mobile */
-  height: calc(var(--cj-n, 14) * var(--cj-seg, 72vh));
+  /* Weighted pacing: height = Σ(scene hold + transition weights) × per-unit scroll
+     (--cj-units is set from JS). Holds park the camera so each beat reads — the point
+     image hold is the longest — while transitions ease (smoothstep) between them. The
+     per-unit value is tuned so the whole journey is ~13–14 viewports of scroll: not
+     rushed, but no dead scrolling. */
+  height: calc(var(--cj-units, 28) * var(--cj-seg, 27vh));
 }
 .cj__stage {
   position: sticky;
@@ -232,7 +236,7 @@
 
 /* ---- Mobile: keep the same hierarchy, lighter + not rushed ----------- */
 @media (max-width: 820px) {
-  .cj__track { --cj-seg: 64vh; }
+  .cj__track { --cj-seg: 25vh; }
   .cj__saudi .saudimap { width: 92vw; }
   .cj__plane { width: 94vw; aspect-ratio: 4 / 5; max-height: 70vh; }
   .cj__plane { backdrop-filter: none; }

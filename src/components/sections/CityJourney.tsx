@@ -20,18 +20,75 @@ import "./CityJourney.css";
  * are animated; point images lazy-load as their scene approaches.
  *
  * Progressive enhancement (iPhone blank-page safety): the section renders a fully
- * readable STATIC gallery by default and only upgrades to the cinematic stage once
- * a live animation frame is confirmed. Reduced-motion stays static; if the global
- * fail-safe (html.sp-revealed) ever fires, it reverts to static. So this section
- * can never contribute a blank page.
+ * readable STATIC gallery by default and upgrades to the cinematic stage once the
+ * rAF ticker is proven live. This motion-readiness decision is DELIBERATELY
+ * DECOUPLED from the global blank-page fail-safe (html.sp-revealed): that fail-safe
+ * only guarantees text is visible during a slow start — it does NOT mean motion is
+ * permanently broken, so it must never lock §10 to the static gallery. A slow
+ * WhatsApp/Safari cold start (or a delayed/frozen first frame that later recovers)
+ * upgrades to cinematic as soon as frames flow, even if the watchdog already fired.
+ * The static gallery is permanent ONLY for genuine reduced-motion or a confirmed
+ * unrecoverable engine error. So this section can never contribute a blank page and
+ * can never get wrongly stuck in the degraded layout on iPhone.
  */
 const VB = { w: 1000, h: 845, cx: 500, cy: 422 };
+
+/* ---- pacing timeline ------------------------------------------------------
+   The journey is scrubbed by scroll. Instead of mapping scroll linearly onto the
+   scene list (which made each scene flash past in a tiny scroll movement), every
+   scene gets a HOLD span where the camera is parked (the map/city/point image is
+   held, fully readable) and every pair of scenes gets a TRANSITION span where the
+   camera eases from one to the next (smoothstep — C1-continuous, so no snapping).
+   The point-image HOLD is the longest phase so each photo reads clearly before it
+   exits. Pure function of scroll position → reverse scrolling replays the identical
+   pacing. Weights are unitless; the track height = Σweights × --cj-seg. */
+type Seg = { kind: "hold" | "trans"; i: number; s: number; e: number };
+const HOLD: Record<Scene["kind"], number> = { overview: 1.3, city: 1.7, point: 2.7 };
+const transWeight = (a: Scene, b: Scene): number => {
+  if (a.kind === "overview" || b.kind === "overview") return 1.5; // deliberate zoom to / from the Kingdom map
+  if (a.kind === "city" && b.kind === "point") return 1.2;        // approach + point focus + image fade-in
+  if (a.kind === "point" && b.kind === "city") return 1.8;        // image exit + pull back + pan to the next city
+  return 1.5;                                                     // point→point: exit + readable dip-to-city + next approach
+};
+function buildTimeline(scenes: Scene[]): { segs: Seg[]; W: number } {
+  const segs: Seg[] = [];
+  let acc = 0;
+  for (let i = 0; i < scenes.length; i++) {
+    const hw = HOLD[scenes[i].kind];
+    segs.push({ kind: "hold", i, s: acc, e: acc + hw });
+    acc += hw;
+    if (i < scenes.length - 1) {
+      const tw = transWeight(scenes[i], scenes[i + 1]);
+      segs.push({ kind: "trans", i, s: acc, e: acc + tw });
+      acc += tw;
+    }
+  }
+  return { segs, W: acc };
+}
+const smoothstep = (x: number) => {
+  const t = x < 0 ? 0 : x > 1 ? 1 : x;
+  return t * t * (3 - 2 * t);
+};
+// scroll progress (0–1) → continuous scene float, with parked holds + eased transitions
+const progressToF = (segs: Seg[], W: number, N: number, p: number): number => {
+  const pos = (p < 0 ? 0 : p > 1 ? 1 : p) * W;
+  for (let k = 0; k < segs.length; k++) {
+    const sg = segs[k];
+    if (pos <= sg.e || k === segs.length - 1) {
+      if (sg.kind === "hold") return sg.i;
+      return sg.i + smoothstep((pos - sg.s) / (sg.e - sg.s || 1));
+    }
+  }
+  return N - 1;
+};
 
 export default function CityJourney() {
   const { lang } = useLang();
   const reduced = useReducedMotion();
   const [mode, setMode] = useState<"static" | "cinematic">("static");
   const rootRef = useRef<HTMLElement>(null);
+  const failedRef = useRef(false); // engine hit a CONFIRMED unrecoverable error → stay static
+  const dbgRef = useRef<HTMLDivElement | null>(null);
 
   const data = cityJourney;
   const t = <T,>(b: { ar: T; en: T }) => (lang === "en" ? b.en : b.ar);
@@ -48,20 +105,56 @@ export default function CityJourney() {
   const gIndex = (ci: number, pi: number) =>
     flat.findIndex((f) => f.ci === ci && f.pi === pi);
 
-  // ---- decide render mode: cinematic only when motion is genuinely live ----
+  // scene-pacing timeline (holds + eased transitions) — drives the scrub + track height
+  const timeline = useMemo(() => buildTimeline(scenes), [scenes]);
+  // opt-in diagnostic overlay: ?debugJourney=1 (no UI otherwise)
+  const debug = useMemo(
+    () => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debugJourney") === "1",
+    [],
+  );
+
+  // ---- motion-readiness → cinematic (DECOUPLED from the blank-page fail-safe) ----
+  // Upgrade to the cinematic stage only once the rAF ticker is genuinely live (two
+  // frames arriving back-to-back). A slow/frozen first frame — iOS cold start, a
+  // backgrounded WhatsApp/Safari webview — does NOT lock static: the poll keeps
+  // trying and upgrades the moment frames flow, even if html.sp-revealed already
+  // fired (the global blank-page safety only reveals text; it must never disable
+  // §10's motion). Permanent static is reserved for reduced-motion (here) or a
+  // CONFIRMED unrecoverable engine error (failedRef, set by the scene engine).
   useEffect(() => {
     if (reduced) { setMode("static"); return; }
-    let r1 = 0, r2 = 0, cancelled = false;
-    // two real frames prove the ticker advances (stalled rAF -> stays static)
-    r1 = requestAnimationFrame(() => {
-      r2 = requestAnimationFrame(() => { if (!cancelled) setMode("cinematic"); });
-    });
-    // if the global blank-page fail-safe fires, fall back to the readable layout
-    const mo = new MutationObserver(() => {
-      if (document.documentElement.classList.contains("sp-revealed")) setMode("static");
-    });
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => { cancelled = true; cancelAnimationFrame(r1); cancelAnimationFrame(r2); mo.disconnect(); };
+    if (failedRef.current) return;
+    let cancelled = false, poll = 0;
+    const confirm = () => {
+      if (cancelled || failedRef.current) return;
+      clearInterval(poll);                    // ticker proven live → stop probing
+      setMode("cinematic");
+    };
+    // Two queued frames prove the rAF ticker actually advances (a stalled ticker
+    // never fires them). We do NOT require a fast/smooth cadence — just liveness —
+    // so the journey upgrades on slow devices too. Each probe is an independent
+    // rAF→rAF chain (never cancelled), so a slow in-flight chain is never interrupted.
+    const probe = () => requestAnimationFrame(() => requestAnimationFrame(confirm));
+    probe();
+    // Re-arm the probe periodically (setInterval survives a frozen rAF). If the first
+    // frames are delayed/frozen — iOS cold start, a backgrounded WhatsApp/Safari
+    // webview — a later probe lands once the ticker recovers and upgrades then, even
+    // after the global blank-page watchdog has already fired. First chain to land wins.
+    poll = window.setInterval(() => { if (!document.hidden && !failedRef.current) probe(); }, 700);
+    // Any genuine interaction (scrolling toward §10, a tap) means the rAF ticker is
+    // live RIGHT NOW — probe immediately so the upgrade lands as the user engages,
+    // well before they reach the journey. Passive + cheap; first probe to confirm wins.
+    const kick = () => probe();
+    const onVis = () => { if (!document.hidden) probe(); };
+    const evs = ["scroll", "touchstart", "pointerdown", "wheel", "keydown"] as const;
+    evs.forEach((e) => window.addEventListener(e, kick, { passive: true }));
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+      evs.forEach((e) => window.removeEventListener(e, kick));
+      document.removeEventListener("visibilitychange", onVis);
+    };
   }, [reduced]);
 
   // ---- cinematic scene engine (sticky stage + scrubbed scroll progress) ----
@@ -145,7 +238,8 @@ export default function CityJourney() {
       let degraded = false;
       const render = (progress: number) => {
        try {
-        const f = progress * (N - 1);
+        // paced scene float: parked holds + smoothstep transitions (longest hold = point image)
+        const f = progressToF(timeline.segs, timeline.W, N, progress);
         const i0 = Math.floor(f);
         const i1 = Math.min(i0 + 1, N - 1);
         warmPanels(i0, i1);
@@ -198,10 +292,18 @@ export default function CityJourney() {
             pt.classList.toggle("is-active", on);
           }
         });
+
+        if (debug && dbgRef.current) {
+          const sc = scenes[Math.max(0, Math.min(N - 1, active))];
+          const loaded = imgEls.filter((im) => im && im.getAttribute("src") && im.naturalWidth > 0).length;
+          dbgRef.current.textContent =
+            `§10 cinematic · p=${progress.toFixed(3)} f=${f.toFixed(2)} · scene ${active}/${N - 1} ${sc.kind}` +
+            ` · imgs ${loaded}/${flat.length} · sp-revealed=${document.documentElement.classList.contains("sp-revealed")}`;
+        }
        } catch {
         // a per-frame render glitch must degrade only the journey to its readable
         // static layout — never escalate to the global (site-wide) error fail-safe.
-        if (!degraded) { degraded = true; st?.kill(); setMode("static"); }
+        if (!degraded) { degraded = true; failedRef.current = true; st?.kill(); setMode("static"); }
        }
       };
 
@@ -223,10 +325,11 @@ export default function CityJourney() {
       return () => st?.kill();
     } catch {
       // any failure in the cinematic engine must never blank the page
+      failedRef.current = true;
       window.__spRevealAll?.();
       setMode("static");
     }
-  }, [mode, lang, scenes, flat, data]);
+  }, [mode, lang, scenes, flat, data, timeline, debug]);
 
   const catLabel = (c: keyof typeof data.ui.categories) => t(data.ui.categories[c]);
 
@@ -245,7 +348,7 @@ export default function CityJourney() {
       </div>
 
       {mode === "cinematic" ? (
-        <div className="cj__track" style={{ "--cj-n": scenes.length } as CSSProperties}>
+        <div className="cj__track" style={{ "--cj-units": timeline.W } as CSSProperties}>
           <div className="cj__stage">
             {/* Level 1 — Saudi map */}
             <div className="cj__saudi">
@@ -319,6 +422,20 @@ export default function CityJourney() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {debug && (
+        <div
+          ref={dbgRef}
+          style={{
+            position: "fixed", left: "8px", bottom: "8px", zIndex: 9999,
+            font: "11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace", color: "#9ff",
+            background: "rgba(2,6,15,0.82)", border: "1px solid rgba(95,243,226,0.4)",
+            borderRadius: "6px", padding: "4px 8px", pointerEvents: "none", maxWidth: "92vw",
+          } as CSSProperties}
+        >
+          {`§10 ${mode} · reduced=${String(reduced)} · sp-revealed=${typeof document !== "undefined" && document.documentElement.classList.contains("sp-revealed")}`}
         </div>
       )}
     </section>

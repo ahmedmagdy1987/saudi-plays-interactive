@@ -53,21 +53,54 @@ export default function SectionProgressNavigation() {
     };
   }, []);
 
-  // active-section detection
+  // active-section detection — a scroll-position reference line, NOT intersection
+  // ratio. The City Journey (§10) is a many-viewport-tall sticky stage; its short DOM
+  // header would never win an intersection-ratio contest, so the old logic never
+  // marked §10 active while the user was inside the journey. Here the active section
+  // is the last one whose top has passed a line ~42% down the viewport — so §10 stays
+  // active for its ENTIRE sticky span (until the Finale begins) and reverse scrolling
+  // restores the previous section exactly (a pure function of scroll position).
   useEffect(() => {
-    const sections = NAV.map((n) => document.getElementById(n.id)).filter((el): el is HTMLElement => !!el);
-    const ratios = new Map<string, number>();
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) ratios.set(e.target.id, e.intersectionRatio);
-        let best = active, max = -1;
-        for (const [id, r] of ratios) if (r > max) { max = r; best = id; }
-        if (max > 0) setActive(best);
-      },
-      { threshold: [0.15, 0.35, 0.55, 0.75] },
-    );
-    sections.forEach((s) => obs.observe(s));
-    return () => obs.disconnect();
+    const ids = NAV.map((n) => n.id);
+    let bounds: { id: string; top: number }[] = [];
+    const measure = () => {
+      const y = window.scrollY || window.pageYOffset || 0;
+      bounds = ids
+        .map((id) => {
+          const el = document.getElementById(id);
+          return el ? { id, top: el.getBoundingClientRect().top + y } : null;
+        })
+        .filter((b): b is { id: string; top: number } => b !== null)
+        .sort((a, b) => a.top - b.top);
+    };
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      if (!bounds.length) return;
+      const ref = (window.scrollY || window.pageYOffset || 0) + window.innerHeight * 0.42;
+      let best = bounds[0].id;
+      for (const b of bounds) if (b.top <= ref) best = b.id;
+      setActive(best);
+    };
+    const onScroll = () => { if (!raf && !document.hidden) raf = requestAnimationFrame(update); };
+    const remeasure = () => { measure(); onScroll(); };
+    measure();
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", remeasure);
+    window.addEventListener("load", remeasure);
+    // The §10 static→cinematic upgrade GROWS the page by many viewports (the sticky
+    // track appears); re-measure section offsets when the document resizes so the
+    // journey's true span — and thus its active range — is always tracked.
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined") { ro = new ResizeObserver(remeasure); ro.observe(document.body); }
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", remeasure);
+      window.removeEventListener("load", remeasure);
+      ro?.disconnect();
+      cancelAnimationFrame(raf);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [NAV]);
 
