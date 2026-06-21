@@ -36,7 +36,7 @@ import "./SectionBackgroundStage.css";
  * blank. Off-screen clips pause; everything pauses when the tab is hidden. Reduced
  * motion never autoplays.
  */
-interface MediaItem { id: string; img: string; loop?: string }
+interface MediaItem { id: string; img: string; loop?: string; portrait?: string }
 const MEDIA: MediaItem[] = [
   { id: "vision", img: "s02-vision" },
   { id: "market", img: "s03-market" },
@@ -251,16 +251,25 @@ export default function SectionBackgroundStage() {
     }
   }, [ios]);
 
-  // ---- iPhone / iOS: in-flow per-section absolute media (mirrors §10) ----
+  // ---- iPhone / iOS: in-flow, viewport-PINNED media that crossfades by scroll ----
+  // Each .ms-flow layer spans the whole document and holds a `position: sticky` 100svh
+  // media box, so ALL layers stay pinned to the viewport (the §10-proven iOS-safe
+  // alternative to position:fixed). One ScrollTrigger maps scroll to a continuous
+  // "section float"; opacity + a restrained scale (1.00→1.02) are derived from each
+  // layer's distance to that float — the SAME crossfade language as the desktop fixed
+  // stage, so the iPhone backgrounds ENTER → HOLD → EXIT and crossfade with scroll
+  // (and reverse deterministically) instead of toggling on/off. Only ~2 layers paint at
+  // once (faded layers go visibility:hidden); no permanent will-change on the layers.
   useEffect(() => {
     if (!ios) return;
     try {
     const flow = flowRef.current!;
     const reduced = prefersReducedMotion();
-    const secEls = MEDIA.map((m) => document.getElementById(m.id));
-    const boxes = Array.from(flow.querySelectorAll<HTMLElement>(".ms-flow__sec"));
-    const imgs = boxes.map((b) => b.querySelector<HTMLImageElement>(".ms-flow__img")!);
-    const videos = boxes.map((b) => b.querySelector<HTMLVideoElement>(".ms-flow__video"));
+    const layers = Array.from(flow.querySelectorAll<HTMLElement>(".ms-flow__sec"));
+    const imgs = layers.map((l) => l.querySelector<HTMLImageElement>(".ms-flow__img")!);
+    const videos = layers.map((l) => l.querySelector<HTMLVideoElement>(".ms-flow__video"));
+    const setO = layers.map((l) => gsap.quickSetter(l, "opacity") as (v: number) => void);
+    const loaded = new Array(N).fill(false);
     const vloaded = new Array(N).fill(false);
     const vready = new Array(N).fill(false);
     const vwant = new Array(N).fill(false);
@@ -274,41 +283,43 @@ export default function SectionBackgroundStage() {
       try { (v as unknown as { disableRemotePlayback?: boolean }).disableRemotePlayback = true; } catch { /* noop */ }
     });
 
-    // Position each section's media box over its section (document coords; .ms-flow is
-    // absolute inset:0 inside the position:relative .app-root, which starts at doc 0).
-    const measure = () => {
+    let sections: { center: number }[] = [];
+    const recache = () => {
       const y = window.scrollY || 0;
-      for (let i = 0; i < N; i++) {
-        const el = secEls[i];
-        const box = boxes[i];
-        if (!el || !box) continue;
+      sections = MEDIA.map((m) => {
+        const el = document.getElementById(m.id);
+        if (!el) return null;
         const r = el.getBoundingClientRect();
-        box.style.top = `${Math.round(r.top + y)}px`;
-        box.style.height = `${Math.round(r.height)}px`;
+        return { center: r.top + y + r.height / 2 };
+      }).filter((s): s is { center: number } => s !== null);
+    };
+    recacheRef.current = recache;
+
+    const floatPos = () => {
+      if (sections.length < N) return -1;
+      const c = (window.scrollY || 0) + window.innerHeight / 2;
+      if (c <= sections[0].center) return -Math.min(1.2, (sections[0].center - c) / window.innerHeight);
+      const last = sections[N - 1];
+      if (c >= last.center) return N - 1;
+      for (let i = 0; i < N - 1; i++) {
+        const a = sections[i], b = sections[i + 1];
+        if (c >= a.center && c <= b.center) return i + (c - a.center) / (b.center - a.center || 1);
       }
+      return 0;
     };
 
-    // The STILL is the guaranteed visible base: assign src for the active section AND
-    // its immediate neighbours (a small window, never all 9 at once), and reveal it
-    // once it has truly decoded (naturalWidth > 0) so essential imagery never depends
-    // on lazy timing or a fragile effect.
-    const warmImg = (i: number) => {
-      if (i < 0 || i >= N) return;
+    // STILL = guaranteed base; src assigned for the active layer + neighbours only.
+    const loadImg = (i: number) => {
+      if (loaded[i]) return;
+      loaded[i] = true;
       const img = imgs[i];
-      if (!img) return;
-      if (!img.getAttribute("src")) {
-        const ds = img.getAttribute("data-src");
-        if (ds) img.setAttribute("src", ds);
-      }
-      const reveal = () => { if (img.naturalWidth > 0) img.classList.add("is-on"); };
-      if (img.complete) reveal();
-      else { img.addEventListener("load", reveal, { once: true }); img.addEventListener("loadeddata", reveal, { once: true }); }
+      const ds = img.getAttribute("data-src");
+      if (ds && !img.getAttribute("src")) img.setAttribute("src", ds);
     };
 
-    // poster→video crossfade only after a REAL first frame (never a blank)
-    const showVideo = (i: number) => {
-      if (vready[i] && vwant[i] && !document.hidden) boxes[i].classList.add("is-playing");
-    };
+    // video ONLY for sections that ship a dedicated PORTRAIT 9:16 variant — a landscape
+    // loop is never up-scaled into the portrait crop. Poster/still stays until a real frame.
+    const showVideo = (i: number) => { if (vready[i] && vwant[i] && !document.hidden) layers[i].classList.add("is-playing"); };
     const onReady = (i: number) => { vready[i] = true; if (vwant[i]) showVideo(i); };
     const startVideo = (i: number) => {
       const v = videos[i];
@@ -316,87 +327,75 @@ export default function SectionBackgroundStage() {
       vwant[i] = true;
       if (!vloaded[i]) {
         vloaded[i] = true;
-        v.querySelectorAll("source").forEach((s) => {
-          const d = s.getAttribute("data-src");
-          if (d && !s.getAttribute("src")) s.setAttribute("src", d);
-        });
+        v.querySelectorAll("source").forEach((s) => { const ds = s.getAttribute("data-src"); if (ds && !s.getAttribute("src")) s.setAttribute("src", ds); });
         v.load();
         v.addEventListener("loadeddata", () => onReady(i), { once: true });
         v.addEventListener("canplay", () => onReady(i), { once: true });
         const rvfc = (v as unknown as { requestVideoFrameCallback?: (cb: () => void) => number }).requestVideoFrameCallback;
         if (rvfc) rvfc.call(v, () => onReady(i));
-      } else if (vready[i]) {
-        showVideo(i);
-      }
+      } else if (vready[i]) showVideo(i);
       const p = v.play?.();
-      if (p && typeof p.catch === "function") p.catch(() => { /* blocked autoplay → poster/still stays */ });
+      if (p && typeof p.catch === "function") p.catch(() => { /* blocked autoplay → still stays */ });
     };
     const stopVideo = (i: number) => {
       const v = videos[i];
       if (!v) return;
       vwant[i] = false;
-      boxes[i].classList.remove("is-playing");   // crossfade back to the still
+      layers[i].classList.remove("is-playing");
       if (!v.paused && v.readyState >= 3) v.pause();
     };
 
-    // Drive everything off real section visibility (no fixed-layer scroll math). Keep
-    // the active section + immediate neighbours warmed; pause off-screen video.
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          const i = secEls.indexOf(e.target as HTMLElement);
-          if (i < 0) continue;
-          if (e.isIntersecting) {
-            warmImg(i - 1); warmImg(i); warmImg(i + 1);
-            if (MEDIA[i].loop) startVideo(i);
-          } else if (MEDIA[i].loop) {
-            stopVideo(i);
-          }
-        }
-      },
-      { rootMargin: "25% 0px 25% 0px", threshold: 0 },
-    );
-    secEls.forEach((el) => el && io.observe(el));
-
-    measure();
-    // warm whatever is already on/near screen immediately (don't wait for a scroll)
-    {
-      const vh = window.innerHeight, y = window.scrollY || 0;
+    const render = () => {
+      const f = floatPos();
       for (let i = 0; i < N; i++) {
-        const el = secEls[i]; if (!el) continue;
-        const r = el.getBoundingClientRect();
-        if (r.top + y < y + vh * 1.25 && r.bottom + y > y - vh * 0.25) { warmImg(i - 1); warmImg(i); warmImg(i + 1); }
+        const d = f - i;
+        const ad = Math.abs(d);
+        const op = ad >= 1.1 ? 0 : Math.max(0, 1 - ad / 1.1);
+        setO[i](op);
+        const vis = op > 0.001 ? "visible" : "hidden";
+        if (layers[i].style.visibility !== vis) layers[i].style.visibility = vis;
+        // restrained scroll-linked zoom only (no heavy parallax): active ≈1.02, receding 1.00
+        const sc = reduced ? 1 : 1 + 0.02 * Math.max(0, 1 - ad);
+        const tf = `scale(${sc.toFixed(4)})`;
+        if (imgs[i].style.transform !== tf) imgs[i].style.transform = tf;
+        const vEl = videos[i];
+        if (vEl && vEl.style.transform !== tf) vEl.style.transform = tf;
+        if (ad < 1.8) loadImg(i);
+        if (videos[i]) {
+          const want = op > 0.5;            // dominant layer drives its portrait clip
+          if (want && !vwant[i]) startVideo(i);
+          else if (!want && vwant[i]) stopVideo(i);
+        }
       }
-    }
+    };
 
-    let raf = 0;
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; measure(); }); };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", measure);
-    window.addEventListener("load", measure);
-    // the §10 static→cinematic upgrade (and font/layout settling) grows the page and
-    // shifts later sections — re-measure on any document size change.
-    let ro: ResizeObserver | undefined;
-    if (typeof ResizeObserver !== "undefined") { ro = new ResizeObserver(() => measure()); ro.observe(document.body); }
+    recache();
+    render();
+
+    const trig = ScrollTrigger.create({
+      trigger: document.documentElement,
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: render,
+      onRefresh: () => { recache(); render(); },
+    });
+
     const onVis = () => {
       if (document.hidden) {
         for (let i = 0; i < N; i++) { const v = videos[i]; if (v && !v.paused) v.pause(); }
       } else {
-        for (let i = 0; i < N; i++) if (vwant[i]) startVideo(i);
-        measure();
+        render();                            // re-derive want from current scroll → replay active
       }
     };
     document.addEventListener("visibilitychange", onVis);
-    recacheRef.current = measure;
+    // §10 static→cinematic upgrade + font settling grow the page → re-measure offsets
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined") { ro = new ResizeObserver(() => { recache(); render(); }); ro.observe(document.body); }
 
     return () => {
-      io.disconnect();
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", measure);
-      window.removeEventListener("load", measure);
+      trig.kill();
       document.removeEventListener("visibilitychange", onVis);
       ro?.disconnect();
-      if (raf) cancelAnimationFrame(raf);
       videos.forEach((v) => v && v.pause());
     };
     } catch {
@@ -434,19 +433,23 @@ export default function SectionBackgroundStage() {
         )}
       </div>
 
-      {/* iPhone: in-flow per-section media (real <img> + <video>), positioned over each
-          section — the same iOS-safe full-bleed pattern proven by the §10 journey. */}
+      {/* iPhone: in-flow, viewport-PINNED media that crossfades by scroll float — real
+          <img> stills always; a <video> only where a dedicated PORTRAIT 9:16 variant
+          exists (landscape loops are never up-scaled into the portrait crop, so video
+          sections fall back to the high-quality still). The §10-proven iOS-safe pattern. */}
       {ios && (
         <div className="ms-flow" ref={flowRef} aria-hidden="true">
           {MEDIA.map((m, i) => (
             <div className="ms-flow__sec" data-i={i} data-sec={m.id} key={m.id}>
-              <img className="ms-flow__img" alt="" decoding="async" data-src={base(m.img + ".webp")} />
-              {m.loop && (
-                <video className="ms-flow__video" muted loop playsInline preload="none" disablePictureInPicture>
-                  <source data-src={base(m.loop + ".mp4")} type="video/mp4" />
-                </video>
-              )}
-              <span className="ms-flow__scrim" />
+              <div className="ms-flow__pin">
+                <img className="ms-flow__img" alt="" decoding="async" data-src={base(m.img + ".webp")} />
+                {m.portrait && (
+                  <video className="ms-flow__video" muted loop playsInline preload="none" disablePictureInPicture>
+                    <source data-src={base(m.portrait)} type="video/mp4" />
+                  </video>
+                )}
+                <span className="ms-flow__scrim" />
+              </div>
             </div>
           ))}
         </div>

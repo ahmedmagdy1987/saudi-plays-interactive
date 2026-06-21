@@ -111,13 +111,20 @@
   inset: 0 -2px;                 /* 2px bleed past the edges → no partial seam column */
   z-index: var(--z-atmos);
   pointer-events: none;
-  overflow: hidden;
 }
+/* Each layer spans the WHOLE document; its sticky child pins to the viewport, so every
+   layer stays viewport-pinned and the JS crossfades them by scroll float (opacity on the
+   layer, restrained scale on the media). No per-layer top/height, no permanent will-change. */
 .ms-flow__sec {
   position: absolute;
-  left: 0;
-  right: 0;
-  /* top + height assigned imperatively to each section's box */
+  inset: 0;
+  opacity: 0;
+}
+.ms-flow__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;                /* small viewport → fits under the iOS toolbar */
   overflow: hidden;
 }
 .ms-flow__img,
@@ -129,12 +136,9 @@
   max-width: none;
   max-height: none;
   object-fit: cover;
-  object-position: center;
-  opacity: 0;
+  object-position: center;       /* clean full-bleed cover — ONE sizing rule, no extra crop */
 }
-.ms-flow__img { transition: opacity 0.6s ease; }
-.ms-flow__img.is-on { opacity: 1; }
-.ms-flow__video { transition: opacity 0.7s ease; }
+.ms-flow__video { opacity: 0; transition: opacity 0.7s ease; }
 .ms-flow__sec.is-playing .ms-flow__video { opacity: 1; }
 .ms-flow__scrim {
   position: absolute;
