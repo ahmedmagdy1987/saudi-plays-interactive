@@ -385,7 +385,8 @@ export default function CityJourney() {
                 <figcaption className="cj__panel-cap">
                   <span className="cj__cat">{catLabel(f.point.category)}</span>
                   <b>{t(f.point.name)}</b>
-                  {f.point.temp && <span className="cj__temp">{t(data.ui.temp)}</span>}
+                  {/* `temp` is internal asset-management metadata only — the public UI
+                      never shows a placeholder badge. */}
                   {f.point.desc && <p>{t(f.point.desc)}</p>}
                 </figcaption>
               </figure>
@@ -410,7 +411,6 @@ export default function CityJourney() {
                   <figure className="cj__static-card" key={p.id}>
                     <div className="cj__static-thumb">
                       <img src={p.image} loading="lazy" decoding="async" alt="" />
-                      {p.temp && <span className="cj__temp">{t(data.ui.temp)}</span>}
                     </div>
                     <figcaption>
                       <span className="cj__cat">{catLabel(p.category)}</span>

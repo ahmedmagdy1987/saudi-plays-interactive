@@ -380,8 +380,9 @@ html.sp-revealed .intro__veil { opacity: 1 !important; }
    otherwise have left it scaled down mid-journey) so the hero reads cleanly */
 html.sp-revealed .intro__map { opacity: 1 !important; transform: none !important; }
 
-/* prevent layout shift from late fonts */
-.app-root { min-height: 100vh; }
+/* prevent layout shift from late fonts; position:relative makes it the containing
+   block for the iPhone in-flow media layer (.ms-flow spans the full document). */
+.app-root { min-height: 100vh; position: relative; }
 
 /* The cinematic media backdrop (.ms) is a fixed layer at var(--z-bg); the page
    content must sit ABOVE it. Sections 02–10 are made transparent so the backdrop

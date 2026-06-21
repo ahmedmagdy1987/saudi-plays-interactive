@@ -94,3 +94,54 @@
 
 /* pause loops when the tab is hidden (JS also pauses the <video>) */
 .ms--paused .ms__video { opacity: 0; }
+
+/* ============================================================================
+   iPhone / iOS in-flow media layer (.ms-flow)
+   A `position: absolute` layer spanning the whole .app-root document, with one
+   full-bleed media box per section positioned (top/height) over its section by JS.
+   Real <img> stills (+ <video> overlays) — the SAME iOS-safe pattern the §10 City
+   Journey uses (and that renders on physical iPhone), instead of the global
+   `position: fixed` stage whose image/video children fail to repaint on physical
+   iOS Safari. Sits above the .ms solid dark base (--z-bg) and below content
+   (--z-content). The still is the guaranteed base; the video only overlays it once
+   a real frame is confirmed, so a blocked autoplay / Low-Power Mode keeps the still.
+   ========================================================================== */
+.ms-flow {
+  position: absolute;
+  inset: 0 -2px;                 /* 2px bleed past the edges → no partial seam column */
+  z-index: var(--z-atmos);
+  pointer-events: none;
+  overflow: hidden;
+}
+.ms-flow__sec {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* top + height assigned imperatively to each section's box */
+  overflow: hidden;
+}
+.ms-flow__img,
+.ms-flow__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+}
+.ms-flow__img { transition: opacity 0.6s ease; }
+.ms-flow__img.is-on { opacity: 1; }
+.ms-flow__video { transition: opacity 0.7s ease; }
+.ms-flow__sec.is-playing .ms-flow__video { opacity: 1; }
+.ms-flow__scrim {
+  position: absolute;
+  inset: 0;
+  /* the same lighter mobile scrim the fixed stage uses on small screens */
+  background:
+    linear-gradient(90deg, rgba(2, 6, 15, 0.3) 0%, rgba(2, 6, 15, 0.62) 50%, rgba(2, 6, 15, 0.3) 100%),
+    linear-gradient(180deg, rgba(2, 6, 15, 0.55) 0%, rgba(2, 6, 15, 0.32) 40%, rgba(2, 6, 15, 0.55) 100%),
+    linear-gradient(rgba(2, 6, 15, 0.46), rgba(2, 6, 15, 0.46));
+}
