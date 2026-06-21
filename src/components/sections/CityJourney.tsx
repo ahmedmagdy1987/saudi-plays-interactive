@@ -118,12 +118,37 @@ export default function CityJourney() {
         panel: a.panel.map((v, i) => lerp(v, b.panel[i], k)),
       });
 
+      // map each scene → its point-panel global index (-1 for overview/city scenes)
+      const scenePanelIdx = scenes.map((sc) =>
+        sc.kind === "point" ? gIndex(sc.cityIndex, sc.pointIndex) : -1,
+      );
+      const warmPanel = (gi: number) => {
+        if (gi < 0) return;
+        const img = imgEls[gi];
+        if (img && !img.getAttribute("src")) {
+          const ds = img.getAttribute("data-src");
+          if (ds) img.setAttribute("src", ds);
+        }
+      };
+      // Eagerly load the ACTIVE scene's image AND its immediate neighbours (a small
+      // ±1-scene window — never all panels at once). This guarantees the point photo
+      // is ready before it fades in, so a fast fling / scrub-rounding / reverse scroll
+      // can never park on a panel whose src was never set (the empty-stage failure),
+      // and iOS never has to decode a freshly-attached image inside the live composited
+      // sticky stage as it crossfades in.
+      const warmPanels = (a: number, b: number) => {
+        for (let s = a - 1; s <= b + 1; s++) {
+          if (s >= 0 && s < N) warmPanel(scenePanelIdx[s]);
+        }
+      };
+
       let degraded = false;
       const render = (progress: number) => {
        try {
         const f = progress * (N - 1);
         const i0 = Math.floor(f);
         const i1 = Math.min(i0 + 1, N - 1);
+        warmPanels(i0, i1);
         const d = blend(descAt(i0), descAt(i1), f - i0);
         const active = Math.round(f); // dominant scene for marker highlight
 

@@ -44,6 +44,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0.4;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%, #000 72%, transparent);
   mask-image: linear-gradient(180deg, transparent, #000 16%, #000 72%, transparent);
 }
 .finale__map {

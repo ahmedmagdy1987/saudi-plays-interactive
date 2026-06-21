@@ -79,6 +79,11 @@
 
 /* mobile: lighter — stronger tone-down + no JS parallax (videos DO play here now) */
 @media (max-width: 820px) {
+  /* No parallax on mobile (the controller sets transform:none), so the poster never
+     animates here — drop the permanent transform layer hint so iOS isn't holding a
+     full-screen GPU backing store per layer (memory pressure → Safari can blank
+     media). The opacity crossfade keeps its own will-change on .ms__layer. */
+  .ms__img { will-change: auto; }
   .ms__scrim {
     background:
       linear-gradient(90deg, rgba(2, 6, 15, 0.3) 0%, rgba(2, 6, 15, 0.62) 50%, rgba(2, 6, 15, 0.3) 100%),

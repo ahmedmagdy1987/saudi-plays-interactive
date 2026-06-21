@@ -13,10 +13,25 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  isolation: isolate;
+  /* NB: isolation lives on the small .intro__space (the nebula's blend group), NOT
+     here. iOS WebKit renders an `isolation: isolate` stacking context on a large,
+     transform/opacity-animated full-viewport element into an offscreen GROUP buffer
+     whose top tile can fail to paint — an opaque WHITE BOX over the essential Saudi
+     map + region imagery. Scoping isolation to the tiny decorative space wrapper
+     keeps the nebula's mix-blend-mode:screen contained (identical look on desktop/
+     Android) without forcing a viewport-sized group buffer over the map. */
 }
 /* ---- cinematic depth layers ---- */
-.intro__space { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.intro__space {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* the ONLY element that needs a private blend group (for the nebula's
+     mix-blend-mode: screen). Small + behind the map, so its group buffer never
+     shares a surface with the essential imagery. */
+  isolation: isolate;
+}
 .intro__stars {
   position: absolute; inset: -20%;
   background-image:

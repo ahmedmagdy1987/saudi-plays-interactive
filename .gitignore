@@ -20,3 +20,5 @@ __journey__/
 vite.config.js
 vite.config.d.ts
 *.tsbuildinfo
+__scan__/
+__verify__/

@@ -390,6 +390,26 @@ html.sp-revealed .intro__map { opacity: 1 !important; transform: none !important
 .app-root > footer { position: relative; z-index: var(--z-content); }
 main > section:not(#intro) { background: transparent; }
 
+/* ---- iOS WebKit white-box safety (compositing) -------------------------
+   `isolation: isolate` on a TALL, transparent-over-the-fixed-backdrop, transform/
+   opacity-animated container makes iOS Safari render that subtree into an offscreen
+   GROUP buffer whose top tile can fail to paint — an opaque WHITE BOX over the
+   essential media (the confirmed hero failure; the same family on every isolated
+   full-screen stage). This block matches iOS Safari / WhatsApp WebKit ONLY:
+   `-webkit-touch-callout` is an iOS-only property, so desktop Safari/Chrome/Firefox
+   and Android Chrome never match it and keep `isolation: isolate` exactly as authored.
+   No descendant of these containers uses a negative z-index, so dropping the isolated
+   context does not change stacking or visuals — it only stops the fragile group
+   buffer. (The hero uses a separate, unconditional fix: its isolation is scoped to
+   the small .intro__space nebula wrapper instead of the full stage.) */
+@supports (-webkit-touch-callout: none) {
+  .section,
+  .cj,
+  .finale__scene {
+    isolation: auto;
+  }
+}
+
 /* perf: drop GPU-expensive backdrop/blur filters on mobile (elements keep their
    solid translucent backgrounds — just without the per-frame live blur) */
 @media (max-width: 820px) {
