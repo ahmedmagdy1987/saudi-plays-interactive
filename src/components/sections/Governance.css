@@ -38,8 +38,8 @@
 .gov-node.is-dim { filter: brightness(0.5) saturate(0.55); }
 .gov-node:focus-visible .gov-disc { stroke: var(--teal-bright); stroke-width: 2.6; }
 .gov-halo { opacity: 0.55; }
-.gov-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: rgba(2,6,15,0.85); stroke-width: 3.5px; }
-.gov-role { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 400; paint-order: stroke; stroke: rgba(2,6,15,0.8); stroke-width: 3px; }
+.gov-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: var(--label-halo); stroke-width: 1.6px; stroke-linejoin: round; }
+.gov-role { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 400; paint-order: stroke; stroke: var(--label-halo); stroke-width: 1.4px; stroke-linejoin: round; }
 
 /* one shared contextual panel — full-width, in normal flow BELOW the diagram
    (reserved layout space, never overlapping any SVG node or label) */

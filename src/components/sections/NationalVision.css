@@ -71,16 +71,18 @@
   font-family: var(--font-ar);
   font-weight: 600;
   paint-order: stroke;
-  stroke: rgba(2, 6, 15, 0.8);
-  stroke-width: 3.5px;
+  stroke: var(--label-halo);
+  stroke-width: 1.6px;
+  stroke-linejoin: round;
 }
 .vcore-label {
   fill: var(--teal-bright);
   font-family: var(--font-ar);
   font-weight: 700;
   paint-order: stroke;
-  stroke: rgba(2, 6, 15, 0.85);
-  stroke-width: 4px;
+  stroke: var(--label-halo);
+  stroke-width: 1.6px;
+  stroke-linejoin: round;
 }
 .vision__converge-note {
   text-align: center;

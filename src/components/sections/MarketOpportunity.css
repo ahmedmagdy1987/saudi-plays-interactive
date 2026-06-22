@@ -41,7 +41,7 @@
 .curve__area { fill: url(#mk-area); opacity: 0; }
 .curve__line { fill: none; stroke: url(#mk-line); stroke-width: 3; vector-effect: non-scaling-stroke; stroke-linecap: round; }
 .curve__dot { fill: var(--teal-bright); filter: drop-shadow(0 0 6px var(--teal-bright)); }
-.curve__growth { fill: var(--gold-bright); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: rgba(2,6,15,0.6); stroke-width: 3px; }
+.curve__growth { fill: var(--gold-bright); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: var(--label-halo); stroke-width: 1.6px; stroke-linejoin: round; }
 .curve__annot-arrow { fill: none; stroke: var(--gold-bright); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
 .donut { width: 100%; max-width: 260px; margin-inline: auto; height: auto; display: block; overflow: visible; }

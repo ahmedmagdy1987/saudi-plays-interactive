@@ -128,8 +128,8 @@
   font-family: var(--font-ar);
   font-weight: 500;
   paint-order: stroke;
-  stroke: rgba(2, 6, 15, 0.75);
-  stroke-width: 3px;
+  stroke: var(--label-halo);
+  stroke-width: 1.6px;
   stroke-linejoin: round;
 }
 .saudimap__label--origin { fill: var(--gold-bright); font-weight: 600; }

@@ -39,6 +39,9 @@
   --line: rgba(120, 162, 224, 0.16);
   --line-strong: rgba(132, 178, 240, 0.3);
   --hair: rgba(146, 184, 240, 0.1);
+  /* subtle legibility halo behind SVG <text> labels — theme-aware so it is always
+     the OPPOSITE of the text (a soft backing), never a dark outline over dark text */
+  --label-halo: rgba(2, 6, 15, 0.72);
   --surface: rgba(18, 36, 72, 0.42);
   --surface-2: rgba(12, 26, 56, 0.6);
   --surface-glass: rgba(14, 30, 64, 0.5);
@@ -144,6 +147,8 @@
   --line: rgba(22, 48, 98, 0.2);
   --line-strong: rgba(22, 48, 98, 0.34);
   --hair: rgba(22, 48, 98, 0.12);
+  /* light theme: the halo flips to a light backing behind the now-dark label text */
+  --label-halo: rgba(255, 255, 255, 0.9);
   --surface: rgba(255, 255, 255, 0.82);
   --surface-2: rgba(255, 255, 255, 0.92);
   --surface-glass: rgba(255, 255, 255, 0.78);
