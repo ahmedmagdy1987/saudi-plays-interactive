@@ -46,6 +46,10 @@
   --surface-2: rgba(12, 26, 56, 0.6);
   --surface-glass: rgba(14, 30, 64, 0.5);
   --node: #bfe9ff;
+  /* card surfaces as theme-aware tokens — the SAME var flips to clean white in light
+     mode, so dark translucent gradients never turn muddy-gray over a light background */
+  --card: linear-gradient(180deg, rgba(20, 40, 82, 0.26), rgba(8, 18, 40, 0.42));
+  --card-2: linear-gradient(180deg, rgba(16, 34, 70, 0.46), rgba(8, 18, 40, 0.54));
 
   /* ---- Glows ---- */
   --glow-teal: 0 0 36px rgba(56, 224, 205, 0.42);
@@ -153,6 +157,9 @@
   --surface-2: rgba(255, 255, 255, 0.92);
   --surface-glass: rgba(255, 255, 255, 0.78);
   --node: #0e4a7a;
+  /* clean white cards with a faint cool tint foot — crisp, never muddy gray */
+  --card: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(244, 248, 253, 0.92));
+  --card-2: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(238, 244, 252, 0.95));
 
   /* glows (softer on light) + shadows */
   --glow-teal: 0 0 30px rgba(12, 138, 126, 0.26);

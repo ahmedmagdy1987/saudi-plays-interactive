@@ -12,7 +12,7 @@
   padding: clamp(1.1rem, 1.8vw, 1.6rem);
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(20, 40, 82, 0.26), rgba(8, 18, 40, 0.42));
+  background: var(--card);
   display: flex; flex-direction: column; gap: 0.5rem;
   overflow: hidden;
 }
@@ -32,7 +32,7 @@
   padding: clamp(1.2rem, 2.2vw, 1.9rem);
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(40, 30, 86, 0.3), rgba(8, 18, 40, 0.46));
+  background: var(--card);
 }
 .imp-cum .stat__num { background: linear-gradient(120deg, var(--gold-bright), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .imp-cum__label { display: block; margin-top: 0.5rem; font-size: var(--fz-lead); color: var(--ink-soft); }
@@ -42,7 +42,7 @@
   padding: clamp(1.1rem, 1.8vw, 1.5rem);
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(18, 36, 74, 0.26), rgba(8, 18, 40, 0.42));
+  background: var(--card);
   display: flex; flex-direction: column; gap: 0.6rem;
 }
 .imp-cat__icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; color: var(--violet-bright); border: 1px solid var(--line-strong); background: rgba(138,120,240,0.08); }

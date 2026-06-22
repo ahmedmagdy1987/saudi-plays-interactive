@@ -420,6 +420,8 @@ body, .panel, .chip, .btn, .mfig, .chart-card, .rev-stream, .zaud-chip {
   --surface: rgba(18, 36, 72, 0.42);
   --surface-2: rgba(12, 26, 56, 0.6);
   --node: #bfe9ff;
+  --card: linear-gradient(180deg, rgba(20, 40, 82, 0.26), rgba(8, 18, 40, 0.42));
+  --card-2: linear-gradient(180deg, rgba(16, 34, 70, 0.46), rgba(8, 18, 40, 0.54));
 }
 
 /* prevent layout shift from late fonts; position:relative makes it the containing

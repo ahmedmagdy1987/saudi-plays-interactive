@@ -141,7 +141,7 @@
   padding: clamp(1.2rem, 2vw, 1.7rem);
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(20, 40, 82, 0.26), rgba(8, 18, 40, 0.42));
+  background: var(--card);
   display: flex;
   flex-direction: column;
   gap: 0.7rem;

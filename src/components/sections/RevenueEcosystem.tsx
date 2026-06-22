@@ -136,7 +136,6 @@ export default function RevenueEcosystem() {
               className={`rev-stream${active === s.id ? " is-active" : ""}${dim(s.id) ? " is-dim" : ""}`}
               data-accent={s.accent}
               data-i={i}
-              data-reveal
               key={s.id}
               tabIndex={0}
               onMouseEnter={() => setActive(s.id)}

@@ -17,7 +17,7 @@
   padding: clamp(1.2rem, 2vw, 1.7rem);
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(20, 40, 82, 0.24), rgba(8, 18, 40, 0.4));
+  background: var(--card);
   display: flex; flex-direction: column; gap: 0.6rem;
 }
 .r2s__proof-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; color: var(--teal-bright); border: 1px solid var(--line-strong); background: rgba(56,224,205,0.08); }
@@ -38,7 +38,7 @@
   position: relative;
   border-radius: var(--radius-lg);
   border: 1px solid var(--line-strong);
-  background: linear-gradient(180deg, rgba(10, 22, 50, 0.5), rgba(4, 10, 26, 0.6));
+  background: var(--card-2);
   box-shadow: var(--shadow-card);
   padding: clamp(0.8rem, 1.6vw, 1.4rem);
   overflow: hidden;
@@ -107,7 +107,7 @@
   padding: clamp(1.4rem, 2.6vw, 2.2rem);
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(16, 34, 72, 0.4), rgba(8, 18, 40, 0.5));
+  background: var(--card-2);
   /* inactive (upcoming/completed) cards stay readable: dates, counts, titles and
      city names must remain legible — never dim below ~70% */
   opacity: 0.72;

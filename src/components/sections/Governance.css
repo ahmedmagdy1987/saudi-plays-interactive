@@ -8,7 +8,7 @@
   margin-top: clamp(1.6rem, 4vh, 2.6rem);
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(12, 26, 56, 0.4), rgba(6, 14, 32, 0.5));
+  background: var(--card);
   /* the contextual panel now lives BELOW the diagram, so the frame no longer
      reserves a tall bottom band that overlapped the beneficiary */
   padding: clamp(0.8rem, 1.6vw, 1.4rem);

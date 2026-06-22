@@ -14,7 +14,7 @@
   padding: clamp(1.1rem, 1.8vw, 1.5rem);
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(20, 40, 82, 0.24), rgba(8, 18, 40, 0.42));
+  background: var(--card);
   display: flex; flex-direction: column; gap: 0.6rem;
 }
 .mo-pillar__icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; color: var(--teal-bright); border: 1px solid var(--line-strong); background: rgba(56,224,205,0.08); }

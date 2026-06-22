@@ -33,7 +33,7 @@
   padding: 0.85rem 1.1rem;
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(18, 36, 74, 0.3), rgba(8, 18, 40, 0.42));
+  background: var(--card);
   --accent: var(--teal);
   cursor: pointer;
   transition: border-color var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out),
