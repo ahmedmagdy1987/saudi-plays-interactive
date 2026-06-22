@@ -79,13 +79,13 @@
   padding: 0.5rem 0.8rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
-  background: rgba(10, 22, 50, 0.4);
+  background: var(--surface);
   /* upcoming stages stay clearly readable (never below ~70% opacity) */
   opacity: 0.72;
   transition: opacity var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
 }
 .r2s__stepper-item.is-done { opacity: 0.9; border-color: var(--line-strong); }
-.r2s__stepper-item.is-active { opacity: 1; border-color: var(--teal); background: rgba(16, 34, 72, 0.6); box-shadow: var(--glow-teal-soft); }
+.r2s__stepper-item.is-active { opacity: 1; border-color: var(--teal); background: color-mix(in srgb, var(--teal) 9%, var(--surface-2)); box-shadow: var(--glow-teal-soft); }
 .r2s__stepper-cities { font-family: var(--font-en); font-size: 1.45rem; font-weight: 700; color: var(--teal-bright); direction: ltr; unicode-bidi: isolate; min-width: 2.6ch; text-align: center; }
 .r2s__stepper-item.is-proven .r2s__stepper-cities { color: var(--gold-bright); }
 .r2s__stepper-meta { display: flex; flex-direction: column; gap: 0.08rem; min-width: 0; }
@@ -94,14 +94,14 @@
 
 .r2s__steps { display: flex; flex-direction: column; }
 .r2s__step {
-  /* shorter than before: enough travel to drive the stage trigger without the
-     large empty viewport-sized gaps the owner flagged */
-  min-height: 50vh;
+  /* compact travel: enough to drive the stage trigger, without the big empty
+     viewport-sized gaps the owner flagged */
+  min-height: 36vh;
   display: flex;
   align-items: center;
 }
-.r2s__step:first-child { min-height: 42vh; }
-.r2s__step:last-child { min-height: 46vh; }
+.r2s__step:first-child { min-height: 30vh; }
+.r2s__step:last-child { min-height: 32vh; }
 .r2s__card {
   width: 100%;
   padding: clamp(1.4rem, 2.6vw, 2.2rem);
