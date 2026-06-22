@@ -151,7 +151,8 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 60px rgba(56, 224, 205, 0.32);
+  /* a restrained glow (was 60px → read as a ghost halo over the busy map) */
+  text-shadow: 0 0 24px rgba(56, 224, 205, 0.22);
 }
 .intro__supporting {
   margin: 1.5rem auto 0;
