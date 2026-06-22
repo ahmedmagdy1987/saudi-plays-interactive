@@ -126,7 +126,10 @@ export default function App() {
     <div className="app-root">
       <SectionBackgroundStage />
       {/* Earth→Kingdom scroll camera: composites the globe + zooming Kingdom OVER the
-          section-video context, turning §02→§10 into one descending geographic journey */}
+          section-video context, turning §02→§10 into one descending geographic journey.
+          MUST stay rendered AFTER SectionBackgroundStage: both layers share z-index
+          var(--z-atmos), so equal-z paint order (DOM order) is what stacks the globe
+          above the section video and below the content — do not reorder. */}
       <EarthKingdomStage />
       <a href="#intro" className="sr-only">
         {ui.skip}

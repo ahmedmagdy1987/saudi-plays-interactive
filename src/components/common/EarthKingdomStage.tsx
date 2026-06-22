@@ -46,10 +46,12 @@ export default function EarthKingdomStage() {
 
     let startY = 0;
     let endY = 1;
+    let isMobile = false;
     const measure = () => {
       const vis = document.getElementById("vision");
       const jrn = document.getElementById("journey");
       const y = window.scrollY || 0;
+      isMobile = window.innerWidth <= 820;
       // P=0 when the viewport centre reaches §02's top; P=1 when it reaches §10's top
       startY = vis ? vis.getBoundingClientRect().top + y - window.innerHeight * 0.5 : 0;
       endY = jrn ? jrn.getBoundingClientRect().top + y - window.innerHeight * 0.5 : startY + 1;
@@ -71,15 +73,23 @@ export default function EarthKingdomStage() {
       const vis = smooth(0.0, 0.06, P) * (1 - smooth(0.84, 1.0, P));
       setStageO(vis);
       const onStage = vis > 0.001;
-      if (stage.style.visibility !== (onStage ? "visible" : "hidden"))
+      if (stage.style.visibility !== (onStage ? "visible" : "hidden")) {
         stage.style.visibility = onStage ? "visible" : "hidden";
+        // release the GPU compositing layer while culled (the layer is hidden for most
+        // of the scroll range); only promote when actually visible AND animating.
+        cam.style.willChange = onStage && !reduced ? "transform" : "auto";
+      }
       if (!onStage) return;
 
       // the Kingdom outline RAMPS in: faint at §02 (the §02 hub map leads there, so no
       // double-map clash), bold through the map-less middle sections, eased so there is
-      // never a hard appearance. Lighter ceiling in light theme so it stays a faint motif.
-      const kCeil = lightTheme() ? 0.42 : 0.74;
-      setKingO((0.16 + (kCeil - 0.16) * smooth(0.1, 0.5, P)) * (1 - smooth(0.86, 1.0, P)));
+      // never a hard appearance. Ceilings are bold enough to read clearly on EVERY device
+      // and in light mode (the owner wants this visible, not a faint motif) while staying
+      // behind the content. Mobile gets a small boost since cards fill more of the frame.
+      const light = lightTheme();
+      const kCeil = (light ? 0.64 : 0.82) + (isMobile ? 0.1 : 0);
+      const kFloor = light ? 0.28 : 0.22;
+      setKingO((kFloor + (kCeil - kFloor) * smooth(0.1, 0.5, P)) * (1 - smooth(0.86, 1.0, P)));
 
       if (reduced) {
         // calm static frame — a gentle mid-descent, no scroll-driven transform
@@ -93,12 +103,16 @@ export default function EarthKingdomStage() {
       // plus a slight vertical drift so it reads as moving OVER the Kingdom, not just zoom.
       const breathe = 0.055 * Math.sin(P * Math.PI * 7); // restrained reposition between beats
       const scale = (1 + P * 2.4) * (1 + breathe);
-      const ty = -48 - P * 6; // %
+      // on mobile the Kingdom sits higher so it clears the dense stacked-card column and
+      // stays visible above the content; a slight extra drift as the camera descends.
+      const ty = (isMobile ? -56 : -48) - P * 6; // %
       setCam(`translate(-50%, ${ty}%) scale(${scale.toFixed(3)})`);
 
-      // the globe limb (the "from space" curvature) is prominent at the start and
-      // recedes as the camera descends to the surface
-      setLimbO(0.72 * (1 - smooth(0.0, 0.42, P)));
+      // the globe limb (the "from space" / horizon curvature) is prominent at the start
+      // and recedes as the camera descends; kept clearly visible in light + on mobile so
+      // the Earth curvature stays recognizable there.
+      const limbCeil = (light ? 0.62 : 0.72) + (isMobile ? 0.1 : 0);
+      setLimbO(limbCeil * (1 - smooth(0.0, 0.42, P)));
     };
 
     measure();
