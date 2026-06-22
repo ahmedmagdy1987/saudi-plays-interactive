@@ -10,8 +10,8 @@
   display: block;
 }
 
-/* atmosphere */
-.saudimap__field { opacity: 0.5; }
+/* atmosphere — kept faint so the map reads as cartography, not a chart grid */
+.saudimap__field { opacity: 0.22; }
 
 /* border */
 .saudimap__fill {

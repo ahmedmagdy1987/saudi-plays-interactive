@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SaudiMap from "@/components/common/SaudiMap";
 import { useLang } from "@/i18n";
+import { getLenis } from "@/lib/scroll";
 import { useReducedMotion } from "@/lib/hooks";
 import { cityJourney, buildScenes, type Scene } from "@/data/cityJourney";
 import "./CityJourney.css";
@@ -43,7 +44,7 @@ const VB = { w: 1000, h: 845, cx: 500, cy: 422 };
    exits. Pure function of scroll position → reverse scrolling replays the identical
    pacing. Weights are unitless; the track height = Σweights × --cj-seg. */
 type Seg = { kind: "hold" | "trans"; i: number; s: number; e: number };
-const HOLD: Record<Scene["kind"], number> = { overview: 1.3, city: 1.7, point: 2.7 };
+const HOLD: Record<Scene["kind"], number> = { overview: 1.5, city: 1.8, point: 3.2 };
 const transWeight = (a: Scene, b: Scene): number => {
   if (a.kind === "overview" || b.kind === "overview") return 1.5; // deliberate zoom to / from the Kingdom map
   if (a.kind === "city" && b.kind === "point") return 1.2;        // approach + point focus + image fade-in
@@ -89,6 +90,9 @@ export default function CityJourney() {
   const rootRef = useRef<HTMLElement>(null);
   const failedRef = useRef(false); // engine hit a CONFIRMED unrecoverable error → stay static
   const dbgRef = useRef<HTMLDivElement | null>(null);
+  // auto-showcase: a controlled, fully interruptible play-through of the journey
+  const [showcasing, setShowcasing] = useState(false);
+  const showcaseRef = useRef<{ raf: number; active: boolean }>({ raf: 0, active: false });
 
   const data = cityJourney;
   const t = <T,>(b: { ar: T; en: T }) => (lang === "en" ? b.en : b.ar);
@@ -331,6 +335,56 @@ export default function CityJourney() {
     }
   }, [mode, lang, scenes, flat, data, timeline, debug]);
 
+  // ---- auto-showcase: controlled play-through, never hijacks, always interruptible ----
+  // The journey track's weighted height already encodes the per-scene holds, so a
+  // CONSTANT-speed scroll through it reproduces the authored pacing (the point-image
+  // holds get the most scroll distance → the most time). Any wheel/touch/key/pointer
+  // input cancels it instantly and returns control. Manual scrolling is never blocked.
+  const stopShowcase = useCallback(() => {
+    const s = showcaseRef.current;
+    if (s.raf) { cancelAnimationFrame(s.raf); s.raf = 0; }
+    s.active = false;
+    setShowcasing(false);
+  }, []);
+
+  const startShowcase = useCallback(() => {
+    if (mode !== "cinematic") return;
+    const track = rootRef.current?.querySelector<HTMLElement>(".cj__track");
+    if (!track) return;
+    const end = track.offsetTop + track.offsetHeight - window.innerHeight;
+    if (window.scrollY >= end - 4) return; // already at the journey's end
+    const lenis = getLenis();
+    showcaseRef.current.active = true;
+    setShowcasing(true);
+    // Steady ~constant-speed advance. We drive the scroll position ourselves each
+    // frame (through Lenis when present, so the two never fight) at a gentle pace —
+    // the track's weighted height means point-image holds get the most distance and
+    // therefore the most dwell time. ~340 px/s → a ~45s readable play-through.
+    const PX_PER_SEC = 340;
+    let last = performance.now();
+    const tick = (now: number) => {
+      if (!showcaseRef.current.active) return;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      const y = Math.min(end, window.scrollY + PX_PER_SEC * dt);
+      if (lenis) lenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
+      if (y >= end - 1) { stopShowcase(); return; }
+      showcaseRef.current.raf = requestAnimationFrame(tick);
+    };
+    showcaseRef.current.raf = requestAnimationFrame(tick);
+  }, [mode, stopShowcase]);
+
+  // any genuine user input during the showcase hands control straight back
+  useEffect(() => {
+    if (!showcasing) return;
+    const onInput = () => stopShowcase();
+    const evs = ["wheel", "touchstart", "pointerdown", "keydown"] as const;
+    evs.forEach((e) => window.addEventListener(e, onInput, { passive: true }));
+    return () => evs.forEach((e) => window.removeEventListener(e, onInput));
+  }, [showcasing, stopShowcase]);
+
+  // leaving cinematic mode (reduced-motion, fail-safe) or unmounting stops it cleanly
+  useEffect(() => { if (mode !== "cinematic") stopShowcase(); return () => stopShowcase(); }, [mode, stopShowcase]);
+
   const catLabel = (c: keyof typeof data.ui.categories) => t(data.ui.categories[c]);
 
   return (
@@ -392,7 +446,14 @@ export default function CityJourney() {
               </figure>
             ))}
 
-            <div className="cj__hint" aria-hidden="true">{t(data.ui.hintScroll)}</div>
+            {showcasing ? (
+              <p className="cj__showhint" aria-live="polite">{t(data.ui.showcaseHint)}</p>
+            ) : (
+              <button type="button" className="cj__start" onClick={startShowcase}>
+                <span className="cj__start-ico" aria-hidden="true" />
+                {t(data.ui.startExperience)}
+              </button>
+            )}
           </div>
         </div>
       ) : (

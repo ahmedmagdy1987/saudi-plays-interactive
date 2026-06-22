@@ -65,15 +65,18 @@
   overflow: hidden;
   will-change: transform;
 }
+/* subtle cartographic mesh (not a chart grid): much fainter, larger cells, with a
+   soft teal "altitude" glow under it and a strong vignette so it reads as map depth */
 .cj__plane-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(120, 162, 224, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120, 162, 224, 0.1) 1px, transparent 1px);
-  background-size: 7% 11%;
-  mask-image: radial-gradient(90% 90% at 50% 50%, #000 55%, transparent 100%);
-  -webkit-mask-image: radial-gradient(90% 90% at 50% 50%, #000 55%, transparent 100%);
+    radial-gradient(70% 60% at 50% 42%, rgba(56, 224, 205, 0.06), transparent 72%),
+    linear-gradient(rgba(120, 162, 224, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 162, 224, 0.045) 1px, transparent 1px);
+  background-size: auto, 9.5% 14%, 9.5% 14%;
+  mask-image: radial-gradient(84% 84% at 50% 50%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(84% 84% at 50% 50%, #000 30%, transparent 100%);
 }
 .cj__routes { position: absolute; inset: 0; width: 100%; height: 100%; }
 .cj__routes polyline {
@@ -94,29 +97,38 @@
   pointer-events: none;
 }
 .cj__pt-dot {
-  width: 13px; height: 13px;
+  width: 9px; height: 9px;
   border-radius: 50%;
   background: var(--teal-bright);
-  box-shadow: 0 0 0 4px rgba(56, 224, 205, 0.18), var(--glow-teal);
+  box-shadow: 0 0 0 3px rgba(56, 224, 205, 0.12), 0 0 9px rgba(56, 224, 205, 0.55);
   flex: none;
-  transition: transform 0.3s var(--ease-out), background 0.3s var(--ease-out);
+  transition: transform 0.3s var(--ease-out), background 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
 }
+/* inactive labels stay quiet (no chart-badge clutter); the active one steps forward */
 .cj__pt-label {
   font-family: var(--font-ar);
-  font-size: clamp(0.72rem, 0.4rem + 1.1vw, 0.95rem);
+  font-size: clamp(0.7rem, 0.4rem + 1vw, 0.9rem);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--ink-soft);
   white-space: nowrap;
-  background: rgba(2, 6, 15, 0.62);
-  padding: 0.18em 0.6em;
+  background: rgba(2, 6, 15, 0.42);
+  padding: 0.16em 0.58em;
   border-radius: var(--radius-pill);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(4px);
+  border: 1px solid transparent;
+  opacity: 0.72;
+  transition: opacity 0.3s var(--ease-out), color 0.3s var(--ease-out), background 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
 }
 .cj__pt.is-active .cj__pt-dot {
   background: var(--gold-bright);
-  box-shadow: 0 0 0 6px rgba(236, 197, 120, 0.2), var(--glow-gold);
-  transform: scale(1.35);
+  box-shadow: 0 0 0 5px rgba(236, 197, 120, 0.18), var(--glow-gold);
+  transform: scale(1.4);
+}
+.cj__pt.is-active .cj__pt-label {
+  opacity: 1;
+  color: var(--ink);
+  background: rgba(2, 6, 15, 0.72);
+  border-color: rgba(236, 197, 120, 0.4);
+  backdrop-filter: blur(4px);
 }
 .cj__city-name {
   position: absolute;
@@ -189,15 +201,52 @@
 }
 [dir="rtl"] .cj__temp { font-family: var(--font-ar); letter-spacing: normal; text-transform: none; }
 
-.cj__hint {
+/* entry control — starts the controlled, interruptible auto-showcase */
+.cj__start {
   position: absolute;
-  inset-block-end: 1.1rem;
+  inset-block-end: clamp(1rem, 3vh, 1.9rem);
+  inset-inline: 0;
+  margin-inline: auto;
+  width: max-content;
+  max-width: 90vw;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65em;
+  padding: 0.72em 1.5em;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: rgba(2, 6, 15, 0.6);
+  backdrop-filter: blur(8px);
+  color: var(--ink);
+  font-family: var(--font-ar);
+  font-size: var(--fz-label);
+  font-weight: 600;
+  box-shadow: var(--glow-teal-soft);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 3;
+  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.cj__start:hover { border-color: var(--teal); transform: translateY(-2px); background: rgba(8, 18, 40, 0.7); }
+.cj__start:focus-visible { outline: 2px solid var(--teal-bright); outline-offset: 3px; }
+.cj__start-ico {
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 11px;
+  border-color: transparent transparent transparent var(--teal-bright);
+  flex: none;
+}
+/* shown while auto-showcase runs — tells the user they can take over anytime */
+.cj__showhint {
+  position: absolute;
+  inset-block-end: clamp(1rem, 3vh, 1.7rem);
   inset-inline: 0;
   text-align: center;
   font-size: var(--fz-eyebrow);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   color: var(--ink-mute);
   pointer-events: none;
+  z-index: 3;
 }
 
 /* ---- Static / reduced-motion / fail-safe gallery --------------------- */

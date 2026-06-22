@@ -58,6 +58,10 @@ export interface CityJourneyData {
     pointOf: Bi; // "{i} / {n}" label prefix, e.g. "Point" / "موقع"
     categories: Record<PointCategory, Bi>;
     hintScroll: Bi;
+    /** primary entry control that starts the auto-showcase */
+    startExperience: Bi;
+    /** shown while the auto-showcase is running (any input takes control back) */
+    showcaseHint: Bi;
   };
   cities: JourneyCity[];
 }
@@ -87,6 +91,8 @@ export const cityJourney: CityJourneyData = {
       landmark: { ar: "معلم", en: "Landmark" },
     },
     hintScroll: { ar: "مرّر للمتابعة", en: "Scroll to travel" },
+    startExperience: { ar: "ابدأ الاستعراض", en: "Start the Experience" },
+    showcaseHint: { ar: "مرّر في أي وقت للتحكم في الرحلة", en: "Scroll anytime to take control" },
   },
   cities: [
     {

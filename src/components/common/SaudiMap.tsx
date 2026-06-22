@@ -217,8 +217,8 @@ export default function SaudiMap({
                   : n.stage === 2
                     ? "url(#sm-glow-violet)"
                     : "url(#sm-glow-teal)";
-              const haloR = n.origin ? 26 : n.stage === 1 ? 18 : 13;
-              const coreR = n.origin ? 4 : n.stage === 1 ? 3 : 2.4;
+              const haloR = n.origin ? 20 : n.stage === 1 ? 14 : 10;
+              const coreR = n.origin ? 3.6 : n.stage === 1 ? 2.8 : 2.2;
               return (
                 <g
                   key={n.id}
