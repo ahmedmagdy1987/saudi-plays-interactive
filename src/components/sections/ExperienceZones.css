@@ -1,133 +1,169 @@
-.section--zones {
-  background:
-    radial-gradient(80% 70% at 50% -10%, rgba(40, 26, 92, 0.4), transparent 55%),
-    linear-gradient(180deg, var(--night), var(--abyss));
-}
-/* ---- core + audiences orbit ---- */
-.zones__orbit-wrap { position: relative; margin: clamp(1.4rem, 3vh, 2.4rem) auto 0; }
-.zones__orbit { width: 100%; height: auto; overflow: visible; }
-.zorbit-ring { fill: none; stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 9; transform-origin: center; }
-.section--zones[data-spin="true"] .zorbit-ring { animation: zspin 60s linear infinite; }
-@keyframes zspin { to { transform: rotate(360deg); } }
-.zorbit-link { stroke: url(#z-link); stroke-width: 1.2; fill: none; vector-effect: non-scaling-stroke;
-  transition: opacity var(--dur-fast) var(--ease-out), stroke-width var(--dur-fast) var(--ease-out); }
-.zorbit-link.is-hot { stroke-width: 2.6; filter: drop-shadow(0 0 5px var(--teal)); }
-.zorbit-link.is-dim { opacity: 0.16; }
-.zorbit-core { fill: rgba(6,16,34,0.9); stroke: var(--teal); stroke-width: 1.5; }
-.zorbit-core-label { fill: var(--teal-bright); font-family: var(--font-ar); font-weight: 700; paint-order: stroke; stroke: rgba(2,6,15,0.85); stroke-width: 4px; }
-.zaud { transform-box: fill-box; transform-origin: center; cursor: pointer; outline: none;
-  transition: filter var(--dur-fast) var(--ease-out); }
-.zaud-hit { transition: fill var(--dur-fast) var(--ease-out), stroke var(--dur-fast) var(--ease-out); }
-.zaud-dot { fill: var(--node); transition: fill var(--dur-fast) var(--ease-out); }
-.zaud.is-hot .zaud-hit { fill: rgba(56,224,205,0.24); stroke: var(--teal); stroke-width: 1.6; }
-.zaud.is-hot .zaud-dot { fill: var(--teal-bright); }
-.zaud.is-dim { filter: brightness(0.5) saturate(0.6); }
-.zaud:focus-visible .zaud-hit { stroke: var(--teal-bright); stroke-width: 2; }
-.zaud-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 500; paint-order: stroke; stroke: rgba(2,6,15,0.8); stroke-width: 3px; }
-
-/* MOBILE: enlarge the central node + its six audience labels so the experience
-   orbit is readable on a narrow screen instead of a tiny thumbnail. (viewBox-unit
-   sizes override the SVG attributes.) */
-@media (max-width: 600px) {
-  .zones__orbit { min-height: 56vh; }
-  .zorbit-core-label { font-size: 30px; }
-  .zaud-label { font-size: 24px; font-weight: 600; }
+/* ============================================================================
+   Section 05 — Experience zones as a premium image-card grid.
+   Cards are the primary visual; the shared cinematic backdrop is kept EXTRA
+   subtle here via a section veil so the cards lead. transform/opacity only.
+   ========================================================================== */
+.section--zones { position: relative; }
+/* extra darkening veil so the (unified) background loop stays extremely subtle
+   behind the cards — sits above the backdrop layer, below the section content */
+.section--zones::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0.42), rgba(2, 6, 15, 0.62));
+  pointer-events: none;
 }
 
-/* one shared contextual detail panel */
-.zones__detail {
-  margin: 0.9rem auto 0;
-  max-width: 640px;
-  min-height: 2.2rem;
+/* ---- audience-category overview chips ---------------------------------- */
+.zaudiences {
   display: flex;
-  align-items: baseline;
-  justify-content: center;
+  flex-wrap: wrap;
   gap: 0.6rem;
-  text-align: center;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
-  background: rgba(8, 18, 40, 0.5);
+  justify-content: center;
+  margin-top: clamp(1rem, 2.4vh, 1.6rem);
 }
-.zones__detail strong { font-weight: 600; color: var(--teal-bright); }
-.zones__detail span { font-size: var(--fz-label); color: var(--ink-soft); }
-.zones__detail-hint { color: var(--ink-mute); }
+.zaud-chip {
+  font-size: var(--fz-label);
+  color: var(--ink-soft);
+  padding: 0.4em 1em;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  backdrop-filter: blur(6px);
+}
 
-/* ---- zones sequence ---- */
-.zones__seq-head { margin: clamp(2.4rem, 6vh, 4rem) 0 1.4rem; }
-.zones__row {
+/* ---- card grid --------------------------------------------------------- */
+.zones-grid {
+  margin-top: clamp(1.6rem, 4vh, 2.6rem);
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min(82vw, 340px);
-  gap: clamp(0.9rem, 1.6vw, 1.4rem);
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 0.4rem clamp(1.1rem, 3vw, 3.4rem) 1.4rem;
-  /* brand-compatible scroller — scoped to THIS row only (does not touch the
-     page/browser scrollbar). Dark navy track, teal→violet thumb. */
-  scrollbar-width: thin;
-  scrollbar-color: var(--teal-deep) rgba(4, 10, 26, 0.6);
-  -webkit-overflow-scrolling: touch;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  gap: clamp(0.9rem, 2vw, 1.4rem);
 }
-.zones__row::-webkit-scrollbar { height: 8px; }
-.zones__row::-webkit-scrollbar-track { background: rgba(4, 10, 26, 0.6); border-radius: 999px; }
-.zones__row::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, var(--teal-deep), var(--violet-deep));
-  border-radius: 999px;
-  border: 2px solid rgba(4, 10, 26, 0.6);
+/* clean single row of all five cards on desktop */
+@media (min-width: 1080px) {
+  .zones-grid { grid-template-columns: repeat(5, 1fr); }
 }
-.zones__row::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, var(--teal), var(--violet)); }
-/* DESKTOP/TABLET: the five zones fit as a wrapping grid, so there is nothing to
-   scroll — no overflow, no scrollbar, and the drag hint stays hidden. Only the
-   narrow (mobile) base layout above keeps the horizontal snap scroller. */
-@media (min-width: 768px) {
-  .zones__row {
-    grid-auto-flow: row;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-auto-columns: auto;
-    overflow-x: visible;
-    scroll-snap-type: none;
-  }
-}
-.zone-card {
-  scroll-snap-align: center;
+
+.zcard {
   position: relative;
+  aspect-ratio: 3 / 4;
   border-radius: var(--radius-lg);
+  overflow: hidden;
+  isolation: isolate;
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(16, 34, 72, 0.4), rgba(8, 18, 40, 0.55));
-  padding: clamp(1.4rem, 2.2vw, 1.9rem);
-  display: flex; flex-direction: column; gap: 0.9rem;
-  overflow: hidden;
-  transition: border-color var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+  background: var(--surface-2);
   --accent: var(--teal);
-  --accent-bright: var(--teal-bright);
+  /* longhand transitions: opacity carries the staggered reveal delay; the hover
+     transforms get ZERO delay so highlighting is instant and never lags */
+  opacity: 0;
+  transition-property: opacity, transform, box-shadow, border-color;
+  transition-duration: 0.6s, 0.45s, 0.45s, 0.45s;
+  transition-timing-function: var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 0.07s), 0s, 0s, 0s;
 }
-.zone-card[data-accent="violet"] { --accent: var(--violet); --accent-bright: var(--violet-bright); }
-.zone-card[data-accent="gold"] { --accent: var(--gold); --accent-bright: var(--gold-bright); }
-.zone-card:hover, .zone-card:focus-within { border-color: var(--accent); transform: translateY(-4px); }
-.zone-card__viz {
-  position: relative;
-  height: 132px;
-  display: grid; place-items: center;
-  border-radius: var(--radius);
-  background: radial-gradient(60% 60% at 50% 50%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
-  color: var(--accent-bright);
-  overflow: hidden;
+.zcard[data-accent="violet"] { --accent: var(--violet); }
+.zcard[data-accent="gold"] { --accent: var(--gold); }
+.zones-grid.is-revealed .zcard { opacity: 1; }
+
+.zcard__media { position: absolute; inset: 0; }
+.zcard__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s var(--ease-out);
 }
-.zone-card__viz .ring {
-  position: absolute; width: 70px; height: 70px; border-radius: 50%;
-  border: 1.5px solid var(--accent); opacity: 0.5;
+.zcard__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0.12) 0%, rgba(2, 6, 15, 0.18) 38%, rgba(2, 6, 15, 0.7) 78%, rgba(2, 6, 15, 0.9) 100%);
 }
-.section--zones[data-spin="true"] .zone-card__viz .ring { animation: zpulse 3.4s ease-out infinite; }
-.section--zones[data-spin="true"] .zone-card__viz .ring.r2 { animation-delay: 1.7s; }
-@keyframes zpulse { 0% { transform: scale(0.5); opacity: 0.6; } 100% { transform: scale(2.6); opacity: 0; } }
-.zone-card__viz svg.glyph { position: relative; z-index: 1; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 60%, transparent)); }
-.zone-card__index { font-family: var(--font-en); font-size: var(--fz-eyebrow); letter-spacing: 0.2em; color: var(--accent-bright); direction: ltr; }
-.zone-card__ar { font-size: var(--fz-h3); font-weight: 600; }
-.zone-card__en { font-family: var(--font-en); font-size: var(--fz-eyebrow); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); direction: ltr; }
-.zone-card__desc { font-size: var(--fz-body); color: var(--ink-soft); }
-.zones__hint { margin-top: 0.4rem; color: var(--ink-faint); font-size: var(--fz-eyebrow); padding-inline: clamp(1.1rem, 3vw, 3.4rem); }
+.zcard__badge {
+  position: absolute;
+  top: 14px;
+  inset-inline-start: 14px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--accent);
+  background: rgba(2, 6, 15, 0.55);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  backdrop-filter: blur(6px);
+}
+.zcard__index {
+  position: absolute;
+  top: 18px;
+  inset-inline-end: 16px;
+  font-family: var(--font-en);
+  font-size: var(--fz-eyebrow);
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  direction: ltr;
+}
+
+.zcard__body {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: clamp(1rem, 2.2vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  z-index: 1;
+}
+.zcard__title { font-size: var(--fz-h3); font-weight: 600; line-height: 1.2; }
+.zcard__en {
+  font-family: var(--font-en);
+  font-size: var(--fz-label);
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+.zcard__desc {
+  font-size: var(--fz-label);
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-top: 0.15rem;
+}
+
+/* accent top hairline reveals on emphasis */
+.zcard::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+  z-index: 2;
+}
+
+/* polished hover (desktop) + tap/focus (mobile) + visible keyboard focus */
+.zcard:hover,
+.zcard:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 54px -26px rgba(0, 0, 0, 0.75);
+  border-color: var(--accent);
+  outline: none;
+}
+.zcard:hover .zcard__img,
+.zcard:focus-visible .zcard__img { transform: scale(1.05); }
+.zcard:hover::after,
+.zcard:focus-visible::after { opacity: 0.9; }
+.zcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .zorbit-ring, .zone-card__viz .ring { animation: none !important; }
+  .zcard { opacity: 1; transition: none; }
+  .zcard__img { transition: none; }
+}
+
+/* mobile: comfortable one-column cards with readable height */
+@media (max-width: 560px) {
+  .zones-grid { grid-template-columns: 1fr; }
+  .zcard { aspect-ratio: 16 / 11; }
 }
