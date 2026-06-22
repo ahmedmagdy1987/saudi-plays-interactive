@@ -33,21 +33,31 @@
   backdrop-filter: blur(6px);
 }
 
-/* ---- card grid --------------------------------------------------------- */
+/* ---- card grid: a premium editorial bento ------------------------------ */
 .zones-grid {
   margin-top: clamp(1.6rem, 4vh, 2.6rem);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
-  gap: clamp(0.9rem, 2vw, 1.4rem);
+  grid-template-columns: 1fr;            /* mobile: one strong card per row */
+  gap: clamp(0.8rem, 1.6vw, 1.3rem);
 }
-/* clean single row of all five cards on desktop */
-@media (min-width: 1080px) {
-  .zones-grid { grid-template-columns: repeat(5, 1fr); }
+/* tablet+: one TALL feature card + a 2×2 of the rest — fills the full width
+   instead of a thin strip of narrow cards stranded in an empty section */
+@media (min-width: 700px) {
+  .zones-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(200px, 27vh);
+  }
+  .zcard:first-child { grid-column: span 2; grid-row: span 2; }
+  .zcard { aspect-ratio: auto; }         /* fill the grid cell, not a fixed ratio */
+  /* the feature card leads with a larger title + fuller copy */
+  .zcard:first-child .zcard__title { font-size: var(--fz-h2); }
+  .zcard:first-child .zcard__desc { font-size: var(--fz-body); max-width: 36ch; }
+  .zcard:first-child .zcard__body { padding: clamp(1.3rem, 2.6vw, 2.1rem); }
 }
 
 .zcard {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 16 / 11;                 /* mobile card proportion */
   border-radius: var(--radius-lg);
   overflow: hidden;
   isolation: isolate;
@@ -170,8 +180,9 @@
   .zcard__img { transition: none; }
 }
 
-/* mobile: comfortable one-column cards with readable height */
+/* mobile already stacks (grid default 1fr, 16/11 cards); give the title a touch
+   more presence and keep the section veil from over-darkening on small screens */
 @media (max-width: 560px) {
-  .zones-grid { grid-template-columns: 1fr; }
-  .zcard { aspect-ratio: 16 / 11; }
+  .zcard__title { font-size: var(--fz-lead); }
+  .zcard__body { padding: clamp(0.9rem, 4vw, 1.3rem); }
 }
