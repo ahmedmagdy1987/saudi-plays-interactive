@@ -125,6 +125,9 @@ export default function MediaDebug() {
           frameRendered: vid.readyState >= 2 && vid.currentTime > 0,
           coverUpscale: +coverScale.toFixed(2),
           opacity: cs(vid)!.opacity,
+          playPromise: vid.dataset.play || "n/a",
+          posterStillVisible: img ? (isImgTag ? (img as HTMLImageElement).naturalWidth > 0 : true) : false,
+          posterStillOpacity: img ? cs(img)!.opacity : "n/a",
         };
       }
 
@@ -164,6 +167,7 @@ export default function MediaDebug() {
         }
         if (video) {
           L.push(`VIDEO src=${video.srcWxH} rs=${video.readyState} paused=${video.paused} t=${video.currentTime} frame=${video.frameRendered} err=${video.errorCode} up=${video.coverUpscale}x op=${video.opacity}`);
+          L.push(`  play=${video.playPromise} poster(still)Visible=${video.posterStillVisible} posterOp=${video.posterStillOpacity}`);
           if (typeof video.src === "string") L.push(`  ${video.src}`);
         } else if (data.hasLoop) {
           L.push(`VIDEO: none on iPhone for this loop section (landscape source too low-res; still used)`);

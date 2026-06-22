@@ -41,12 +41,12 @@ const MEDIA: MediaItem[] = [
   { id: "vision", img: "s02-vision" },
   { id: "market", img: "s03-market" },
   { id: "riyadh", img: "s04-expansion" },
-  { id: "zones", img: "s05-entertainment", loop: "loop-entertainment" },
+  { id: "zones", img: "s05-entertainment", loop: "loop-entertainment", portrait: "loop-entertainment-portrait.mp4" },
   { id: "malahi", img: "s06-energy" },
   { id: "governance", img: "s07-governance" },
   { id: "revenue", img: "s08-revenue" },
-  { id: "impact", img: "s09-impact", loop: "loop-impact" },
-  { id: "finale", img: "s10-finale", loop: "loop-finale" },
+  { id: "impact", img: "s09-impact", loop: "loop-impact", portrait: "loop-impact-portrait.mp4" },
+  { id: "finale", img: "s10-finale", loop: "loop-finale", portrait: "loop-finale-portrait.mp4" },
 ];
 const N = MEDIA.length;
 const base = (f: string) => `/media/sections/${f}`;
@@ -335,14 +335,14 @@ export default function SectionBackgroundStage() {
         if (rvfc) rvfc.call(v, () => onReady(i));
       } else if (vready[i]) showVideo(i);
       const p = v.play?.();
-      if (p && typeof p.catch === "function") p.catch(() => { /* blocked autoplay → still stays */ });
+      if (p && typeof p.then === "function") p.then(() => { v.dataset.play = "playing"; }).catch(() => { v.dataset.play = "blocked"; /* still stays */ });
     };
     const stopVideo = (i: number) => {
       const v = videos[i];
       if (!v) return;
       vwant[i] = false;
       layers[i].classList.remove("is-playing");
-      if (!v.paused && v.readyState >= 3) v.pause();
+      if (!v.paused && v.readyState >= 3) { v.pause(); v.dataset.play = "paused"; }
     };
 
     const render = () => {
@@ -362,9 +362,11 @@ export default function SectionBackgroundStage() {
         if (vEl && vEl.style.transform !== tf) vEl.style.transform = tf;
         if (ad < 1.8) loadImg(i);
         if (videos[i]) {
-          const want = op > 0.5;            // dominant layer drives its portrait clip
-          if (want && !vwant[i]) startVideo(i);
-          else if (!want && vwant[i]) stopVideo(i);
+          // opacity hysteresis (enter 0.34 / leave 0.12): a video-backed section keeps
+          // playing through its scroll-crossfade and never flickers start/stop when the
+          // user is parked near a boundary. load() runs once; pause preserves currentTime.
+          const want = vwant[i] ? op > WANT_LEAVE : op > WANT_ENTER;
+          if (want !== vwant[i]) { if (want) startVideo(i); else stopVideo(i); }
         }
       }
     };
@@ -382,7 +384,14 @@ export default function SectionBackgroundStage() {
 
     const onVis = () => {
       if (document.hidden) {
-        for (let i = 0; i < N; i++) { const v = videos[i]; if (v && !v.paused) v.pause(); }
+        // mark un-wanted + drop is-playing so returning re-evaluates want from scroll and
+        // replays the active clip (resumes from its currentTime — load() is not called again)
+        for (let i = 0; i < N; i++) {
+          vwant[i] = false;
+          layers[i].classList.remove("is-playing");
+          const v = videos[i];
+          if (v && !v.paused) v.pause();
+        }
       } else {
         render();                            // re-derive want from current scroll → replay active
       }
