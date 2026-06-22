@@ -38,6 +38,20 @@
 .gov-node.is-dim { filter: brightness(0.5) saturate(0.55); }
 .gov-node:focus-visible .gov-disc { stroke: var(--teal-bright); stroke-width: 2.6; }
 .gov-halo { opacity: 0.55; }
+/* LIGHT THEME: nodes become clean light discs (not dark "button dots on a white card").
+   A near-white fill with the node's own accent as a soft border + icon, so the diagram
+   reads as light, premium and integrated. currentColor = each node's accent. */
+:root[data-theme="light"] .gov-disc {
+  fill: #ffffff;
+  stroke: color-mix(in srgb, currentColor 50%, var(--line-strong));
+  stroke-width: 1.4;
+}
+:root[data-theme="light"] .gov-node--hub .gov-disc {
+  fill: color-mix(in srgb, var(--teal) 9%, #ffffff);
+  stroke: var(--teal);
+  stroke-width: 1.8;
+}
+:root[data-theme="light"] .gov-halo { opacity: 0.3; }
 .gov-label { fill: var(--ink); font-family: var(--font-ar); font-weight: 600; paint-order: stroke; stroke: var(--label-halo); stroke-width: 1.6px; stroke-linejoin: round; }
 .gov-role { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 400; paint-order: stroke; stroke: var(--label-halo); stroke-width: 1.4px; stroke-linejoin: round; }
 

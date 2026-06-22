@@ -62,7 +62,9 @@
 
 .zcard {
   position: relative;
-  aspect-ratio: 16 / 11;                 /* mobile card proportion */
+  /* NOTE: no base aspect-ratio here — it would out-cascade the bento's grid sizing
+     (this rule sits after the @media block) and stop the cards filling their cells.
+     The 1-column mobile layout sets a proportion in its own media query below. */
   border-radius: var(--radius-lg);
   overflow: hidden;
   isolation: isolate;
@@ -187,8 +189,11 @@
   .zcard__img { transition: none; }
 }
 
-/* mobile already stacks (grid default 1fr, 16/11 cards); give the title a touch
-   more presence and keep the section veil from over-darkening on small screens */
+/* below the bento breakpoint the grid is a single column, so the cells no longer set a
+   height — give the stacked cards a proportion here (only). */
+@media (max-width: 699px) {
+  .zcard { aspect-ratio: 16 / 11; }
+}
 @media (max-width: 560px) {
   .zcard__title { font-size: var(--fz-lead); }
   .zcard__body { padding: clamp(0.9rem, 4vw, 1.3rem); }

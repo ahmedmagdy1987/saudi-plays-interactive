@@ -112,11 +112,15 @@
    faint texture, the title carries the deep-teal gradient with a restrained glow, and
    the scrim still ramps to var(--abyss) (now light) so it meets the light footer
    seamlessly — no jarring dark block. */
-:root[data-theme="light"] .finale__media { opacity: 0.22; }
+/* the dark cinematic clip dropped to a barely-there texture so it no longer reads as a
+   separate dark layer floating over the light scene; the scrim is a soft, near-uniform
+   light atmosphere (clear enough in the middle for the soft map) so the whole section
+   reads as ONE coherent light surface — no seam between overlay and backdrop. */
+:root[data-theme="light"] .finale__media { opacity: 0.09; }
 :root[data-theme="light"] .finale__scrim {
   background:
-    radial-gradient(60% 42% at 50% 86%, rgba(231, 237, 246, 0.66), transparent 70%),
-    linear-gradient(180deg, rgba(231, 237, 246, 0.6) 0%, rgba(231, 237, 246, 0.12) 28%, rgba(231, 237, 246, 0.12) 50%, rgba(231, 237, 246, 0.92) 86%, var(--abyss) 100%);
+    radial-gradient(72% 50% at 50% 82%, rgba(231, 237, 246, 0.5), transparent 76%),
+    linear-gradient(180deg, rgba(233, 240, 249, 0.66) 0%, rgba(233, 240, 249, 0.28) 32%, rgba(233, 240, 249, 0.3) 56%, rgba(231, 237, 246, 0.92) 86%, var(--abyss) 100%);
 }
 :root[data-theme="light"] .finale__title { text-shadow: 0 0 34px rgba(12, 138, 126, 0.16); }
 :root[data-theme="light"] .finale__map .saudimap__svg { filter: drop-shadow(0 24px 64px rgba(18, 40, 90, 0.22)); }

@@ -109,13 +109,13 @@ export default function SaudiMap({
       >
         <defs>
           <linearGradient id="sm-border" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="var(--teal-bright)" />
-            <stop offset="0.55" stopColor="var(--teal)" />
-            <stop offset="1" stopColor="var(--violet-bright)" />
+            <stop offset="0" stopColor="var(--map-stroke-1)" />
+            <stop offset="0.55" stopColor="var(--map-stroke-2)" />
+            <stop offset="1" stopColor="var(--map-stroke-3)" />
           </linearGradient>
           <linearGradient id="sm-fill" x1="0" y1="0" x2="0.6" y2="1">
-            <stop offset="0" stopColor="rgba(34,72,140,0.34)" />
-            <stop offset="1" stopColor="rgba(10,22,52,0.16)" />
+            <stop offset="0" stopColor="var(--map-fill-1)" />
+            <stop offset="1" stopColor="var(--map-fill-2)" />
           </linearGradient>
           <linearGradient id="sm-link" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="rgba(236,197,120,0.85)" />
@@ -146,7 +146,7 @@ export default function SaudiMap({
             <path
               d="M34 0H0V34"
               fill="none"
-              stroke="rgba(120,162,224,0.12)"
+              stroke="var(--map-grid)"
               strokeWidth="0.6"
             />
           </pattern>

@@ -85,6 +85,21 @@
 .mo-loc__tag { font-family: var(--font-en); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-faint); direction: ltr; }
 .mo__dash-foot { padding: 0.9rem clamp(1rem, 2vw, 1.6rem); border-top: 1px solid var(--line); background: rgba(6, 14, 32, 0.5); }
 
+/* LIGHT THEME: the ops dashboard becomes a clean LIGHT analytics panel (was a dark
+   "screen" island). All inner labels/metrics use theme tokens, so only the dark
+   surfaces need flipping; the live teal/green accents stay vivid on the light panel. */
+:root[data-theme="light"] .mo__dash { background: var(--card-2); border-color: var(--line-strong); }
+:root[data-theme="light"] .mo__dash-bar { background: rgba(255, 255, 255, 0.7); }
+:root[data-theme="light"] .mo-tile,
+:root[data-theme="light"] .mo-spark,
+:root[data-theme="light"] .mo-locs { background: var(--surface); }
+:root[data-theme="light"] .mo__dash-foot { background: rgba(255, 255, 255, 0.55); }
+:root[data-theme="light"] .section--malahi {
+  background:
+    radial-gradient(70% 60% at 90% 10%, rgba(120, 170, 220, 0.22), transparent 55%),
+    linear-gradient(180deg, var(--abyss), var(--night));
+}
+
 @media (max-width: 920px) { .mo__pillars { grid-template-columns: repeat(2, 1fr); } .mo__dash-grid { grid-template-columns: 1fr; } }
 @media (max-width: 520px) { .mo__pillars { grid-template-columns: 1fr; } .mo__tiles { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .mo__live i, .mo-spark__dot, .mo-loc__status { animation: none !important; } }

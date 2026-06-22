@@ -24,14 +24,15 @@
   stroke-width: 1.6;
   vector-effect: non-scaling-stroke;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0 6px rgba(56, 224, 205, 0.5));
+  filter: drop-shadow(0 0 6px var(--map-glow));
 }
 /* the national outline gently breathes its glow so it feels alive even at rest
-   (filter only — never touched by the GSAP draw, so no conflict) */
+   (filter only — never touched by the GSAP draw, so no conflict). Theme-aware glow:
+   a luminous teal pulse in dark, a soft restrained one in light. */
 .saudimap[data-animate="true"] .saudimap__border { animation: sm-border-glow 6s ease-in-out infinite; }
 @keyframes sm-border-glow {
-  0%, 100% { filter: drop-shadow(0 0 5px rgba(56, 224, 205, 0.4)); }
-  50%      { filter: drop-shadow(0 0 11px rgba(95, 243, 226, 0.7)); }
+  0%, 100% { filter: drop-shadow(0 0 5px var(--map-glow)); }
+  50%      { filter: drop-shadow(0 0 11px var(--map-glow)); }
 }
 
 /* connection links */

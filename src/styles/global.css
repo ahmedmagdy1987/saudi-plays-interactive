@@ -395,34 +395,10 @@ body, .panel, .chip, .btn, .mfig, .chart-card, .rev-stream, .zaud-chip {
   transition: background-color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
 }
 
-/* Dark cinematic "islands" keep the DARK palette in light mode. Now ONLY the frozen
-   hero (#intro) and the §06 ops "screen" dashboard (.mo__dash) — both deliberate dark
-   devices. The finale (§11) and footer now belong to the LIGHT theme (styled below in
-   their component CSS); the §10 stage keeps its own copy in CityJourney.css. */
-:root[data-theme="light"] #intro,
-:root[data-theme="light"] .mo__dash {
-  --abyss: #02060f;
-  --night: #050c1c;
-  --ink: #eef3fb;
-  --ink-soft: rgba(238, 243, 251, 0.74);
-  --ink-mute: rgba(238, 243, 251, 0.56);
-  --ink-faint: rgba(238, 243, 251, 0.4);
-  --teal: #38e0cd;
-  --teal-bright: #5ff3e2;
-  --teal-deep: #11a99e;
-  --violet: #8a78f0;
-  --violet-bright: #a99bff;
-  --violet-deep: #5a44c4;
-  --gold: #ecc578;
-  --gold-bright: #f6d99a;
-  --line: rgba(120, 162, 224, 0.16);
-  --line-strong: rgba(132, 178, 240, 0.3);
-  --surface: rgba(18, 36, 72, 0.42);
-  --surface-2: rgba(12, 26, 56, 0.6);
-  --node: #bfe9ff;
-  --card: linear-gradient(180deg, rgba(20, 40, 82, 0.26), rgba(8, 18, 40, 0.42));
-  --card-2: linear-gradient(180deg, rgba(16, 34, 70, 0.46), rgba(8, 18, 40, 0.54));
-}
+/* No more forced-dark islands in light mode: the hero (#intro) and the §06 ops screen
+   (.mo__dash) now adopt the LIGHT theme too, with real light treatments in their own
+   component CSS (IntroHero.css / MalahiOperating.css). Dark mode is unaffected (this rule
+   was light-scoped only). The §10 stage keeps its own light treatment in CityJourney.css. */
 
 /* prevent layout shift from late fonts; position:relative makes it the containing
    block for the unified in-document media layer (.ms-flow spans the full document
