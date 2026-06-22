@@ -1,38 +1,67 @@
-.theme-toggle {
+/* ============================================================================
+   Top-left control CLUSTER — the theme switcher + language switcher as one tidy,
+   balanced group (single fixed flex container; the pills are static children so
+   they always sit together with a consistent gap, no fragile pixel offsets).
+   ========================================================================== */
+.topcontrols {
   position: fixed;
   inset-block-start: clamp(0.85rem, 2vh, 1.5rem);
-  /* sits just inline-start of the language switcher */
-  inset-inline-end: calc(clamp(0.85rem, 2vw, 1.7rem) + 142px);
+  inset-inline-end: clamp(0.85rem, 2vw, 1.7rem);
   z-index: var(--z-overlay);
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* segmented theme switch — identical pill language to the language switcher */
+.themeswitch {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--line-strong);
   background: rgba(6, 14, 30, 0.72);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-card);
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
-.theme-toggle:hover { color: var(--ink); border-color: var(--teal); transform: translateY(-1px); }
-.theme-toggle:focus-visible { outline: 2px solid var(--teal-bright); outline-offset: 2px; }
-.theme-toggle svg { width: 19px; height: 19px; display: block; }
+.themeswitch__btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: var(--ink-mute);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.themeswitch__btn svg { width: 16px; height: 16px; display: block; }
+.themeswitch__btn[aria-pressed="true"] {
+  background: linear-gradient(120deg, var(--teal), var(--teal-deep));
+  color: #021018;
+}
+.themeswitch__btn:not([aria-pressed="true"]):hover { color: var(--ink); }
+.themeswitch__btn:focus-visible { outline: 2px solid var(--teal-bright); outline-offset: 2px; }
 
-/* light theme: flip the floating control chrome to a paper surface so the dark
-   icon/labels stay readable (these pills use fixed rgba, not tokens) */
-:root[data-theme="light"] .theme-toggle,
-:root[data-theme="light"] .langswitch { background: rgba(255, 255, 255, 0.82); }
+/* LIGHT THEME: paper chrome for both pills + the active segment carries WHITE text on
+   the (now deep-teal) accent, so the active state stays high-contrast (the old near-black
+   text on deep teal read as muddy dark-on-dark). */
+:root[data-theme="light"] .themeswitch,
+:root[data-theme="light"] .langswitch {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(22, 48, 98, 0.2);
+  box-shadow: 0 14px 36px -22px rgba(18, 40, 90, 0.4);
+}
+:root[data-theme="light"] .themeswitch__btn[aria-pressed="true"],
+:root[data-theme="light"] .langswitch__btn[aria-pressed="true"] {
+  background: linear-gradient(120deg, var(--teal), var(--teal-deep));
+  color: #ffffff;
+}
 
 @media (max-width: 560px) {
-  .theme-toggle {
-    inset-block-start: 0.6rem;
-    inset-inline-end: calc(0.6rem + 118px);
-    width: 36px;
-    height: 36px;
-  }
-  .theme-toggle svg { width: 17px; height: 17px; }
+  .topcontrols { inset-block-start: 0.6rem; inset-inline-end: 0.6rem; gap: 0.4rem; }
+  .themeswitch__btn { width: 28px; height: 24px; }
+  .themeswitch__btn svg { width: 15px; height: 15px; }
 }

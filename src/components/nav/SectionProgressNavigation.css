@@ -96,6 +96,25 @@
   direction: ltr;
 }
 
+/* LIGHT THEME: a crisp paper rail that reads as an intentional element (not a faint
+   floating pill), and a LIGHT tooltip — the dark tooltip + var(--ink) text was
+   dark-on-dark and invisible in light mode. */
+:root[data-theme="light"] .navrail {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(22, 48, 98, 0.2);
+  box-shadow: 0 16px 40px -22px rgba(18, 40, 90, 0.45);
+}
+:root[data-theme="light"] .navrail__dot { background: rgba(13, 24, 48, 0.4); }
+:root[data-theme="light"] .navrail__item[aria-current="true"] .navrail__dot {
+  background: linear-gradient(180deg, var(--teal), var(--teal-deep));
+}
+:root[data-theme="light"] .navrail__tooltip {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(22, 48, 98, 0.22);
+  color: var(--ink);
+  box-shadow: 0 16px 40px -22px rgba(18, 40, 90, 0.5);
+}
+
 @media (max-width: 900px) {
   .navrail { display: none; }
 }

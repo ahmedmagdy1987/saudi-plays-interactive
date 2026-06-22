@@ -134,8 +134,11 @@ export default function App() {
       <a href="#intro" className="sr-only">
         {ui.skip}
       </a>
-      <ThemeToggle />
-      <LanguageSwitcher />
+      {/* one tidy top control cluster: theme switcher + language switcher */}
+      <div className="topcontrols">
+        <ThemeToggle />
+        <LanguageSwitcher />
+      </div>
       <SectionProgressNavigation />
       {/* key={lang}: a controlled remount of the whole motion layer on language
           change. Every section's GSAP scene cleans up (gsap.context revert) and

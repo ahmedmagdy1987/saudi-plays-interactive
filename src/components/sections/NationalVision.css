@@ -107,6 +107,12 @@
 }
 .vision__partners-row .brandmark--logo { height: 70px; max-width: 230px; }
 .vision__partners-row .brandmark--light { height: 78px; }
+/* LIGHT THEME: the partner band becomes a light card (not a muddy dark band inside the
+   light section); the white logos pick up their dark tile from BrandMark's light flip. */
+:root[data-theme="light"] .vision__partners-row {
+  background: var(--card);
+  border-color: var(--line);
+}
 
 /* ---- the four forces — a structured premium card grid ------------------- */
 .vision__forces {

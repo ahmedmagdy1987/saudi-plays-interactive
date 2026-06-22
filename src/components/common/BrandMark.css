@@ -43,3 +43,20 @@
   border-radius: 10px;
   padding: 0.4rem 0.6rem;
 }
+
+/* LIGHT THEME: flip the backing so marks read on LIGHT partner surfaces — the
+   white/light artwork now gets the subtle dark tile, and the dark mark drops its tile
+   and reads directly on the light surface. The text-fallback chip flips to paper too. */
+:root[data-theme="light"] .brandmark--dark {
+  background: linear-gradient(180deg, rgba(13, 28, 58, 0.95), rgba(8, 18, 40, 0.97));
+  border-radius: 10px;
+  padding: 0.45rem 0.7rem;
+}
+:root[data-theme="light"] .brandmark--light {
+  background: none;
+  padding: 0;
+}
+:root[data-theme="light"] .brandmark--text {
+  background: var(--surface-2);
+  color: var(--ink-soft);
+}

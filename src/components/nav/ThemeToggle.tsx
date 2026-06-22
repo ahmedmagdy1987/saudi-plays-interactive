@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useContent } from "@/i18n";
+import { useLang } from "@/i18n";
 import "./ThemeToggle.css";
 
 type Theme = "dark" | "light";
@@ -7,15 +7,16 @@ const read = (): Theme =>
   typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
 
 /**
- * Accessible dark/light theme control. The initial theme is set before paint by the
- * bootstrap script in index.html (saved choice → OS preference → dark), so there is
- * no flash of the wrong theme; this control toggles + persists it. It is a real
- * <button> (Enter/Space work) with an aria-pressed state describing "light mode on",
- * a descriptive aria-label, and a visible focus ring.
+ * Theme SWITCHER — a segmented pill (Light | Dark) that mirrors the language switcher,
+ * not a floating round icon. The initial theme is set before paint by the bootstrap
+ * script in index.html (saved choice → OS preference → dark), so there is no flash; this
+ * control sets + persists it. Two real <button>s with aria-pressed on the active theme,
+ * descriptive aria-labels, and visible focus rings. Sun = light, moon = dark.
  */
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(read);
-  const { ui } = useContent();
+  const { lang } = useLang();
+  const en = lang === "en";
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -24,29 +25,36 @@ export default function ThemeToggle() {
     if (meta) meta.setAttribute("content", theme === "light" ? "#eef2f9" : "#040a1a");
   }, [theme]);
 
-  const toLight = theme === "dark";
-  const label = toLight ? ui.themeToLight : ui.themeToDark;
+  const lightLabel = en ? "Light mode" : "الوضع الفاتح";
+  const darkLabel = en ? "Dark mode" : "الوضع الداكن";
+
   return (
-    <button
-      type="button"
-      className="theme-toggle"
-      onClick={() => setTheme(toLight ? "light" : "dark")}
-      aria-label={label}
-      aria-pressed={theme === "light"}
-      title={label}
-    >
-      {toLight ? (
-        // moon (currently dark → switch to light)
+    <div className="themeswitch" role="group" aria-label={en ? "Theme" : "السمة"}>
+      <button
+        type="button"
+        className="themeswitch__btn"
+        aria-pressed={theme === "light"}
+        aria-label={lightLabel}
+        title={lightLabel}
+        onClick={() => setTheme("light")}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.1" fill="currentColor" stroke="none" />
+          <path d="M12 2.6v2.1M12 19.3v2.1M2.6 12h2.1M19.3 12h2.1M5.1 5.1l1.5 1.5M17.4 17.4 18.9 18.9M18.9 5.1l-1.5 1.5M6.6 17.4 5.1 18.9" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        className="themeswitch__btn"
+        aria-pressed={theme === "dark"}
+        aria-label={darkLabel}
+        title={darkLabel}
+        onClick={() => setTheme("dark")}
+      >
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z" fill="currentColor" />
         </svg>
-      ) : (
-        // sun (currently light → switch to dark)
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none" />
-          <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19" />
-        </svg>
-      )}
-    </button>
+      </button>
+    </div>
   );
 }

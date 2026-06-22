@@ -301,21 +301,40 @@
   .cj__pt-dot { transition: none; }
 }
 
-/* ---- Light theme ------------------------------------------------------------
-   The cinematic stage stays a DARK centrepiece (per "don't blindly light-ify the
-   cinematic sections"), so re-declare the dark ink/accent tokens INSIDE it — every
-   over-stage label (city names, captions, the Start control, hint) reads light
-   again. Only the readable static gallery re-themes to light via the base tokens. */
+/* ---- Light theme: the §10 journey BELONGS to the light theme -----------------
+   A soft DAYTIME atmosphere stage (light & airy, not a dark-mode leftover) carries the
+   Kingdom map + dark labels; the full-screen POINT images stay cinematic photos (their
+   own #fff captions + dark scrim), so depth is preserved without the stage being dark.
+   The stage now inherits the page's LIGHT tokens (dark ink), with the few hardcoded
+   dark surfaces below flipped to light. */
 :root[data-theme="light"] .cj__stage {
-  --ink: #eef3fb;
-  --ink-soft: rgba(238, 243, 251, 0.74);
-  --ink-mute: rgba(238, 243, 251, 0.52);
-  --ink-faint: rgba(238, 243, 251, 0.34);
-  --teal: #38e0cd;
-  --teal-bright: #5ff3e2;
-  --violet-bright: #a99bff;
-  --gold-bright: #f6d99a;
-  --line: rgba(120, 162, 224, 0.16);
-  --line-strong: rgba(132, 178, 240, 0.3);
-  --surface: rgba(18, 36, 72, 0.42);
+  background:
+    radial-gradient(120% 82% at 50% -12%, rgba(120, 175, 225, 0.45), transparent 62%),
+    linear-gradient(180deg, #e9f0f9 0%, #d9e4f2 55%, #ccdaed 100%);
 }
+:root[data-theme="light"] .cj__saudi .saudimap { filter: drop-shadow(0 26px 70px rgba(18, 40, 90, 0.28)); }
+:root[data-theme="light"] .cj__city-name b { text-shadow: 0 2px 18px rgba(255, 255, 255, 0.75); }
+:root[data-theme="light"] .cj__plane {
+  border-color: rgba(22, 48, 98, 0.16);
+  background:
+    radial-gradient(34% 44% at 32% 36%, rgba(10, 138, 126, 0.12), transparent 70%),
+    radial-gradient(30% 40% at 70% 62%, rgba(97, 80, 196, 0.1), transparent 72%),
+    linear-gradient(180deg, #eef4fb, #e1ebf6);
+  box-shadow: var(--shadow-card);
+}
+:root[data-theme="light"] .cj__pt-label {
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink);
+  border-color: transparent;
+}
+:root[data-theme="light"] .cj__pt.is-active .cj__pt-label {
+  background: #ffffff;
+  border-color: rgba(154, 111, 30, 0.5);
+}
+:root[data-theme="light"] .cj__start {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(22, 48, 98, 0.22);
+  color: var(--ink);
+  box-shadow: 0 14px 36px -22px rgba(18, 40, 90, 0.4);
+}
+:root[data-theme="light"] .cj__start:hover { background: #ffffff; border-color: var(--teal); }

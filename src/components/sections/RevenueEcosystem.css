@@ -18,9 +18,9 @@
   transform-origin: center;
   transition: opacity var(--dur-fast) var(--ease-out), stroke-width var(--dur-fast) var(--ease-out);
 }
-.rev__seg.is-active { stroke-width: 31; filter: drop-shadow(0 0 8px currentColor); }
-.rev__seg.is-dim { opacity: 0.28; }
-.rev__seg:focus-visible { outline: none; stroke-width: 31; filter: drop-shadow(0 0 6px currentColor); }
+.rev__seg.is-active { stroke-width: 29; filter: drop-shadow(0 0 6px currentColor); }
+.rev__seg.is-dim { opacity: 0.42; }
+.rev__seg:focus-visible { outline: none; stroke-width: 29; filter: drop-shadow(0 0 5px currentColor); }
 .rev__center-total { fill: var(--ink); font-family: var(--font-en); font-weight: 700; }
 .rev__center-cap { fill: var(--ink-mute); font-family: var(--font-ar); font-weight: 500; }
 
@@ -39,8 +39,15 @@
   transition: border-color var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
 }
-.rev-stream.is-active { border-color: var(--accent); transform: translateX(-4px); background: linear-gradient(180deg, rgba(24, 48, 94, 0.5), rgba(10, 22, 48, 0.5)); }
-.rev-stream.is-dim { opacity: 0.5; }
+/* subtle, theme-aware active state — a gentle accent-tinted surface (NOT a hardcoded
+   dark gradient that "dark-pops" rows in light mode) + an accent-coloured soft lift */
+.rev-stream.is-active {
+  border-color: var(--accent);
+  transform: translateX(-4px);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-2));
+  box-shadow: 0 10px 26px -16px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.rev-stream.is-dim { opacity: 0.55; }
 .rev-stream:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .rev-stream[data-accent="violet"] { --accent: var(--violet); }
 .rev-stream[data-accent="gold"] { --accent: var(--gold); }

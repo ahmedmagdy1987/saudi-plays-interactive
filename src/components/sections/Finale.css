@@ -107,6 +107,20 @@
   color: var(--ink-soft);
 }
 
+/* LIGHT THEME: the climax belongs to the light theme now (no longer a dark island).
+   A light atmospheric veil replaces the dark cinematic one, the dark media drops to a
+   faint texture, the title carries the deep-teal gradient with a restrained glow, and
+   the scrim still ramps to var(--abyss) (now light) so it meets the light footer
+   seamlessly — no jarring dark block. */
+:root[data-theme="light"] .finale__media { opacity: 0.22; }
+:root[data-theme="light"] .finale__scrim {
+  background:
+    radial-gradient(60% 42% at 50% 86%, rgba(231, 237, 246, 0.66), transparent 70%),
+    linear-gradient(180deg, rgba(231, 237, 246, 0.6) 0%, rgba(231, 237, 246, 0.12) 28%, rgba(231, 237, 246, 0.12) 50%, rgba(231, 237, 246, 0.92) 86%, var(--abyss) 100%);
+}
+:root[data-theme="light"] .finale__title { text-shadow: 0 0 34px rgba(12, 138, 126, 0.16); }
+:root[data-theme="light"] .finale__map .saudimap__svg { filter: drop-shadow(0 24px 64px rgba(18, 40, 90, 0.22)); }
+
 @media (max-width: 980px) { .why__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 720px) {
   .finale__map .saudimap__svg { height: min(54vh, 560px); }

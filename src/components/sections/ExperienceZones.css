@@ -49,10 +49,15 @@
   }
   .zcard:first-child { grid-column: span 2; grid-row: span 2; }
   .zcard { aspect-ratio: auto; }         /* fill the grid cell, not a fixed ratio */
-  /* the feature card leads with a larger title + fuller copy */
+  /* the feature card leads with a larger title + the descriptive copy */
   .zcard:first-child .zcard__title { font-size: var(--fz-h2); }
   .zcard:first-child .zcard__desc { font-size: var(--fz-body); max-width: 36ch; }
-  .zcard:first-child .zcard__body { padding: clamp(1.3rem, 2.6vw, 2.1rem); }
+  .zcard:first-child .zcard__body { padding: clamp(1.3rem, 2.6vw, 2.1rem); gap: 0.4rem; }
+  /* supporting cards stay clean & aligned: icon + title + EN only (no cramped
+     paragraph), so the four read as one balanced set against the feature */
+  .zcard:not(:first-child) .zcard__desc { display: none; }
+  .zcard:not(:first-child) .zcard__body { gap: 0.12rem; padding: clamp(0.95rem, 1.7vw, 1.35rem); }
+  .zcard:not(:first-child) .zcard__title { font-size: var(--fz-lead); }
 }
 
 .zcard {
@@ -91,7 +96,9 @@
 .zcard__scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(2, 6, 15, 0.12) 0%, rgba(2, 6, 15, 0.18) 38%, rgba(2, 6, 15, 0.7) 78%, rgba(2, 6, 15, 0.9) 100%);
+  /* cleaner editorial gradient: clear image up top, a firm anchored base for the
+     title/copy (less mid haze, stronger foot) */
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(2, 6, 15, 0.06) 42%, rgba(2, 6, 15, 0.6) 74%, rgba(2, 6, 15, 0.92) 100%);
 }
 .zcard__badge {
   position: absolute;

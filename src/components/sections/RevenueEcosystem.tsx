@@ -58,7 +58,7 @@ export default function RevenueEcosystem() {
   // jump/cut) and reverses along the exact same path. Only stroke-dashoffset and the
   // non-interactive centre's opacity are touched here — the stream rows reveal via the
   // global [data-reveal] system, so the is-active/is-dim highlighting stays intact.
-  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const arcs = gsap.utils.toArray<SVGCircleElement>(".rev__seg");
     const center = scope.querySelector(".rev__center") as SVGGElement | null;
     const n = arcs.length;
@@ -78,13 +78,21 @@ export default function RevenueEcosystem() {
 
     if (reduced) { render(1); return; }
     render(0);
-    ScrollTrigger.create({
-      trigger: scope.querySelector(".rev__layout") || scope,
-      start: "top 82%",
-      end: "top 34%",
-      scrub: 0.4,
-      onUpdate: (self) => render(self.progress),
-      onRefresh: (self) => render(self.progress),
+    // smooth ONE-SHOT eased fill when the ring enters view. Still scroll-AWARE (it
+    // triggers on scroll-in) but the fill is a TWEEN, not locked to scrollbar position —
+    // so it reads as a fluid, premium assemble rather than a mechanical scrub that jumps
+    // back and forth with the scroll wheel.
+    const state = { p: 0 };
+    gsap.to(state, {
+      p: 1,
+      duration: 1.6,
+      ease: "power2.out",
+      onUpdate: () => render(state.p),
+      scrollTrigger: {
+        trigger: scope.querySelector(".rev__layout") || scope,
+        start: "top 76%",
+        toggleActions: "play none none none",
+      },
     });
   });
 

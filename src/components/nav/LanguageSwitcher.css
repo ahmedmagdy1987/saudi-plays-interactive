@@ -1,8 +1,6 @@
+/* a static child of .topcontrols (which owns the fixed position) so the language
+   switcher and theme switcher always sit together as one balanced cluster */
 .langswitch {
-  position: fixed;
-  inset-block-start: clamp(0.85rem, 2vh, 1.5rem);
-  inset-inline-end: clamp(0.85rem, 2vw, 1.7rem);
-  z-index: var(--z-overlay);
   display: inline-flex;
   gap: 3px;
   padding: 4px;
@@ -32,6 +30,5 @@
 .langswitch__btn:focus-visible { outline: 2px solid var(--teal-bright); outline-offset: 2px; }
 
 @media (max-width: 560px) {
-  .langswitch { inset-block-start: 0.6rem; inset-inline-end: 0.6rem; }
   .langswitch__btn { font-size: 0.72rem; padding: 0.4em 0.75em; }
 }

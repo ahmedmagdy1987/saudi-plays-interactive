@@ -1,12 +1,16 @@
 .site-footer {
   position: relative;
-  /* A deliberate DARK grounding footer in BOTH themes: the white-on-transparent
-     partner logos need a dark backing to read, and the cinematic finale above ends
-     dark too — so the two meet seamlessly with no abrupt light/dark cut. The dark
-     ink/accent tokens are re-declared for this island in global.css, so the footer
-     text stays light and readable on the dark base regardless of the page theme. */
+  /* Theme-aware footer. DARK theme: the deep grounding base that the cinematic finale
+     ends into. LIGHT theme (below): a light paper footer that belongs to the light
+     theme — the finale scrim ramps to the same light --abyss so they still meet
+     seamlessly, and the partner-logo backing flips (see BrandMark.css) so the marks
+     stay readable on the light surface. */
   background: linear-gradient(180deg, #060f22, #01040b);
   padding-block: clamp(3rem, 7vh, 5rem) clamp(1.8rem, 4vh, 2.6rem);
+}
+/* LIGHT THEME: paper footer (no longer a dark island) */
+:root[data-theme="light"] .site-footer {
+  background: linear-gradient(180deg, #e7edf6 0%, #dce5f1 100%);
 }
 /* everything lives inside the same centered content grid as the site */
 .footer__inner {

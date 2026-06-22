@@ -394,14 +394,12 @@ body, .panel, .chip, .btn, .mfig, .chart-card, .rev-stream, .zaud-chip {
   transition: background-color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
 }
 
-/* Dark cinematic "islands" keep the DARK palette in light mode, so their text/
-   accents stay light over their dark imagery — this also keeps the FROZEN hero
-   visually identical in both themes. Re-declares the full dark token set locally
-   (the §10 stage has its own copy in CityJourney.css). */
+/* Dark cinematic "islands" keep the DARK palette in light mode. Now ONLY the frozen
+   hero (#intro) and the §06 ops "screen" dashboard (.mo__dash) — both deliberate dark
+   devices. The finale (§11) and footer now belong to the LIGHT theme (styled below in
+   their component CSS); the §10 stage keeps its own copy in CityJourney.css. */
 :root[data-theme="light"] #intro,
-:root[data-theme="light"] .mo__dash,
-:root[data-theme="light"] .finale__scene,
-:root[data-theme="light"] .site-footer {
+:root[data-theme="light"] .mo__dash {
   --abyss: #02060f;
   --night: #050c1c;
   --ink: #eef3fb;
