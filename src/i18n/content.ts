@@ -57,6 +57,8 @@ export const ar = {
     sparkAria: "مخطط توضيحي لتدفّق الجلسات",
     footerAria: "تذييل الصفحة",
     introAria: "الافتتاحية",
+    themeToLight: "تفعيل الوضع الفاتح",
+    themeToDark: "تفعيل الوضع الداكن",
   },
   NAV: [
     { id: "intro", index: "01", label: "الافتتاحية" },
@@ -323,6 +325,8 @@ export const en: Content = {
     sparkAria: "Illustrative session-flow chart",
     footerAria: "Page footer",
     introAria: "Opening",
+    themeToLight: "Switch to light mode",
+    themeToDark: "Switch to dark mode",
   },
   NAV: [
     { id: "intro", index: "01", label: "Opening" },

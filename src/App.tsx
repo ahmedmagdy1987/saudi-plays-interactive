@@ -5,6 +5,7 @@ import { prefersReducedMotion } from "@/lib/hooks";
 import { useContent, useLang } from "@/i18n";
 import SectionProgressNavigation from "@/components/nav/SectionProgressNavigation";
 import LanguageSwitcher from "@/components/nav/LanguageSwitcher";
+import ThemeToggle from "@/components/nav/ThemeToggle";
 import SectionBackgroundStage from "@/components/common/SectionBackgroundStage";
 import MediaDebug from "@/components/common/MediaDebug";
 
@@ -126,6 +127,7 @@ export default function App() {
       <a href="#intro" className="sr-only">
         {ui.skip}
       </a>
+      <ThemeToggle />
       <LanguageSwitcher />
       <SectionProgressNavigation />
       {/* key={lang}: a controlled remount of the whole motion layer on language

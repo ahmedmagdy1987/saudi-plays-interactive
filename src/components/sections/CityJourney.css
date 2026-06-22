@@ -296,3 +296,22 @@
 @media (prefers-reduced-motion: reduce) {
   .cj__pt-dot { transition: none; }
 }
+
+/* ---- Light theme ------------------------------------------------------------
+   The cinematic stage stays a DARK centrepiece (per "don't blindly light-ify the
+   cinematic sections"), so re-declare the dark ink/accent tokens INSIDE it — every
+   over-stage label (city names, captions, the Start control, hint) reads light
+   again. Only the readable static gallery re-themes to light via the base tokens. */
+:root[data-theme="light"] .cj__stage {
+  --ink: #eef3fb;
+  --ink-soft: rgba(238, 243, 251, 0.74);
+  --ink-mute: rgba(238, 243, 251, 0.52);
+  --ink-faint: rgba(238, 243, 251, 0.34);
+  --teal: #38e0cd;
+  --teal-bright: #5ff3e2;
+  --violet-bright: #a99bff;
+  --gold-bright: #f6d99a;
+  --line: rgba(120, 162, 224, 0.16);
+  --line-strong: rgba(132, 178, 240, 0.3);
+  --surface: rgba(18, 36, 72, 0.42);
+}

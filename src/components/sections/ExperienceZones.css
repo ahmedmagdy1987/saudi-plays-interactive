@@ -53,7 +53,9 @@
   isolation: isolate;
   border: 1px solid var(--line);
   background: var(--surface-2);
-  --accent: var(--teal);
+  /* cards always sit over their own dark image → fixed bright accent + light text,
+     identical in dark and light themes (a deepened token would lose contrast here) */
+  --accent: #38e0cd;
   /* longhand transitions: opacity carries the staggered reveal delay; the hover
      transforms get ZERO delay so highlighting is instant and never lags */
   opacity: 0;
@@ -62,8 +64,8 @@
   transition-timing-function: var(--ease-out);
   transition-delay: calc(var(--i, 0) * 0.07s), 0s, 0s, 0s;
 }
-.zcard[data-accent="violet"] { --accent: var(--violet); }
-.zcard[data-accent="gold"] { --accent: var(--gold); }
+.zcard[data-accent="violet"] { --accent: #a99bff; }
+.zcard[data-accent="gold"] { --accent: #f0cd85; }
 .zones-grid.is-revealed .zcard { opacity: 1; }
 
 .zcard__media { position: absolute; inset: 0; }
@@ -102,8 +104,14 @@
   font-family: var(--font-en);
   font-size: var(--fz-eyebrow);
   letter-spacing: 0.12em;
-  color: var(--ink-faint);
+  color: rgba(255, 255, 255, 0.6);
   direction: ltr;
+}
+
+/* light theme: lighten the §05 section veil so the area around the (dark) cards
+   reads as paper too; the cards themselves stay dark-image with light text */
+:root[data-theme="light"] .section--zones::before {
+  background: linear-gradient(180deg, rgba(238, 242, 249, 0.88), rgba(238, 242, 249, 0.93));
 }
 
 .zcard__body {
@@ -116,7 +124,7 @@
   gap: 0.3rem;
   z-index: 1;
 }
-.zcard__title { font-size: var(--fz-h3); font-weight: 600; line-height: 1.2; }
+.zcard__title { font-size: var(--fz-h3); font-weight: 600; line-height: 1.2; color: #fff; }
 .zcard__en {
   font-family: var(--font-en);
   font-size: var(--fz-label);
@@ -125,7 +133,7 @@
 }
 .zcard__desc {
   font-size: var(--fz-label);
-  color: var(--ink-soft);
+  color: rgba(255, 255, 255, 0.82);
   line-height: 1.6;
   margin-top: 0.15rem;
 }

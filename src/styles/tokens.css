@@ -100,3 +100,63 @@
 
   color-scheme: dark;
 }
+
+/* ============================================================================
+   LIGHT THEME — a real alternate theme, not an inversion. Only the colour tokens
+   are overridden; every component reads them via var(), so the whole UI re-themes.
+   Accents are DEEPENED to pass WCAG-AA as text on light surfaces (bright variants
+   are reused for fills/glows where contrast is not the concern). The cinematic
+   media sections keep their own dark image/video treatment (handled in component
+   CSS with a light scrim), so the premium identity is preserved — not flattened.
+   ========================================================================== */
+:root[data-theme="light"] {
+  /* backgrounds (soft, cool paper) */
+  --abyss: #eef2f9;
+  --night: #e5ebf5;
+  --navy-900: #dbe3f0;
+  --navy-800: #cfd9ec;
+  --navy-700: #c2cfe6;
+  --navy-600: #b3c2de;
+
+  /* accents — deepened so they read as text on light (AA); on-dark fills reuse bright */
+  --teal: #0a6e63;
+  --teal-bright: #0a6e63;
+  --teal-deep: #08584f;
+  --violet: #6150c4;
+  --violet-bright: #5642b4;
+  --violet-deep: #46369a;
+  --gold: #9a6f1e;
+  --gold-bright: #876012;
+  --gold-deep: #6f5212;
+
+  --pulse-green: #0f9d63;
+  --pulse-amber: #b9791f;
+
+  /* ink (dark text on light) */
+  --ink: #0d1830;
+  --ink-soft: rgba(13, 24, 48, 0.78);
+  --ink-mute: rgba(13, 24, 48, 0.66);
+  --ink-faint: rgba(13, 24, 48, 0.5);
+
+  /* lines & surfaces */
+  --line: rgba(20, 44, 92, 0.16);
+  --line-strong: rgba(20, 44, 92, 0.3);
+  --hair: rgba(20, 44, 92, 0.1);
+  --surface: rgba(255, 255, 255, 0.66);
+  --surface-2: rgba(255, 255, 255, 0.8);
+  --surface-glass: rgba(255, 255, 255, 0.62);
+  --node: #0e4a7a;
+
+  /* glows (softer on light) + shadows */
+  --glow-teal: 0 0 30px rgba(12, 138, 126, 0.26);
+  --glow-teal-soft: 0 0 18px rgba(12, 138, 126, 0.18);
+  --glow-violet: 0 0 30px rgba(97, 80, 196, 0.24);
+  --glow-gold: 0 0 26px rgba(154, 111, 30, 0.22);
+  --shadow-card: 0 20px 48px -28px rgba(18, 40, 90, 0.34);
+  --shadow-deep: 0 36px 100px -44px rgba(18, 40, 90, 0.4);
+
+  /* scrim behind text over busy imagery flips light */
+  --scrim: radial-gradient(120% 120% at 50% 50%, rgba(244, 247, 252, 0.84) 0%, rgba(244, 247, 252, 0.5) 45%, transparent 75%);
+
+  color-scheme: light;
+}
