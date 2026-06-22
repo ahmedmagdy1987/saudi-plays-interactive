@@ -94,18 +94,17 @@
    A paper veil over the (still cinematic) media so §02–09 + the finale read light
    with dark text, while the video stays a faint living texture behind it. */
 :root[data-theme="light"] .ms { background: var(--abyss); }
-/* a strong paper veil: the media stays a faint living texture, but text over it
-   reads on a near-light surface (so accent/disclaimer text keeps WCAG-AA contrast) */
+/* Light paper veil — gradient, NOT a flat wash: it eases toward the top/bottom reading
+   bands (where headers + content live) for contrast, but lets the cinematic media stay
+   a visible living texture through the middle so light sections never look faded/dead. */
 :root[data-theme="light"] .ms-flow__scrim {
   background:
-    radial-gradient(120% 90% at 82% 4%, rgba(12, 138, 126, 0.04), transparent 56%),
-    linear-gradient(90deg, rgba(238, 242, 249, 0.86) 0%, rgba(238, 242, 249, 0.93) 50%, rgba(238, 242, 249, 0.86) 100%),
-    linear-gradient(180deg, rgba(238, 242, 249, 0.9) 0%, rgba(238, 242, 249, 0.82) 40%, rgba(238, 242, 249, 0.92) 100%);
+    radial-gradient(120% 90% at 82% 4%, rgba(12, 138, 126, 0.06), transparent 56%),
+    linear-gradient(180deg, rgba(237, 242, 250, 0.9) 0%, rgba(237, 242, 250, 0.74) 36%, rgba(237, 242, 250, 0.72) 60%, rgba(237, 242, 250, 0.88) 100%);
 }
 @media (max-width: 820px) {
   :root[data-theme="light"] .ms-flow__scrim {
     background:
-      linear-gradient(90deg, rgba(238, 242, 249, 0.88) 0%, rgba(238, 242, 249, 0.94) 50%, rgba(238, 242, 249, 0.88) 100%),
-      linear-gradient(180deg, rgba(238, 242, 249, 0.9), rgba(238, 242, 249, 0.92));
+      linear-gradient(180deg, rgba(237, 242, 250, 0.94) 0%, rgba(237, 242, 250, 0.74) 35%, rgba(237, 242, 250, 0.7) 65%, rgba(237, 242, 250, 0.92) 100%);
   }
 }

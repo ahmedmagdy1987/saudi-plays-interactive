@@ -351,7 +351,10 @@ export default function CityJourney() {
     if (mode !== "cinematic") return;
     const track = rootRef.current?.querySelector<HTMLElement>(".cj__track");
     if (!track) return;
-    const end = track.offsetTop + track.offsetHeight - window.innerHeight;
+    // ABSOLUTE document position — offsetTop is relative to the positioned .cj section,
+    // not the page, so it must be combined with the element's viewport rect + scrollY.
+    const trackTop = track.getBoundingClientRect().top + window.scrollY;
+    const end = trackTop + track.offsetHeight - window.innerHeight;
     if (window.scrollY >= end - 4) return; // already at the journey's end
     const lenis = getLenis();
     showcaseRef.current.active = true;

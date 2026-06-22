@@ -110,18 +110,19 @@
    CSS with a light scrim), so the premium identity is preserved — not flattened.
    ========================================================================== */
 :root[data-theme="light"] {
-  /* backgrounds (soft, cool paper) */
-  --abyss: #eef2f9;
-  --night: #e5ebf5;
-  --navy-900: #dbe3f0;
-  --navy-800: #cfd9ec;
-  --navy-700: #c2cfe6;
-  --navy-600: #b3c2de;
+  /* backgrounds (soft, cool paper — a touch deeper so white surfaces read as crisp
+     cards, not washed-out gray) */
+  --abyss: #e7edf6;
+  --night: #dde6f2;
+  --navy-900: #d3deee;
+  --navy-800: #c7d4ea;
+  --navy-700: #bacae4;
+  --navy-600: #aabfdd;
 
   /* accents — deepened so they read as text on light (AA); on-dark fills reuse bright */
-  --teal: #0a6e63;
-  --teal-bright: #0a6e63;
-  --teal-deep: #08584f;
+  --teal: #0a6258;
+  --teal-bright: #0a6258;
+  --teal-deep: #084c44;
   --violet: #6150c4;
   --violet-bright: #5642b4;
   --violet-deep: #46369a;
@@ -138,13 +139,14 @@
   --ink-mute: rgba(13, 24, 48, 0.66);
   --ink-faint: rgba(13, 24, 48, 0.5);
 
-  /* lines & surfaces */
-  --line: rgba(20, 44, 92, 0.16);
-  --line-strong: rgba(20, 44, 92, 0.3);
-  --hair: rgba(20, 44, 92, 0.1);
-  --surface: rgba(255, 255, 255, 0.66);
-  --surface-2: rgba(255, 255, 255, 0.8);
-  --surface-glass: rgba(255, 255, 255, 0.62);
+  /* lines & surfaces — crisper borders + cleaner near-opaque white cards so they read
+     as defined surfaces against the paper background (not faint gray washes) */
+  --line: rgba(22, 48, 98, 0.2);
+  --line-strong: rgba(22, 48, 98, 0.34);
+  --hair: rgba(22, 48, 98, 0.12);
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-2: rgba(255, 255, 255, 0.92);
+  --surface-glass: rgba(255, 255, 255, 0.78);
   --node: #0e4a7a;
 
   /* glows (softer on light) + shadows */
