@@ -2,24 +2,23 @@ import { useEffect, useMemo, useRef } from "react";
 
 /**
  * Opt-in production media diagnostic — renders NOTHING unless opened with
- * `?debugMedia=1`. Required because Playwright WebKit on desktop never reproduces the
- * physical-iPhone media behaviour, so the real-device state must be captured directly.
+ * `?debugMedia=1`. Reports CAPABILITY + ACTIVE STATE for the ONE unified media
+ * engine (it is identical on every device, so there is no "mode" to report). It
+ * exists because Playwright WebKit on desktop does not perfectly reproduce
+ * physical-iPhone media compositing, so real-device state must be read directly.
  *
- * Shows a compact fixed overlay (and logs window.__mediaDebug to the console every 2s)
- * with: the global environment; the section float/progress + entry/hold/exit phase;
- * the current + next layer opacity; the active media's transform/scale; the still and
- * (portrait) video state; and — to pinpoint pixelation — the SOURCE pixel dimensions vs
- * the rendered CSS/physical dimensions, the cover crop ratio, the source-pixels-per-
- * rendered-physical-pixel (a value < 1 means up-scaling), and which source is selected.
+ * Shows a compact fixed overlay (and logs window.__mediaDebug to the console every
+ * 2s) with: the environment + capabilities (viewport, dpr, reduced-motion, webkit —
+ * informational, NOT used to branch); the section float/progress + entry/hold/exit
+ * phase; the current + next layer opacity; the active media's transform/scale; the
+ * still and landscape-loop video state; and — to confirm parity / pinpoint any
+ * pixelation — the SOURCE pixel dimensions vs the rendered CSS/physical dimensions,
+ * the cover crop ratio, and the source-pixels-per-rendered-physical-pixel (a value
+ * < 1 means up-scaling). Because every device now selects the SAME source with the
+ * SAME geometry, these numbers should match across iPhone, Android, and desktop.
  */
 const MEDIA_IDS = ["vision", "market", "riyadh", "zones", "malahi", "governance", "revenue", "impact", "finale"];
 const LOOP_IDS = new Set(["zones", "impact", "finale"]);
-
-const isIOSWebKit = () => {
-  const ua = navigator.userAgent || "";
-  if (/iP(hone|od|ad)/.test(ua)) return true;
-  return navigator.platform === "MacIntel" && (navigator.maxTouchPoints || 0) > 1;
-};
 
 export default function MediaDebug() {
   const on = useMemo(
@@ -30,7 +29,6 @@ export default function MediaDebug() {
 
   useEffect(() => {
     if (!on) return;
-    const ios = isIOSWebKit();
     const cs = (el: Element | null) => (el ? getComputedStyle(el) : null);
     const rect = (el: Element | null) => {
       if (!el) return null;
@@ -70,36 +68,32 @@ export default function MediaDebug() {
       const secProgress = av ? Math.max(0, Math.min(1, (c - av.top) / (av.h || 1))) : 0;
       const phase = secProgress < 0.16 ? "entry" : secProgress > 0.82 ? "exit" : "hold";
 
-      // ---- layers (iOS .ms-flow__sec | desktop .ms__layer), opacity-sorted ----
-      const layerSel = ios ? ".ms-flow__sec" : ".ms__layer";
-      const layers = [...document.querySelectorAll(layerSel)].map((l, i) => ({ i, el: l, op: +(+(cs(l)!.opacity)).toFixed(3) }));
+      // ---- layers (single unified selector), opacity-sorted ----
+      const layers = [...document.querySelectorAll(".ms-flow__sec")].map((l, i) => ({ i, el: l, op: +(+(cs(l)!.opacity)).toFixed(3) }));
       const sorted = [...layers].sort((a, b) => b.op - a.op);
       const cur = sorted[0], nxt = sorted[1];
 
       const mediaOf = (layerEl: Element | undefined) => {
         if (!layerEl) return { img: null as Element | null, vid: null as HTMLVideoElement | null };
-        return { img: layerEl.querySelector(ios ? ".ms-flow__img" : ".ms__img"), vid: layerEl.querySelector("video") as HTMLVideoElement | null };
+        return { img: layerEl.querySelector(".ms-flow__img"), vid: layerEl.querySelector("video") as HTMLVideoElement | null };
       };
       const curMedia = mediaOf(cur?.el);
       const img = curMedia.img as HTMLImageElement | null;
       const vid = curMedia.vid;
 
       // ---- still: source vs rendered, cover crop, source-px-per-physical-px ----
-      const isImgTag = img?.tagName === "IMG";
-      const pin = cur?.el?.querySelector(ios ? ".ms-flow__pin" : ".ms__img") ?? cur?.el;
+      const pin = cur?.el?.querySelector(".ms-flow__pin") ?? cur?.el;
       const box = rect(pin) || rect(cur?.el ?? null);
       let still: Record<string, unknown> | null = null;
       if (img) {
-        const natW = isImgTag ? (img as HTMLImageElement).naturalWidth : 0;
-        const natH = isImgTag ? (img as HTMLImageElement).naturalHeight : 0;
+        const natW = img.naturalWidth, natH = img.naturalHeight;
         const physW = (box?.w ?? 0) * dpr, physH = (box?.h ?? 0) * dpr;
         const coverScale = natW && natH ? Math.max(physW / natW, physH / natH) : 0; // >1 = upscale
         const srcPxPerPhysPx = coverScale ? +(1 / coverScale).toFixed(3) : 0;       // <1 = upscaling
         const visibleWidthFrac = natW && coverScale ? +((physW / coverScale) / natW).toFixed(2) : 0;
         still = {
-          type: isImgTag ? "img" : "bg-div",
-          src: isImgTag ? ((img as HTMLImageElement).currentSrc || img.getAttribute("src") || "(unset)").slice(-40) : (cs(img)!.backgroundImage || "none").slice(0, 50),
-          decoded: isImgTag ? (img as HTMLImageElement).naturalWidth > 0 : cs(img)!.backgroundImage !== "none",
+          src: (img.currentSrc || img.getAttribute("src") || "(unset)").slice(-40),
+          decoded: img.naturalWidth > 0,
           srcWxH: `${natW}x${natH}`,
           renderedCSS: `${box?.w}x${box?.h}`,
           renderedPhysical: `${Math.round(physW)}x${Math.round(physH)}`,
@@ -112,7 +106,7 @@ export default function MediaDebug() {
         };
       }
 
-      // ---- video (portrait variant on iOS | landscape loop on desktop) ----
+      // ---- video (the SAME landscape loop on every device) ----
       let video: Record<string, unknown> | null = null;
       if (vid) {
         const physW = (box?.w ?? 0) * dpr, physH = (box?.h ?? 0) * dpr;
@@ -126,18 +120,15 @@ export default function MediaDebug() {
           coverUpscale: +coverScale.toFixed(2),
           opacity: cs(vid)!.opacity,
           playPromise: vid.dataset.play || "n/a",
-          posterStillVisible: img ? (isImgTag ? (img as HTMLImageElement).naturalWidth > 0 : true) : false,
+          posterStillVisible: img ? img.naturalWidth > 0 : false,
           posterStillOpacity: img ? cs(img)!.opacity : "n/a",
         };
       }
 
-      const selectedSource = ios
-        ? (vid ? "iPhone portrait video" : "iPhone still (no portrait video)")
-        : "desktop/Android landscape video+still";
-
+      const webkit = /WebKit/.test(navigator.userAgent) && !/Chrome|CriOS|Edg/.test(navigator.userAgent);
       const data = {
-        ua: navigator.userAgent, iosDetected: ios,
-        webkit: /WebKit/.test(navigator.userAgent) && !/Chrome|CriOS|Edg/.test(navigator.userAgent),
+        ua: navigator.userAgent,
+        webkit, // informational only — NOT used to branch the experience
         viewport: { w: window.innerWidth, h: vh, dpr },
         pageVisibility: document.visibilityState,
         reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -147,20 +138,20 @@ export default function MediaDebug() {
         sectionProgress: +secProgress.toFixed(3), phase,
         currentLayer: cur ? { idx: cur.i, opacity: cur.op } : null,
         nextLayer: nxt ? { idx: nxt.i, opacity: nxt.op } : null,
-        selectedSource,
+        selectedSource: "unified landscape loop + still (same on every device)",
         still, video,
       };
       (window as unknown as Record<string, unknown>).__mediaDebug = data;
 
       if (boxRef.current) {
         const L: string[] = [];
-        L.push(`debugMedia · iOS=${ios} wk=${data.webkit} ${data.viewport.w}x${data.viewport.h}@${dpr} vis=${data.pageVisibility} reduced=${data.reducedMotion}`);
+        L.push(`debugMedia · UNIFIED · wk=${webkit} ${data.viewport.w}x${data.viewport.h}@${dpr} vis=${data.pageVisibility} reduced=${data.reducedMotion}`);
         L.push(`sp-revealed=${data.spRevealed} §10cine=${data.journeyCinematic}`);
         L.push(`float=${data.float} active=${activeId} progress=${data.sectionProgress} PHASE=${phase}`);
         L.push(`layers: cur=#${cur?.i} op=${cur?.op}  next=#${nxt?.i} op=${nxt?.op}`);
-        L.push(`source: ${selectedSource}`);
+        L.push(`source: ${data.selectedSource}`);
         if (still) {
-          L.push(`STILL[${still.type}] decoded=${still.decoded} scale=${still.scale} op=${still.opacity}`);
+          L.push(`STILL decoded=${still.decoded} scale=${still.scale} op=${still.opacity}`);
           L.push(`  src=${still.srcWxH}  renderedCSS=${still.renderedCSS}  phys=${still.renderedPhysical}`);
           L.push(`  coverUpscale=${still.coverUpscale}x  srcPxPerPhysPx=${still.srcPxPerPhysPx}  visW=${still.visibleWidthFrac}  → ${still.verdict}`);
           if (typeof still.src === "string") L.push(`  ${still.src}`);
@@ -170,7 +161,7 @@ export default function MediaDebug() {
           L.push(`  play=${video.playPromise} poster(still)Visible=${video.posterStillVisible} posterOp=${video.posterStillOpacity}`);
           if (typeof video.src === "string") L.push(`  ${video.src}`);
         } else if (data.hasLoop) {
-          L.push(`VIDEO: none on iPhone for this loop section (landscape source too low-res; still used)`);
+          L.push(`VIDEO: loop section — clip not yet wanted/loaded at this scroll position`);
         }
         boxRef.current.textContent = L.join("\n");
       }

@@ -15,6 +15,7 @@ yarn-error.log*
 __screenshots__/
 __ios__/
 __journey__/
+__parity__/
 
 # tsc -b (composite) emit artifacts for the node config
 vite.config.js

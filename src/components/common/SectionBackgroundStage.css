@@ -1,72 +1,75 @@
 /* ============================================================================
-   Cinematic media backdrop for Sections 02–10.
-   A fixed, non-interactive layer BEHIND the content (sections 02–10 are made
-   transparent below). Real Higgsfield stills (+ 3 short loops) cross-fade / zoom /
-   drift with scroll. A readability scrim tones the whole frame down and darkens
-   the centre content column, so the scenes read clearly at the sides + as depth
-   while text stays legible. transform + opacity only; no idle rAF.
+   Unified cinematic media backdrop for Sections 02–09 + finale (§11).
+
+   ONE media system for EVERY device (iPhone Safari, iPhone WhatsApp WebView,
+   Android Chrome, desktop, tablet). No device-specific path. A non-interactive
+   layer BEHIND the content (sections 02–10 are transparent below). Real
+   Higgsfield stills (+ 3 shared landscape loops) cross-fade and apply ONE
+   restrained scroll zoom. transform + opacity only; no idle rAF.
+
+   Architecture: the §10-proven in-document `position: sticky` stage. Each layer
+   spans the whole .app-root document; its sticky 100svh media box pins to the
+   viewport, so every layer stays viewport-pinned and the JS crossfades them by
+   scroll float — the iOS-safe alternative to a `position: fixed` stage whose
+   image/video children fail to repaint on physical iOS Safari.
    ========================================================================== */
+
+/* solid dark base shown before/behind imagery. A fixed SOLID-colour div is
+   iOS-safe (only fixed MEDIA children fail to repaint on iOS — there are none
+   here). Guarantees a section is never blank even before a still decodes. */
 .ms {
   position: fixed;
-  /* Bleed the clip box 2px past the left/right viewport edges. The backdrop's
-     composited children (.ms__img translateZ/will-change, .ms__video) are clipped
-     by this overflow:hidden box; at fractional device-pixel ratios (e.g. Windows
-     125%/150% scaling) a clip landing exactly on the viewport edge leaves a 1-device-px
-     partially-covered column that blends with the dark base / body glow behind — the
-     reported far-left (and right) vertical seam. Moving the clip edge off-screen makes
-     every on-screen column fully interior, so no edge column is ever partial. A fixed
-     element does not add scrollable overflow, and html{overflow-x:clip} is a backstop. */
-  inset: 0 -2px;
-  z-index: var(--z-bg);          /* true backdrop — content sits above (see below) */
+  inset: 0;
+  z-index: var(--z-bg);
   pointer-events: none;
-  overflow: hidden;
-  background: #02060f;           /* dark base shown before/behind imagery */
+  background: #02060f;
 }
-.ms__layers { position: absolute; inset: 0; }
-.ms__layer {
+
+/* the media layer spans the whole document; sticky children pin to the viewport */
+.ms-flow {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-atmos);
+  pointer-events: none;
+}
+.ms-flow__sec {
   position: absolute;
   inset: 0;
   opacity: 0;
   will-change: opacity;
 }
-.ms__img {
-  position: absolute;
-  inset: -4%;                    /* bleed so the parallax/zoom never reveals an edge */
-  background-size: cover;
-  background-position: center;
-  will-change: transform;
-  transform: translateZ(0);
+.ms-flow__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;                /* small viewport → fits under the iOS toolbar */
+  overflow: hidden;
 }
-.ms__video {
+
+/* ONE reliable sizing system, every device: one full-bleed box, no negative
+   insets, no 108%, no nested scale (the restrained scroll zoom is the single
+   transform the controller writes). object-fit:cover + a per-scene object-position
+   (centre — the stills/loops are centre-composed) give the identical crop on
+   iPhone and Android at the same viewport. */
+.ms-flow__img,
+.ms-flow__video {
   position: absolute;
-  /* EXACT same box as .ms__img. .ms__img is a div filled via `inset:-4%`
-     (left/right/top/bottom = -4% → 108%×108% at -4%,-4%). A <video> is a REPLACED
-     element: `inset` + auto size makes it fall back to its intrinsic 1152×648, and
-     `inset` + width/height over-constrains it (the §09 left strip). So pin it with
-     left/top + width/height ONLY — no right/bottom — which resolves to the identical
-     108%×108% rect at (-4%,-4%). object-fit:cover gives the identical centre crop. */
-  top: -4%;
-  left: -4%;
-  width: 108%;
-  height: 108%;
-  /* the global `video{max-width:100%}` would clamp width:108% back to 100% and pull
-     the right edge ~115px short of the poster — opt out so the box stays a true 108%. */
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
   max-height: none;
   object-fit: cover;
   object-position: center;
-  opacity: 0;
-  transition: opacity 0.7s ease;
-  /* No permanent will-change: a <video> only needs its own compositor layer while it
-     actually has frames (playing); a paused, visibility:hidden off-screen clip then
-     drops its backing store, so at most the active clip (+ its transition neighbour)
-     stays composited. */
 }
-.ms__layer.is-playing .ms__video { opacity: 1; }
+.ms-flow__video { opacity: 0; transition: opacity 0.7s ease; }
+.ms-flow__sec.is-playing .ms-flow__video { opacity: 1; }
 
 /* readability scrim: global tone-down + darker centre column (clear sides) +
-   darker header/footer bands + a faint brand vignette for cohesion */
-.ms__scrim {
+   darker header/footer bands + a faint brand vignette for cohesion. The SAME
+   element on every device; only its intensity is responsive (lighter on small
+   viewports), never a different structure. */
+.ms-flow__scrim {
   position: absolute;
   inset: 0;
   background:
@@ -77,75 +80,12 @@
     linear-gradient(rgba(2, 6, 15, 0.4), rgba(2, 6, 15, 0.4));
 }
 
-/* mobile: lighter — stronger tone-down + no JS parallax (videos DO play here now) */
+/* small viewports: lighter, even tone-down (responsive intensity only) */
 @media (max-width: 820px) {
-  /* No parallax on mobile (the controller sets transform:none), so the poster never
-     animates here — drop the permanent transform layer hint so iOS isn't holding a
-     full-screen GPU backing store per layer (memory pressure → Safari can blank
-     media). The opacity crossfade keeps its own will-change on .ms__layer. */
-  .ms__img { will-change: auto; }
-  .ms__scrim {
+  .ms-flow__scrim {
     background:
       linear-gradient(90deg, rgba(2, 6, 15, 0.3) 0%, rgba(2, 6, 15, 0.62) 50%, rgba(2, 6, 15, 0.3) 100%),
       linear-gradient(180deg, rgba(2, 6, 15, 0.55) 0%, rgba(2, 6, 15, 0.32) 40%, rgba(2, 6, 15, 0.55) 100%),
       linear-gradient(rgba(2, 6, 15, 0.46), rgba(2, 6, 15, 0.46));
   }
-}
-
-/* pause loops when the tab is hidden (JS also pauses the <video>) */
-.ms--paused .ms__video { opacity: 0; }
-
-/* ============================================================================
-   iPhone / iOS in-flow media layer (.ms-flow)
-   A `position: absolute` layer spanning the whole .app-root document, with one
-   full-bleed media box per section positioned (top/height) over its section by JS.
-   Real <img> stills (+ <video> overlays) — the SAME iOS-safe pattern the §10 City
-   Journey uses (and that renders on physical iPhone), instead of the global
-   `position: fixed` stage whose image/video children fail to repaint on physical
-   iOS Safari. Sits above the .ms solid dark base (--z-bg) and below content
-   (--z-content). The still is the guaranteed base; the video only overlays it once
-   a real frame is confirmed, so a blocked autoplay / Low-Power Mode keeps the still.
-   ========================================================================== */
-.ms-flow {
-  position: absolute;
-  inset: 0 -2px;                 /* 2px bleed past the edges → no partial seam column */
-  z-index: var(--z-atmos);
-  pointer-events: none;
-}
-/* Each layer spans the WHOLE document; its sticky child pins to the viewport, so every
-   layer stays viewport-pinned and the JS crossfades them by scroll float (opacity on the
-   layer, restrained scale on the media). No per-layer top/height, no permanent will-change. */
-.ms-flow__sec {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-}
-.ms-flow__pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;                /* small viewport → fits under the iOS toolbar */
-  overflow: hidden;
-}
-.ms-flow__img,
-.ms-flow__video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
-  object-fit: cover;
-  object-position: center;       /* clean full-bleed cover — ONE sizing rule, no extra crop */
-}
-.ms-flow__video { opacity: 0; transition: opacity 0.7s ease; }
-.ms-flow__sec.is-playing .ms-flow__video { opacity: 1; }
-.ms-flow__scrim {
-  position: absolute;
-  inset: 0;
-  /* the same lighter mobile scrim the fixed stage uses on small screens */
-  background:
-    linear-gradient(90deg, rgba(2, 6, 15, 0.3) 0%, rgba(2, 6, 15, 0.62) 50%, rgba(2, 6, 15, 0.3) 100%),
-    linear-gradient(180deg, rgba(2, 6, 15, 0.55) 0%, rgba(2, 6, 15, 0.32) 40%, rgba(2, 6, 15, 0.55) 100%),
-    linear-gradient(rgba(2, 6, 15, 0.46), rgba(2, 6, 15, 0.46));
 }
