@@ -51,41 +51,43 @@
   visibility: hidden;
   will-change: opacity;
 }
+/* a stylized CITY-MAP focus (not a rectangular chart panel): soft organic frame, a
+   layered aerial/terrain-style background with a glowing downtown core + district
+   washes, and elegant map pins — reads as a zoomed city map, never a dashboard grid */
 .cj__plane {
   position: relative;
   width: min(92vw, 1000px);
   aspect-ratio: 16 / 10;
   max-height: 78vh;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-lg);
+  border: 1px solid rgba(95, 243, 226, 0.14);
+  border-radius: clamp(20px, 3vw, 34px);
   background:
-    radial-gradient(60% 60% at 50% 40%, rgba(56, 224, 205, 0.07), transparent 70%),
-    linear-gradient(180deg, rgba(18, 36, 72, 0.5), rgba(6, 14, 32, 0.66));
-  box-shadow: var(--shadow-card);
+    radial-gradient(34% 44% at 32% 36%, rgba(56, 224, 205, 0.1), transparent 70%),
+    radial-gradient(30% 40% at 70% 62%, rgba(138, 120, 240, 0.09), transparent 72%),
+    radial-gradient(80% 80% at 50% 50%, rgba(10, 28, 56, 0.55), transparent 82%),
+    linear-gradient(180deg, #06142a, #030b1a);
+  box-shadow: var(--shadow-deep), inset 0 0 90px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   will-change: transform;
 }
-/* subtle cartographic mesh (not a chart grid): much fainter, larger cells, with a
-   soft teal "altitude" glow under it and a strong vignette so it reads as map depth */
+/* faint topographic "elevation" rings + a soft land/water split — atmosphere, no grid */
 .cj__plane-grid {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(70% 60% at 50% 42%, rgba(56, 224, 205, 0.06), transparent 72%),
-    linear-gradient(rgba(120, 162, 224, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120, 162, 224, 0.045) 1px, transparent 1px);
-  background-size: auto, 9.5% 14%, 9.5% 14%;
-  mask-image: radial-gradient(84% 84% at 50% 50%, #000 30%, transparent 100%);
-  -webkit-mask-image: radial-gradient(84% 84% at 50% 50%, #000 30%, transparent 100%);
+    repeating-radial-gradient(circle at 40% 42%, transparent 0 26px, rgba(120, 178, 224, 0.03) 26px 27px),
+    radial-gradient(120% 80% at 16% 8%, rgba(46, 96, 150, 0.12), transparent 55%);
+  mask-image: radial-gradient(86% 86% at 50% 50%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(86% 86% at 50% 50%, #000 40%, transparent 100%);
 }
 .cj__routes { position: absolute; inset: 0; width: 100%; height: 100%; }
 .cj__routes polyline {
   fill: none;
-  stroke: rgba(95, 243, 226, 0.45);
+  stroke: rgba(95, 243, 226, 0.3);
   stroke-width: 0.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1.6 1.8;
+  stroke-dasharray: 1.2 2.2;
   vector-effect: non-scaling-stroke;
 }
 .cj__pt {
@@ -96,11 +98,13 @@
   gap: 0.5em;
   pointer-events: none;
 }
+/* an elegant map pin: a glowing core inside a soft ring */
 .cj__pt-dot {
-  width: 9px; height: 9px;
+  width: 11px; height: 11px;
   border-radius: 50%;
-  background: var(--teal-bright);
-  box-shadow: 0 0 0 3px rgba(56, 224, 205, 0.12), 0 0 9px rgba(56, 224, 205, 0.55);
+  background:
+    radial-gradient(circle, var(--teal-bright) 0 32%, rgba(95, 243, 226, 0.25) 34% 60%, transparent 62%);
+  box-shadow: 0 0 12px rgba(56, 224, 205, 0.6);
   flex: none;
   transition: transform 0.3s var(--ease-out), background 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
 }
