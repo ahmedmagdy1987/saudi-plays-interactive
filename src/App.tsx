@@ -7,6 +7,7 @@ import SectionProgressNavigation from "@/components/nav/SectionProgressNavigatio
 import LanguageSwitcher from "@/components/nav/LanguageSwitcher";
 import ThemeToggle from "@/components/nav/ThemeToggle";
 import SectionBackgroundStage from "@/components/common/SectionBackgroundStage";
+import EarthKingdomStage from "@/components/common/EarthKingdomStage";
 import MediaDebug from "@/components/common/MediaDebug";
 
 import IntroHero from "@/components/sections/IntroHero";
@@ -124,6 +125,9 @@ export default function App() {
   return (
     <div className="app-root">
       <SectionBackgroundStage />
+      {/* Earth→Kingdom scroll camera: composites the globe + zooming Kingdom OVER the
+          section-video context, turning §02→§10 into one descending geographic journey */}
+      <EarthKingdomStage />
       <a href="#intro" className="sr-only">
         {ui.skip}
       </a>
