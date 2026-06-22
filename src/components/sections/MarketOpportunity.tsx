@@ -64,8 +64,18 @@ export default function MarketOpportunity() {
     `M${tipX.toFixed(1)} ${tipY.toFixed(1)} L${(tipX - aHead * Math.cos(aAng - 0.5)).toFixed(1)} ${(tipY - aHead * Math.sin(aAng - 0.5)).toFixed(1)} ` +
     `M${tipX.toFixed(1)} ${tipY.toFixed(1)} L${(tipX - aHead * Math.cos(aAng + 0.5)).toFixed(1)} ${(tipY - aHead * Math.sin(aAng + 0.5)).toFixed(1)}`;
 
-  useGsapScene(ref, ({ gsap, scope, reduced }) => {
+  // ONE deterministic, pure-scroll-progress render. Every visual (curve draw, area/
+  // dot/annotation fade, donut arcs, the 0→63% count) is a function of normalized
+  // progress p∈[0,1] from a single scrubbed ScrollTrigger — so forward scroll fills
+  // smoothly and reverse scroll un-fills along the EXACT same path, with no play-once
+  // timeline, no restart at boundaries, and no stepping/cut. Only stroke-dashoffset
+  // (presentation) + opacity are touched — never the interactive segments' opacity —
+  // so the legend↔segment highlighting is untouched.
+  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const line = scope.querySelector(".curve__line") as SVGPathElement | null;
+    const area = scope.querySelector(".curve__area") as SVGPathElement | null;
+    const dot = scope.querySelector(".curve__dot") as SVGCircleElement | null;
+    const annot = scope.querySelector(".curve__annot") as SVGGElement | null;
     const segUnder = scope.querySelector(".donut__seg--under") as SVGCircleElement | null;
     const segOver = scope.querySelector(".donut__seg--over") as SVGCircleElement | null;
     const numEl = scope.querySelector(".donut__num") as SVGTextElement | null;
@@ -74,42 +84,40 @@ export default function MarketOpportunity() {
     const dashUnder = (ys[0].value / 100) * C - GAP2;
     const dashOver = (ys[1].value / 100) * C - GAP2;
 
-    gsap.set(line, { strokeDasharray: llen, strokeDashoffset: reduced ? 0 : llen });
-    // dasharray is baked into the JSX; here we only drive the reveal offset, so a
-    // StrictMode/context revert can never collapse a segment into a full ring.
-    gsap.set(segUnder, { strokeDashoffset: reduced ? 0 : dashUnder });
-    gsap.set(segOver, { strokeDashoffset: reduced ? 0 : dashOver });
-    if (reduced) {
-      gsap.set([".curve__area", ".curve__dot", ".curve__annot"], { opacity: 1 });
-      if (numEl) numEl.textContent = `${pct}%`;             // final value shown at once
-      return;
-    }
-    gsap.set([".curve__dot", ".curve__annot"], { opacity: 0 });
-    if (numEl) numEl.textContent = "0%";                    // set before paint (no 63→0 flash)
+    // dasharray baked in JSX; we only own the reveal offset (a context revert can
+    // never collapse a segment into a full ring).
+    gsap.set(line, { strokeDasharray: llen });
 
-    // demand-trend line (left card)
-    const tl = gsap.timeline({ scrollTrigger: { trigger: ".market__charts", start: "top 75%", toggleActions: "play none none none" } });
-    tl.to(line, { strokeDashoffset: 0, duration: 1.4, ease: "power2.out" })
-      .to(".curve__area", { opacity: 1, duration: 0.8 }, "-=0.8")
-      .to(".curve__dot", { opacity: 1, duration: 0.3 }, "-=0.15")
-      // annotation slides in only after the line finishes drawing, anchored to the endpoint
-      .fromTo(".curve__annot", { opacity: 0, x: -6, y: 6 }, { opacity: 1, x: 0, y: 0, duration: 0.5, ease: "power2.out" });
+    const sm = (x: number) => { const t = x < 0 ? 0 : x > 1 ? 1 : x; return t * t * (3 - 2 * t); };
+    const seg = (p: number, a: number, b: number) => sm((p - a) / (b - a || 1));
 
-    // demographic donut (right card) — the 0→63% NUMBER and the 63% teal arc draw
-    // are driven by ONE tween so they stay perfectly synchronised; then the 37%
-    // violet arc draws as its own distinct segment. Plays once at the reading
-    // position. The count is written straight to the DOM (not React state) so AT
-    // never hears the intermediate ticks — the spoken value lives on aria-label.
-    const ring = { p: 0 };
-    gsap.timeline({ scrollTrigger: { trigger: ".market__donut", start: "top 80%", toggleActions: "play none none none" } })
-      .to(ring, {
-        p: 1, duration: 1.5, ease: "power2.out",
-        onUpdate: () => {
-          if (segUnder) gsap.set(segUnder, { strokeDashoffset: dashUnder * (1 - ring.p) });
-          if (numEl) numEl.textContent = `${Math.round(pct * ring.p)}%`;
-        },
-      })
-      .to(segOver, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" }, "-=0.2");
+    const render = (p: number) => {
+      const lp = seg(p, 0.0, 0.55);                         // curve draws first
+      if (line) line.style.strokeDashoffset = `${(llen * (1 - lp)).toFixed(2)}`;
+      if (area) area.style.opacity = `${seg(p, 0.12, 0.58).toFixed(3)}`;
+      if (dot) dot.style.opacity = `${seg(p, 0.5, 0.64).toFixed(3)}`;
+      if (annot) {
+        const ap = seg(p, 0.62, 0.9);
+        annot.style.opacity = `${ap.toFixed(3)}`;
+        annot.style.transform = `translate(${(-6 * (1 - ap)).toFixed(2)}px, ${(6 * (1 - ap)).toFixed(2)}px)`;
+      }
+      const dp = seg(p, 0.28, 0.82);                        // 63% teal arc + count, in sync
+      if (segUnder) segUnder.style.strokeDashoffset = `${(dashUnder * (1 - dp)).toFixed(2)}`;
+      if (numEl) numEl.textContent = `${Math.round(pct * dp)}%`;
+      const op = seg(p, 0.76, 1.0);                         // 37% violet arc, its own segment
+      if (segOver) segOver.style.strokeDashoffset = `${(dashOver * (1 - op)).toFixed(2)}`;
+    };
+
+    if (reduced) { render(1); return; }                    // final, static state
+    render(0);                                              // hidden before the band
+    ScrollTrigger.create({
+      trigger: scope.querySelector(".market__charts") || scope,
+      start: "top 85%",
+      end: "top 38%",
+      scrub: 0.4,
+      onUpdate: (self) => render(self.progress),
+      onRefresh: (self) => render(self.progress),
+    });
   });
 
   return (

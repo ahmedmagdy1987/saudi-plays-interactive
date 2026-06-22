@@ -16,6 +16,7 @@ __screenshots__/
 __ios__/
 __journey__/
 __parity__/
+__charts__/
 
 # tsc -b (composite) emit artifacts for the node config
 vite.config.js

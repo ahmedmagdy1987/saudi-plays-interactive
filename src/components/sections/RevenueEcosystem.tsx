@@ -52,26 +52,40 @@ export default function RevenueEcosystem() {
     return { ...s, start, len, dash: Math.max(len - GAP, 0.5), rotate: -90 + (start / 100) * 360 };
   });
 
-  useGsapScene(ref, ({ gsap, scope, reduced }) => {
-    // base stroke-dasharray comes from JSX; here we only set the hidden→shown
-    // offset so a StrictMode/context revert can never leave the ring un-segmented.
+  // ONE deterministic, pure-scroll-progress render. The six arcs assemble as a
+  // function of normalized progress p∈[0,1] from a single scrubbed ScrollTrigger,
+  // with OVERLAPPING per-arc sub-bands so the colour fills continuously (no segmented
+  // jump/cut) and reverses along the exact same path. Only stroke-dashoffset and the
+  // non-interactive centre's opacity are touched here — the stream rows reveal via the
+  // global [data-reveal] system, so the is-active/is-dim highlighting stays intact.
+  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
     const arcs = gsap.utils.toArray<SVGCircleElement>(".rev__seg");
-    arcs.forEach((a) => {
-      const dash = Number(a.dataset.dash);
-      gsap.set(a, { strokeDashoffset: reduced ? 0 : dash });
+    const center = scope.querySelector(".rev__center") as SVGGElement | null;
+    const n = arcs.length;
+    const dashes = arcs.map((a) => Number(a.dataset.dash));
+
+    const sm = (x: number) => { const t = x < 0 ? 0 : x > 1 ? 1 : x; return t * t * (3 - 2 * t); };
+    const SPAN = 0.42;                                       // each arc fills over 42% of the band
+    const step = n > 1 ? (1 - SPAN) / (n - 1) : 0;          // staggered, overlapping starts
+    const arcSeg = (p: number, i: number) => sm((p - i * step) / SPAN);
+
+    const render = (p: number) => {
+      for (let i = 0; i < n; i++) {
+        arcs[i].style.strokeDashoffset = `${(dashes[i] * (1 - arcSeg(p, i))).toFixed(2)}`;
+      }
+      if (center) center.style.opacity = `${sm((p - 0.82) / 0.18).toFixed(3)}`;
+    };
+
+    if (reduced) { render(1); return; }
+    render(0);
+    ScrollTrigger.create({
+      trigger: scope.querySelector(".rev__layout") || scope,
+      start: "top 82%",
+      end: "top 34%",
+      scrub: 0.4,
+      onUpdate: (self) => render(self.progress),
+      onRefresh: (self) => render(self.progress),
     });
-    if (reduced) {
-      gsap.set(".rev__center", { opacity: 1 });
-      return;
-    }
-    gsap.set(".rev__center", { opacity: 0 });
-    const tl = gsap.timeline({ scrollTrigger: { trigger: ".rev__layout", start: "top 74%", toggleActions: "play none none none" } });
-    arcs.forEach((a, i) => {
-      tl.to(a, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" }, i === 0 ? 0 : "-=0.35");
-      const row = scope.querySelector(`.rev-stream[data-i="${i}"]`);
-      if (row) tl.fromTo(row, { opacity: 0.35, x: 14 }, { opacity: 1, x: 0, duration: 0.4 }, "<");
-    });
-    tl.to(".rev__center", { opacity: 1, duration: 0.5 }, "+=0.1");
   });
 
   const dim = (id: string) => active !== null && active !== id;
@@ -122,6 +136,7 @@ export default function RevenueEcosystem() {
               className={`rev-stream${active === s.id ? " is-active" : ""}${dim(s.id) ? " is-dim" : ""}`}
               data-accent={s.accent}
               data-i={i}
+              data-reveal
               key={s.id}
               tabIndex={0}
               onMouseEnter={() => setActive(s.id)}
