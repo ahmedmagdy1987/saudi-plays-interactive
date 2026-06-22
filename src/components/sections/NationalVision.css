@@ -56,6 +56,19 @@
   background-clip: text;
   color: transparent;
 }
+/* LIGHT THEME: the platform medallion becomes a clean LIGHT emblem (not a dark navy
+   disc on the light hub) — a soft white disc, deep-teal border + glow, and deep text. */
+:root[data-theme="light"] .vision__core-badge {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.97), rgba(236, 244, 252, 0.9));
+  border-color: rgba(10, 98, 88, 0.45);
+  box-shadow: 0 14px 40px -18px rgba(18, 40, 90, 0.3), inset 0 0 40px rgba(10, 98, 88, 0.05);
+}
+:root[data-theme="light"] .vision__core-badge b { color: #0d1830; }
+:root[data-theme="light"] .vision__core-badge b:last-child {
+  background: linear-gradient(118deg, #0a6258, #11a99e 48%, #5642b4);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
 /* national pulse rings around the core */
 .vision__core-badge::before,
 .vision__core-badge::after {

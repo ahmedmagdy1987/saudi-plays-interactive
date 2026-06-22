@@ -94,6 +94,9 @@
 :root[data-theme="light"] .mo-spark,
 :root[data-theme="light"] .mo-locs { background: var(--surface); }
 :root[data-theme="light"] .mo__dash-foot { background: rgba(255, 255, 255, 0.55); }
+/* the unfilled gauge/bar rails need a touch more presence on the light tiles */
+:root[data-theme="light"] .mo-gauge__track { stroke: rgba(22, 48, 98, 0.16); }
+:root[data-theme="light"] .mo-bar { background: rgba(22, 48, 98, 0.13); }
 :root[data-theme="light"] .section--malahi {
   background:
     radial-gradient(70% 60% at 90% 10%, rgba(120, 170, 220, 0.22), transparent 55%),
