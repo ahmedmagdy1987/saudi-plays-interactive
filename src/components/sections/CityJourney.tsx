@@ -452,9 +452,11 @@ export default function CityJourney() {
             {showcasing ? (
               <p className="cj__showhint" aria-live="polite">{t(data.ui.showcaseHint)}</p>
             ) : (
-              <button type="button" className="cj__start" onClick={startShowcase}>
+              <button type="button" className="cj__start" onClick={startShowcase} dir={lang === "en" ? "ltr" : "rtl"}>
                 <span className="cj__start-ico" aria-hidden="true" />
-                {t(data.ui.startExperience)}
+                {/* <bdi> isolates the locale label's directionality so the Arabic always
+                    renders normally (browser-driven), never reversed by the flex/icon context */}
+                <bdi className="cj__start-label">{t(data.ui.startExperience)}</bdi>
               </button>
             )}
           </div>
