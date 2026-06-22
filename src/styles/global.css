@@ -400,7 +400,8 @@ body, .panel, .chip, .btn, .mfig, .chart-card, .rev-stream, .zaud-chip {
    (the §10 stage has its own copy in CityJourney.css). */
 :root[data-theme="light"] #intro,
 :root[data-theme="light"] .mo__dash,
-:root[data-theme="light"] .finale__scene {
+:root[data-theme="light"] .finale__scene,
+:root[data-theme="light"] .site-footer {
   --abyss: #02060f;
   --night: #050c1c;
   --ink: #eef3fb;

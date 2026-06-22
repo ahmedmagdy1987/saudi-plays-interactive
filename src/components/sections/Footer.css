@@ -1,9 +1,11 @@
 .site-footer {
   position: relative;
-  /* No top border: the finale scene above now ends in opaque var(--abyss), the
-     exact colour the footer starts with, so the two meet seamlessly. A 1px line
-     here would be the visible "hard cut" between the cinematic finale and footer. */
-  background: linear-gradient(180deg, var(--abyss), #01040b);
+  /* A deliberate DARK grounding footer in BOTH themes: the white-on-transparent
+     partner logos need a dark backing to read, and the cinematic finale above ends
+     dark too — so the two meet seamlessly with no abrupt light/dark cut. The dark
+     ink/accent tokens are re-declared for this island in global.css, so the footer
+     text stays light and readable on the dark base regardless of the page theme. */
+  background: linear-gradient(180deg, #060f22, #01040b);
   padding-block: clamp(3rem, 7vh, 5rem) clamp(1.8rem, 4vh, 2.6rem);
 }
 /* everything lives inside the same centered content grid as the site */
