@@ -5,16 +5,8 @@ import BrandMark from "@/components/common/BrandMark";
 import { Icon, type IconName } from "@/components/common/icons";
 import { useContent, useLang } from "@/i18n";
 import { useGsapScene } from "@/lib/scroll";
-import { prefersReducedMotion } from "@/lib/hooks";
 import "./NationalVision.css";
 
-const SAT = [
-  { x: 205, y: 140 },
-  { x: 795, y: 140 },
-  { x: 205, y: 470 },
-  { x: 795, y: 470 },
-];
-const CORE = { x: 500, y: 305 };
 const FORCE_ICONS: Record<string, IconName> = {
   v2030: "spark",
   growth: "analytics",
@@ -22,37 +14,25 @@ const FORCE_ICONS: Record<string, IconName> = {
   demand: "society",
 };
 
-function link(sx: number, sy: number) {
-  const mx = (sx + CORE.x) / 2;
-  const my = (sy + CORE.y) / 2 - 24;
-  return `M${sx} ${sy} Q${mx} ${my} ${CORE.x} ${CORE.y}`;
-}
-
 /**
- * Section 02 — National vision. Four converging forces join the central
- * «السعودية تلعب» network: connectors draw in and satellite nodes ignite as the
- * section enters view, over a faint national map. Supporting cards carry the
- * detail — the forces are never just four flat cards.
+ * Section 02 — National vision. A clean central Kingdom hub (the «السعودية تلعب»
+ * platform over the national map) states the convergence; the four forces are then
+ * presented as a structured grid of premium cards — not a crude floating-node graph.
  */
 export default function NationalVision() {
   const ref = useRef<HTMLElement>(null);
   const { vision, brand } = useContent();
   const { lang } = useLang();
-  // central project node, localized: "السعودية / تلعب" or "Saudi / Plays"
   const coreLines = (lang === "en" ? brand.nameLatin : brand.name).split(" ");
   const tdir = lang === "en" ? "ltr" : "rtl";
-  // official strategic partners — shown prominently in this national-vision
-  // section (exact artwork; contrast per logo; white-on-transparent on the dark
-  // band, only the dark Vision 2030 mark gets a minimal neutral backing).
   const partners = [
     { id: "gea", src: "/brand/gea.png", contrast: "dark" as const, label: lang === "en" ? "General Entertainment Authority" : "الهيئة العامة للترفيه" },
     { id: "vision2030", src: "/brand/vision2030.png", contrast: "light" as const, label: lang === "en" ? "Saudi Vision 2030" : "رؤية السعودية 2030" },
     { id: "qlp", src: "/brand/qlp.png", contrast: "dark" as const, label: lang === "en" ? "Quality of Life Program" : "برنامج جودة الحياة" },
   ];
 
-  // radar pulse only runs while the section is in view and the tab is visible
+  // ambient pulse only while in view + tab visible
   useEffect(() => {
-    if (prefersReducedMotion()) return;
     const sec = document.getElementById("vision");
     if (!sec) return;
     let inView = false;
@@ -65,29 +45,15 @@ export default function NationalVision() {
     return () => { io.disconnect(); document.removeEventListener("visibilitychange", onVis); };
   }, []);
 
-  useGsapScene(ref, ({ gsap, scope, reduced }) => {
-    const lines = gsap.utils.toArray<SVGPathElement>(".vline");
-    const sats = gsap.utils.toArray<SVGGElement>(".vsat");
-    lines.forEach((l) => {
-      const len = l.getTotalLength?.() ?? 400;
-      gsap.set(l, { strokeDasharray: len, strokeDashoffset: reduced ? 0 : len });
-    });
+  useGsapScene(ref, ({ gsap, reduced }) => {
     if (reduced) return;
-
-    gsap.set(sats, { opacity: 0, transformBox: "fill-box", transformOrigin: "center", scale: 0.4 });
-    gsap.set(".vsat-core", { transformBox: "fill-box", transformOrigin: "center", scale: 0.6, opacity: 0 });
-
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: scope, start: "top 70%", toggleActions: "play none none none" },
-    });
-    tl.to(".vsat-core", { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.6)" })
-      .to(lines, { strokeDashoffset: 0, duration: 0.9, stagger: 0.12, ease: "power2.out" }, "-=0.2")
-      .to(sats, { opacity: 1, scale: 1, duration: 0.6, stagger: 0.12, ease: "back.out(1.5)" }, "-=0.7");
-
-    // explanatory cards reveal AFTER the network, with a restrained stagger
+    gsap.set(".vision__core-badge", { opacity: 0, scale: 0.7, transformOrigin: "center" });
+    gsap.timeline({ scrollTrigger: { trigger: ".vision__hub", start: "top 74%", toggleActions: "play none none none" } })
+      .to(".vision__core-badge", { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.5)" });
+    // the four force cards reveal as a structured, restrained stagger
     gsap.set(".vforce", { opacity: 0, y: 26 });
     gsap.to(".vforce", {
-      opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "power3.out",
+      opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power3.out",
       scrollTrigger: { trigger: ".vision__forces", start: "top 84%", toggleActions: "play none none none" },
     });
   });
@@ -102,68 +68,22 @@ export default function NationalVision() {
       lede={vision.sub}
       label={vision.headline}
     >
-      <div className="vision__stage container">
+      {/* central Kingdom hub — the national map + the platform core */}
+      <div className="vision__hub container">
         <div className="vision__map" aria-hidden="true">
-          <SaudiMap stage={3} connections="none" labels="none" pulse={false} ariaLabel="" />
+          <SaudiMap stage={3} connections="none" labels="none" pulse ariaLabel="" />
         </div>
-        <svg className="vision__converge" viewBox="0 0 1000 610" role="img" aria-label={vision.convergeStatement}>
-          <defs>
-            <linearGradient id="v-link" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="rgba(56,224,205,0.7)" />
-              <stop offset="1" stopColor="rgba(138,120,240,0.55)" />
-            </linearGradient>
-            <radialGradient id="v-core" cx="0.5" cy="0.5" r="0.5">
-              <stop offset="0" stopColor="rgba(95,243,226,0.9)" />
-              <stop offset="0.5" stopColor="rgba(56,224,205,0.3)" />
-              <stop offset="1" stopColor="rgba(56,224,205,0)" />
-            </radialGradient>
-          </defs>
-
-          {SAT.map((s, i) => (
-            <path key={i} className="vline" d={link(s.x, s.y)} />
-          ))}
-
-          {/* core — national radar signal */}
-          <g className="vsat-core">
-            <circle className="vcore-breathe" cx={CORE.x} cy={CORE.y} r={86} fill="url(#v-core)" />
-            <circle className="vradar vradar--1" cx={CORE.x} cy={CORE.y} r={44} />
-            <circle className="vradar vradar--2" cx={CORE.x} cy={CORE.y} r={44} />
-            <circle className="vradar vradar--3" cx={CORE.x} cy={CORE.y} r={44} />
-            <circle cx={CORE.x} cy={CORE.y} r={46} fill="rgba(6,16,34,0.85)" stroke="var(--teal)" strokeWidth={1.4} />
-            <text className="vcore-label" x={CORE.x} y={CORE.y - 2} textAnchor="middle" fontSize={21} direction={tdir}>
-              {coreLines[0]}
-            </text>
-            <text className="vcore-label" x={CORE.x} y={CORE.y + 22} textAnchor="middle" fontSize={21} direction={tdir}>
-              {coreLines[1]}
-            </text>
-          </g>
-
-          {/* satellites */}
-          {vision.forces.map((f, i) => {
-            const s = SAT[i];
-            return (
-              <g className="vsat" key={f.id}>
-                <circle cx={s.x} cy={s.y} r={30} fill="rgba(56,224,205,0.1)" stroke="var(--line-strong)" strokeWidth={1} />
-                <circle cx={s.x} cy={s.y} r={5} fill="var(--teal-bright)" />
-                <text
-                  className="vsat-label"
-                  x={s.x}
-                  y={s.y > CORE.y ? s.y + 52 : s.y - 44}
-                  textAnchor="middle"
-                  fontSize={18}
-                  direction={tdir}
-                >
-                  {f.ar}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
+        <div className="vision__core" aria-hidden="true">
+          <span className="vision__core-badge" dir={tdir}>
+            <b>{coreLines[0]}</b>
+            <b>{coreLines[1]}</b>
+          </span>
+        </div>
       </div>
 
       <p className="vision__converge-note container text-grad-teal">{vision.convergeStatement}</p>
 
-      {/* official strategic-partner marks — a prominent, centered national band */}
+      {/* official strategic-partner marks */}
       <div className="vision__partners container" data-reveal>
         <span className="vision__partners-label">
           {lang === "en" ? "Strategic national partners" : "شركاء وطنيون استراتيجيون"}
@@ -175,13 +95,16 @@ export default function NationalVision() {
         </div>
       </div>
 
+      {/* the four converging forces — a structured premium card grid */}
       <div className="vision__forces container">
-        {vision.forces.map((f) => (
+        {vision.forces.map((f, i) => (
           <article className="vforce" key={f.id}>
+            <span className="vforce__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
             <span className="vforce__icon">
-              <Icon name={FORCE_ICONS[f.id] ?? "spark"} size={22} />
+              <Icon name={FORCE_ICONS[f.id] ?? "spark"} size={24} />
             </span>
             <h3 className="vforce__ar">{f.ar}</h3>
+            {f.en && f.en !== f.ar && <span className="vforce__en">{f.en}</span>}
             <p className="vforce__desc">{f.desc}</p>
           </article>
         ))}
