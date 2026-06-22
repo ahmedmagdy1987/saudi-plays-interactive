@@ -25,3 +25,5 @@ vite.config.d.ts
 __scan__/
 __verify__/
 scripts/_dl_*
+__vidwork__/
+__video__/

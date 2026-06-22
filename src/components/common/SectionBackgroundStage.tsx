@@ -35,14 +35,19 @@ import "./SectionBackgroundStage.css";
  * creating a different experience.
  */
 interface MediaItem { id: string; img: string; loop?: string }
+// Every §02+ section + the finale now carries its own lightweight cinematic loop
+// (poster = the approved still, shown until the first decoded frame). The SAME
+// landscape source is used on every device; the unified engine warms only the
+// active section + its neighbours, pauses off-screen/hidden, and crossfades with
+// a restrained scroll-linked scale — no per-device path.
 const MEDIA: MediaItem[] = [
-  { id: "vision", img: "s02-vision" },
-  { id: "market", img: "s03-market" },
-  { id: "riyadh", img: "s04-expansion" },
+  { id: "vision", img: "s02-vision", loop: "loop-vision" },
+  { id: "market", img: "s03-market", loop: "loop-market" },
+  { id: "riyadh", img: "s04-expansion", loop: "loop-expansion" },
   { id: "zones", img: "s05-entertainment", loop: "loop-entertainment" },
-  { id: "malahi", img: "s06-energy" },
-  { id: "governance", img: "s07-governance" },
-  { id: "revenue", img: "s08-revenue" },
+  { id: "malahi", img: "s06-energy", loop: "loop-malahi" },
+  { id: "governance", img: "s07-governance", loop: "loop-governance" },
+  { id: "revenue", img: "s08-revenue", loop: "loop-revenue" },
   { id: "impact", img: "s09-impact", loop: "loop-impact" },
   { id: "finale", img: "s10-finale", loop: "loop-finale" },
 ];
