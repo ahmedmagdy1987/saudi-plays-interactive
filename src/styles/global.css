@@ -245,8 +245,9 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, rgba(20, 40, 82, 0.34), rgba(8, 18, 40, 0.5));
+  /* theme-aware card token (flips to clean white in light) — was a hardcoded dark
+     gradient that would render muddy-dark in light mode if this base class is used */
+  background: var(--card);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(8px);
 }

@@ -58,6 +58,13 @@
      the frost is unnecessary; output is visually indistinguishable. */
   background: rgba(7, 15, 32, 0.9);
 }
+/* LIGHT THEME: flip the always-mounted contextual panel to a light card — it was a
+   near-opaque dark-navy panel sitting in the (light) section = a muddy dark island.
+   The inner text already uses theme-aware ink tokens, so only the surface needs it. */
+:root[data-theme="light"] .gov__detail {
+  background: var(--card);
+  border-color: var(--line);
+}
 .gov__detail-icon { color: var(--teal-bright); display: grid; place-items: center; flex: none; }
 .gov__detail strong { font-size: var(--fz-label); font-weight: 600; }
 .gov__detail div { display: flex; flex-direction: column; gap: 0.05rem; }

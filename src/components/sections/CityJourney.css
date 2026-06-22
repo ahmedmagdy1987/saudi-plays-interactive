@@ -338,3 +338,13 @@
   box-shadow: 0 14px 36px -22px rgba(18, 40, 90, 0.4);
 }
 :root[data-theme="light"] .cj__start:hover { background: #ffffff; border-color: var(--teal); }
+/* the full-screen point PHOTO panel is ALWAYS a dark cinematic image (it keeps its dark
+   scrim in both themes), so its caption text must stay LIGHT in light mode too — re-declare
+   the light-on-dark ink/accent tokens for this panel only (fixes dark-on-dark caption body
+   + category eyebrow that appeared once §10 stopped being a forced dark island). */
+.cj__panel {
+  --ink: #eef3fb;
+  --ink-soft: rgba(238, 243, 251, 0.84);
+  --teal-bright: #5ff3e2;
+  --gold-bright: #f6d99a;
+}

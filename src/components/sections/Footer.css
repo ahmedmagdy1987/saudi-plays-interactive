@@ -12,6 +12,10 @@
 :root[data-theme="light"] .site-footer {
   background: linear-gradient(180deg, #e7edf6 0%, #dce5f1 100%);
 }
+/* lift the small decorative sub-labels off the faint tier on the light paper (the
+   --ink-faint 0.5 alpha read ~3:1 on the light footer) */
+:root[data-theme="light"] .footer__latin,
+:root[data-theme="light"] .footer__legal { color: var(--ink-mute); }
 /* everything lives inside the same centered content grid as the site */
 .footer__inner {
   display: flex;
