@@ -6,14 +6,15 @@
     <meta name="theme-color" content="#040a1a" />
     <meta name="color-scheme" content="dark light" />
     <!-- Theme bootstrap (runs before the bundle → no flash of the wrong theme).
-         Honours a saved choice, else the OS preference; defaults to dark. -->
+         Honours an EXPLICIT saved choice ("light"/"dark"); otherwise the PRODUCT DEFAULT
+         is DARK — independent of the OS prefers-color-scheme (a light-mode OS must NOT
+         override the default). Any missing/corrupted value, or a storage failure
+         (private mode / restricted WebView), falls back to dark too. -->
     <script>
       (function () {
         try {
           var t = localStorage.getItem("sp-theme");
-          if (t !== "light" && t !== "dark") {
-            t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-          }
+          if (t !== "light" && t !== "dark") { t = "dark"; }
           document.documentElement.setAttribute("data-theme", t);
           if (t === "light") { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", "#eef2f9"); }
         } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
