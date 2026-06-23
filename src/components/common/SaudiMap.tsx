@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import {
   VIEWBOX,
   BORDER_PATH,
@@ -69,6 +69,10 @@ export default function SaudiMap({
   className,
   ariaLabel = "خريطة المملكة العربية السعودية وشبكة المدن",
 }: SaudiMapProps) {
+  // unique per-instance prefix for SVG <defs> ids — SaudiMap renders multiple times on
+  // the page (hero/§02/§04/§10/§11); shared hardcoded ids would be invalid duplicate ids.
+  const gp = `${useId().replace(/:/g, "_")}sm-`;
+  const u = (s: string) => `url(#${gp}${s})`;
   const nodes = useMemo(() => citiesThroughStage(stage), [stage]);
   const { lang } = useLang();
   const reduced = useReducedMotion();
@@ -108,37 +112,37 @@ export default function SaudiMap({
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id="sm-border" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={`${gp}border`} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="var(--map-stroke-1)" />
             <stop offset="0.55" stopColor="var(--map-stroke-2)" />
             <stop offset="1" stopColor="var(--map-stroke-3)" />
           </linearGradient>
-          <linearGradient id="sm-fill" x1="0" y1="0" x2="0.6" y2="1">
+          <linearGradient id={`${gp}fill`} x1="0" y1="0" x2="0.6" y2="1">
             <stop offset="0" stopColor="var(--map-fill-1)" />
             <stop offset="1" stopColor="var(--map-fill-2)" />
           </linearGradient>
-          <linearGradient id="sm-link" x1="0" y1="0" x2="1" y2="0">
+          <linearGradient id={`${gp}link`} x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="rgba(236,197,120,0.85)" />
             <stop offset="0.5" stopColor="rgba(56,224,205,0.6)" />
             <stop offset="1" stopColor="rgba(138,120,240,0.55)" />
           </linearGradient>
-          <radialGradient id="sm-glow-teal" cx="0.5" cy="0.5" r="0.5">
+          <radialGradient id={`${gp}glow-teal`} cx="0.5" cy="0.5" r="0.5">
             <stop offset="0" stopColor="rgba(95,243,226,0.9)" />
             <stop offset="0.4" stopColor="rgba(56,224,205,0.45)" />
             <stop offset="1" stopColor="rgba(56,224,205,0)" />
           </radialGradient>
-          <radialGradient id="sm-glow-gold" cx="0.5" cy="0.5" r="0.5">
+          <radialGradient id={`${gp}glow-gold`} cx="0.5" cy="0.5" r="0.5">
             <stop offset="0" stopColor="rgba(246,217,154,0.95)" />
             <stop offset="0.4" stopColor="rgba(236,197,120,0.5)" />
             <stop offset="1" stopColor="rgba(236,197,120,0)" />
           </radialGradient>
-          <radialGradient id="sm-glow-violet" cx="0.5" cy="0.5" r="0.5">
+          <radialGradient id={`${gp}glow-violet`} cx="0.5" cy="0.5" r="0.5">
             <stop offset="0" stopColor="rgba(169,155,255,0.85)" />
             <stop offset="0.45" stopColor="rgba(138,120,240,0.4)" />
             <stop offset="1" stopColor="rgba(138,120,240,0)" />
           </radialGradient>
           <pattern
-            id="sm-grid"
+            id={`${gp}grid`}
             width="34"
             height="34"
             patternUnits="userSpaceOnUse"
@@ -154,25 +158,27 @@ export default function SaudiMap({
 
         <g data-map-zoom>
           {/* atmospheric signal field clipped to the country shape */}
-          <clipPath id="sm-clip">
+          <clipPath id={`${gp}clip`}>
             <path d={simple ? MAINLAND_PATH : BORDER_PATH} />
           </clipPath>
-          <g className="saudimap__field" clipPath="url(#sm-clip)">
+          <g className="saudimap__field" clipPath={u("clip")}>
             <rect
               x="0"
               y="0"
               width={VIEWBOX.w}
               height={VIEWBOX.h}
-              fill="url(#sm-grid)"
+              fill={u("grid")}
             />
           </g>
 
           <path
             className="saudimap__fill"
+            fill={u("fill")}
             d={simple ? MAINLAND_PATH : BORDER_PATH}
           />
           <path
             className="saudimap__border"
+            stroke={u("border")}
             data-map-border
             d={simple ? MAINLAND_PATH : BORDER_PATH}
           />
@@ -183,6 +189,7 @@ export default function SaudiMap({
               <path
                 key={l.id}
                 className={`saudimap__link${isArmed ? " saudimap__link--armed" : ""}`}
+                stroke={u("link")}
                 data-link={l.id}
                 d={l.d}
               />
@@ -211,12 +218,12 @@ export default function SaudiMap({
           <g className="saudimap__nodes">
             {nodes.map((n) => {
               const glow = n.origin
-                ? "url(#sm-glow-gold)"
+                ? u("glow-gold")
                 : n.stage === 1
-                  ? "url(#sm-glow-teal)"
+                  ? u("glow-teal")
                   : n.stage === 2
-                    ? "url(#sm-glow-violet)"
-                    : "url(#sm-glow-teal)";
+                    ? u("glow-violet")
+                    : u("glow-teal");
               const haloR = n.origin ? 20 : n.stage === 1 ? 14 : 10;
               const coreR = n.origin ? 3.6 : n.stage === 1 ? 2.8 : 2.2;
               return (

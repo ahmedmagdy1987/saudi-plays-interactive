@@ -14,13 +14,13 @@
 .saudimap__field { opacity: 0.22; }
 
 /* border */
+/* paint-server fills/strokes are set INLINE per-instance (unique useId() ids) — the
+   component renders multiple times, so a shared CSS url(#sm-…) would be a duplicate id */
 .saudimap__fill {
-  fill: url(#sm-fill);
   stroke: none;
 }
 .saudimap__border {
   fill: none;
-  stroke: url(#sm-border);
   stroke-width: 1.6;
   vector-effect: non-scaling-stroke;
   stroke-linejoin: round;
@@ -38,7 +38,6 @@
 /* connection links */
 .saudimap__link {
   fill: none;
-  stroke: url(#sm-link);
   stroke-width: 1.1;
   vector-effect: non-scaling-stroke;
   opacity: 0.6;
