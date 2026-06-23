@@ -1,15 +1,24 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-// Self-hosted, licensed (OFL) fonts — Arabic-first with a Latin companion.
-import "@fontsource/ibm-plex-sans-arabic/300.css";
-import "@fontsource/ibm-plex-sans-arabic/400.css";
-import "@fontsource/ibm-plex-sans-arabic/500.css";
-import "@fontsource/ibm-plex-sans-arabic/600.css";
-import "@fontsource/ibm-plex-sans-arabic/700.css";
-import "@fontsource/ibm-plex-sans/400.css";
-import "@fontsource/ibm-plex-sans/500.css";
-import "@fontsource/ibm-plex-sans/600.css";
+// Self-hosted, licensed (OFL) fonts — Arabic-first with a Latin companion. Only the
+// ARABIC + LATIN(+ext) glyph subsets are imported (this is an AR/EN site); the umbrella
+// /NNN.css imports also pulled cyrillic/greek/vietnamese faces this site never renders.
+import "@fontsource/ibm-plex-sans-arabic/arabic-300.css";
+import "@fontsource/ibm-plex-sans-arabic/latin-300.css";
+import "@fontsource/ibm-plex-sans-arabic/arabic-400.css";
+import "@fontsource/ibm-plex-sans-arabic/latin-400.css";
+import "@fontsource/ibm-plex-sans-arabic/latin-ext-400.css";
+import "@fontsource/ibm-plex-sans-arabic/arabic-500.css";
+import "@fontsource/ibm-plex-sans-arabic/latin-500.css";
+import "@fontsource/ibm-plex-sans-arabic/arabic-600.css";
+import "@fontsource/ibm-plex-sans-arabic/latin-600.css";
+import "@fontsource/ibm-plex-sans-arabic/arabic-700.css";
+import "@fontsource/ibm-plex-sans-arabic/latin-700.css";
+import "@fontsource/ibm-plex-sans/latin-400.css";
+import "@fontsource/ibm-plex-sans/latin-ext-400.css";
+import "@fontsource/ibm-plex-sans/latin-500.css";
+import "@fontsource/ibm-plex-sans/latin-600.css";
 
 import "./styles/tokens.css";
 import "./styles/global.css";
