@@ -111,9 +111,9 @@ export default function CityJourney() {
 
   // scene-pacing timeline (holds + eased transitions) — drives the scrub + track height
   const timeline = useMemo(() => buildTimeline(scenes), [scenes]);
-  // opt-in diagnostic overlay: ?debugJourney=1 (no UI otherwise)
+  // opt-in diagnostic overlay: ?debugJourney=1 — DEV builds only (stripped from prod)
   const debug = useMemo(
-    () => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debugJourney") === "1",
+    () => import.meta.env.DEV && typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debugJourney") === "1",
     [],
   );
 

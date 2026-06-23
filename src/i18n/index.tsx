@@ -14,8 +14,15 @@ const STORAGE = "sp-lang";
 
 function initialLang(): Lang {
   if (typeof window === "undefined") return "ar";
-  const s = window.localStorage.getItem(STORAGE);
-  return s === "en" || s === "ar" ? s : "ar";
+  // localStorage access can THROW (disabled storage, private mode, sandboxed/WhatsApp
+  // webview) — guard it so a restricted environment never crashes the provider. Any
+  // missing/corrupted value falls back to the default language.
+  try {
+    const s = window.localStorage.getItem(STORAGE);
+    return s === "en" || s === "ar" ? s : "ar";
+  } catch {
+    return "ar";
+  }
 }
 
 interface Ctx {

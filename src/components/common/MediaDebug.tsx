@@ -21,8 +21,10 @@ const MEDIA_IDS = ["vision", "market", "riyadh", "zones", "malahi", "governance"
 const LOOP_IDS = new Set(["zones", "impact", "finale"]);
 
 export default function MediaDebug() {
+  // DEV-only diagnostic: the ?debugMedia=1 overlay (and its console logging) is gated to
+  // development builds, so it is tree-shaken out of production — never shipped publicly.
   const on = useMemo(
-    () => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debugMedia") === "1",
+    () => import.meta.env.DEV && typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debugMedia") === "1",
     [],
   );
   const boxRef = useRef<HTMLPreElement>(null);

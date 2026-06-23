@@ -144,7 +144,7 @@ export default function App() {
           change. Every section's GSAP scene cleans up (gsap.context revert) and
           rebuilds against the new RTL/LTR layout — no stale timelines, no stale
           ScrollTriggers, no inline opacity/transform surviving the switch. */}
-      <main key={lang}>
+      <main key={lang} id="main-content">
         <IntroHero />
         <NationalVision />
         <MarketOpportunity />
@@ -158,7 +158,8 @@ export default function App() {
         <Finale />
       </main>
       <Footer />
-      <MediaDebug />
+      {/* DEV-only media diagnostic overlay — tree-shaken out of production builds */}
+      {import.meta.env.DEV && <MediaDebug />}
     </div>
   );
 }
