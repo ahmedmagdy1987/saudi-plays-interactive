@@ -5,8 +5,11 @@
    ========================================================================== */
 .topcontrols {
   position: fixed;
-  inset-block-start: clamp(0.85rem, 2vh, 1.5rem);
-  inset-inline-end: clamp(0.85rem, 2vw, 1.7rem);
+  /* viewport-fit=cover is enabled, so keep the fixed cluster clear of the notch /
+     Dynamic Island / landscape side inset. env() is 0 on non-notch devices → no-op
+     everywhere else, preserving the single cross-device layout. */
+  inset-block-start: max(clamp(0.85rem, 2vh, 1.5rem), env(safe-area-inset-top));
+  inset-inline-end: max(clamp(0.85rem, 2vw, 1.7rem), env(safe-area-inset-right), env(safe-area-inset-left));
   z-index: var(--z-overlay);
   display: flex;
   align-items: center;
@@ -61,7 +64,11 @@
 }
 
 @media (max-width: 560px) {
-  .topcontrols { inset-block-start: 0.6rem; inset-inline-end: 0.6rem; gap: 0.4rem; }
+  .topcontrols {
+    inset-block-start: max(0.6rem, env(safe-area-inset-top));
+    inset-inline-end: max(0.6rem, env(safe-area-inset-right), env(safe-area-inset-left));
+    gap: 0.4rem;
+  }
   .themeswitch__btn { width: 28px; height: 24px; }
   .themeswitch__btn svg { width: 15px; height: 15px; }
 }

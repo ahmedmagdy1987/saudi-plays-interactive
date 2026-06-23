@@ -18,7 +18,8 @@
 /* side rail (desktop) — an integrated glass track, not floating dots */
 .navrail {
   position: fixed;
-  inset-inline-start: clamp(0.6rem, 1.4vw, 1.7rem);
+  /* keep clear of a landscape side notch (env() is 0 elsewhere) */
+  inset-inline-start: max(clamp(0.6rem, 1.4vw, 1.7rem), env(safe-area-inset-left), env(safe-area-inset-right));
   inset-block-start: 50%;
   transform: translateY(-50%);
   z-index: var(--z-nav);
