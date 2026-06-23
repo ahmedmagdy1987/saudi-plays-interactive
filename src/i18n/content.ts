@@ -149,11 +149,11 @@ export const ar = {
     zonesTitle: "خمس مناطق تجربة رئيسية",
     zonesSub: "خمس مناطق، وجهة واحدة متصلة.",
     zones: [
-      { id: "digital", ar: "المنطقة الرقمية", en: "Digital Zone", icon: "digital", accent: "violet", desc: "تجارب تفاعلية وألعاب رقمية وواقع ممتد يجمع بين اللعب والتقنية." },
-      { id: "sports", ar: "المنطقة الرياضية", en: "Sports Zone", icon: "sports", accent: "teal", desc: "ملاعب وتحديات حركية ومنافسات جماعية لكل المستويات." },
-      { id: "challenge", ar: "منطقة التحدي", en: "Challenge Zone", icon: "challenge", accent: "gold", desc: "مهمات ومسارات مهارة تختبر الجرأة والذكاء والعمل الجماعي." },
-      { id: "kids", ar: "منطقة الأطفال", en: "Kids Zone", icon: "kids", accent: "teal", desc: "عالم آمن وتعليمي يحفّز الخيال في بيئة مصممة للصغار." },
-      { id: "family", ar: "منطقة العائلة", en: "Family Zone", icon: "family", accent: "violet", desc: "مساحات تجمع كل الأجيال في تجربة واحدة لا تُنسى." },
+      { id: "digital", ar: "المنطقة الرقمية", en: "Digital Zone", accent: "violet", desc: "تجارب تفاعلية وألعاب رقمية وواقع ممتد يجمع بين اللعب والتقنية." },
+      { id: "sports", ar: "المنطقة الرياضية", en: "Sports Zone", accent: "teal", desc: "ملاعب وتحديات حركية ومنافسات جماعية لكل المستويات." },
+      { id: "challenge", ar: "منطقة التحدي", en: "Challenge Zone", accent: "gold", desc: "مهمات ومسارات مهارة تختبر الجرأة والذكاء والعمل الجماعي." },
+      { id: "kids", ar: "منطقة الأطفال", en: "Kids Zone", accent: "teal", desc: "عالم آمن وتعليمي يحفّز الخيال في بيئة مصممة للصغار." },
+      { id: "family", ar: "منطقة العائلة", en: "Family Zone", accent: "violet", desc: "مساحات تجمع كل الأجيال في تجربة واحدة لا تُنسى." },
     ],
   },
   malahi: {
@@ -417,11 +417,11 @@ export const en: Content = {
     zonesTitle: "Five core experience zones",
     zonesSub: "Five zones, one connected destination.",
     zones: [
-      { id: "digital", ar: "Digital Zone", en: "Digital Zone", icon: "digital", accent: "violet", desc: "Interactive experiences, digital games and extended reality blending play and technology." },
-      { id: "sports", ar: "Sports Zone", en: "Sports Zone", icon: "sports", accent: "teal", desc: "Courts, active challenges and team competitions for all levels." },
-      { id: "challenge", ar: "Challenge Zone", en: "Challenge Zone", icon: "challenge", accent: "gold", desc: "Missions and skill courses testing courage, wit and teamwork." },
-      { id: "kids", ar: "Kids Zone", en: "Kids Zone", icon: "kids", accent: "teal", desc: "A safe, educational world that sparks imagination, designed for children." },
-      { id: "family", ar: "Family Zone", en: "Family Zone", icon: "family", accent: "violet", desc: "Spaces that bring every generation together in one unforgettable experience." },
+      { id: "digital", ar: "Digital Zone", en: "Digital Zone", accent: "violet", desc: "Interactive experiences, digital games and extended reality blending play and technology." },
+      { id: "sports", ar: "Sports Zone", en: "Sports Zone", accent: "teal", desc: "Courts, active challenges and team competitions for all levels." },
+      { id: "challenge", ar: "Challenge Zone", en: "Challenge Zone", accent: "gold", desc: "Missions and skill courses testing courage, wit and teamwork." },
+      { id: "kids", ar: "Kids Zone", en: "Kids Zone", accent: "teal", desc: "A safe, educational world that sparks imagination, designed for children." },
+      { id: "family", ar: "Family Zone", en: "Family Zone", accent: "violet", desc: "Spaces that bring every generation together in one unforgettable experience." },
     ],
   },
   malahi: {

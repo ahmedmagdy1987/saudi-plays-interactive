@@ -1,5 +1,4 @@
 import { useEffect, useRef, type CSSProperties } from "react";
-import { Icon, type IconName } from "@/components/common/icons";
 import { useContent, useLang } from "@/i18n";
 import "./ExperienceZones.css";
 
@@ -71,8 +70,6 @@ export default function ExperienceZones() {
               <div className="zcard__media" aria-hidden="true">
                 <img className="zcard__img" src={ZONE_IMG[z.id]} alt="" loading="lazy" decoding="async" />
                 <span className="zcard__scrim" />
-                <span className="zcard__badge"><Icon name={z.icon as IconName} size={22} /></span>
-                <span className="zcard__index">{String(i + 1).padStart(2, "0")} / 05</span>
               </div>
               <div className="zcard__body" dir={dir}>
                 <h3 className="zcard__title">{z.ar}</h3>
