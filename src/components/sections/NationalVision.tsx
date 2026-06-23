@@ -97,9 +97,8 @@ export default function NationalVision() {
 
       {/* the four converging forces — a structured premium card grid */}
       <div className="vision__forces container">
-        {vision.forces.map((f, i) => (
+        {vision.forces.map((f) => (
           <article className="vforce" key={f.id}>
-            <span className="vforce__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
             <span className="vforce__icon">
               <Icon name={FORCE_ICONS[f.id] ?? "spark"} size={24} />
             </span>

@@ -71,7 +71,7 @@ export default function MarketOpportunity() {
   // timeline, no restart at boundaries, and no stepping/cut. Only stroke-dashoffset
   // (presentation) + opacity are touched — never the interactive segments' opacity —
   // so the legend↔segment highlighting is untouched.
-  useGsapScene(ref, ({ gsap, scope, reduced, ScrollTrigger }) => {
+  useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const line = scope.querySelector(".curve__line") as SVGPathElement | null;
     const area = scope.querySelector(".curve__area") as SVGPathElement | null;
     const dot = scope.querySelector(".curve__dot") as SVGCircleElement | null;
@@ -110,13 +110,21 @@ export default function MarketOpportunity() {
 
     if (reduced) { render(1); return; }                    // final, static state
     render(0);                                              // hidden before the band
-    ScrollTrigger.create({
-      trigger: scope.querySelector(".market__charts") || scope,
-      start: "top 85%",
-      end: "top 38%",
-      scrub: 0.4,
-      onUpdate: (self) => render(self.progress),
-      onRefresh: (self) => render(self.progress),
+    // ONE-SHOT smooth fill when the charts enter view. Scroll-AWARE trigger, but the
+    // fill is a TWEEN — NOT scrubbed by scroll position — so the curve draws and the
+    // donut 0→63% counts up smoothly ONCE and then STAYS. Scrolling up/down afterward
+    // never decrements/re-fills it (toggleActions play-once, no reverse on leave-back).
+    const state = { p: 0 };
+    gsap.to(state, {
+      p: 1,
+      duration: 1.7,
+      ease: "power2.out",
+      onUpdate: () => render(state.p),
+      scrollTrigger: {
+        trigger: scope.querySelector(".market__charts") || scope,
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
     });
   });
 

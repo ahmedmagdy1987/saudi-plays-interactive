@@ -1,4 +1,5 @@
 .section--finale {
+  position: relative;
   background: linear-gradient(180deg, var(--abyss), var(--night));
   overflow: clip;
   /* The full-bleed climax scene is the section's last child; drop the section's
@@ -6,6 +7,20 @@
      directly — removes the bright un-scrimmed media strip that used to sit in the
      padding gap between the scrim and the footer. */
   padding-block-end: 0;
+}
+/* "visual seam / overlay discontinuity between sections" fix: ONE consistent theme-aware
+   veil over the WHOLE finale (sits above the shared section-media backdrop, below the
+   content). It removes the band where the busy media behind the why-cards met the finale
+   scene below — so «لماذا ملاهي», the cards, the map and the climax read as one coherent
+   surface. Theme-aware (var tokens): clean light paper in light, calm deep base in dark.
+   The finale scene's own faint media + map + title still read as the climax on top. */
+.section--finale::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--night) 0%, var(--abyss) 100%);
 }
 .why__grid {
   display: grid;

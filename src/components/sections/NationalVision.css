@@ -147,16 +147,6 @@
   transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .vforce:hover { transform: translateY(-4px); border-color: var(--teal); box-shadow: var(--shadow-deep); }
-.vforce__num {
-  position: absolute;
-  top: clamp(0.9rem, 2vw, 1.4rem);
-  inset-inline-end: clamp(1rem, 2vw, 1.6rem);
-  font-family: var(--font-en);
-  font-size: var(--fz-label);
-  letter-spacing: 0.1em;
-  color: var(--ink-faint);
-  direction: ltr;
-}
 .vforce__icon {
   width: 46px; height: 46px;
   display: grid; place-items: center;
