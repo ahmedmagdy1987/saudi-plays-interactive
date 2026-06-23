@@ -131,7 +131,7 @@ export default function App() {
           var(--z-atmos), so equal-z paint order (DOM order) is what stacks the globe
           above the section video and below the content — do not reorder. */}
       <EarthKingdomStage />
-      <a href="#intro" className="sr-only">
+      <a href="#main-content" className="skip-link">
         {ui.skip}
       </a>
       {/* one tidy top control cluster: theme switcher + language switcher */}

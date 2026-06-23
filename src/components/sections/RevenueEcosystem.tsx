@@ -129,6 +129,7 @@ export default function RevenueEcosystem() {
                 onFocus={() => setActive(s.id)}
                 onBlur={() => setActive(null)}
                 onClick={() => toggle(s.id)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(s.id); } }}
               />
             ))}
             <g className="rev__center">
@@ -146,11 +147,14 @@ export default function RevenueEcosystem() {
               data-i={i}
               key={s.id}
               tabIndex={0}
+              role="button"
+              aria-label={`${s.ar}: ${s.pct} ${pctWord}`}
               onMouseEnter={() => setActive(s.id)}
               onMouseLeave={() => setActive(null)}
               onFocus={() => setActive(s.id)}
               onBlur={() => setActive(null)}
               onClick={() => toggle(s.id)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(s.id); } }}
             >
               <span className="rev-stream__sw" aria-hidden="true" />
               <div className="rev-stream__body">

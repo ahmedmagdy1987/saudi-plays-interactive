@@ -176,7 +176,7 @@ export default function Governance() {
                 data-id={e.id}
                 data-layer={e.layer}
                 tabIndex={0}
-                role="button"
+                role="img"
                 aria-label={`${e.ar}: ${e.role}`}
                 onMouseEnter={() => setActive(e.id)}
                 onMouseLeave={() => setActive(null)}

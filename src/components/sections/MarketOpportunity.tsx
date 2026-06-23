@@ -203,6 +203,7 @@ export default function MarketOpportunity() {
                   onFocus={() => setActiveYouth(seg.id)}
                   onBlur={() => setActiveYouth(null)}
                   onClick={() => toggleYouth(seg.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleYouth(seg.id); } }}
                 />
               ))}
               <text className="donut__center donut__num" x="100" y="96" textAnchor="middle" fontSize="34" aria-hidden="true">{ys[0].value}%</text>
@@ -216,11 +217,14 @@ export default function MarketOpportunity() {
                   key={y.id}
                   className={`donut-legend__item${yState(y.id)}`}
                   tabIndex={0}
+                  role="button"
+                  aria-label={`${y.label}: ${y.value} ${pctWord}`}
                   onMouseEnter={() => setActiveYouth(y.id)}
                   onMouseLeave={() => setActiveYouth(null)}
                   onFocus={() => setActiveYouth(y.id)}
                   onBlur={() => setActiveYouth(null)}
                   onClick={() => toggleYouth(y.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleYouth(y.id); } }}
                 >
                   <span className="sw" style={{ background: y.color }} />
                   <span className="donut-legend__txt">{y.label}: {y.value}%</span>
