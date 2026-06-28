@@ -19,7 +19,7 @@ import MalahiOperating from "@/components/sections/MalahiOperating";
 import Governance from "@/components/sections/Governance";
 import RevenueEcosystem from "@/components/sections/RevenueEcosystem";
 import ImpactDashboard from "@/components/sections/ImpactDashboard";
-import CityJourney from "@/components/sections/CityJourney";
+import CityExplorer from "@/components/sections/CityExplorer";
 import Finale from "@/components/sections/Finale";
 import Footer from "@/components/sections/Footer";
 
@@ -145,16 +145,19 @@ export default function App() {
           rebuilds against the new RTL/LTR layout — no stale timelines, no stale
           ScrollTriggers, no inline opacity/transform surviving the switch. */}
       <main key={lang} id="main-content">
+        {/* Visual-first order: lead with the strongest visuals (Riyadh, zones, the
+            interactive city explorer), then the operating model, and only then the
+            quantitative/commercial/governance sections — never open with metrics. */}
         <IntroHero />
-        <NationalVision />
-        <MarketOpportunity />
         <RiyadhToSaudi />
         <ExperienceZones />
+        <CityExplorer />
         <MalahiOperating />
-        <Governance />
+        <NationalVision />
+        <MarketOpportunity />
         <RevenueEcosystem />
+        <Governance />
         <ImpactDashboard />
-        <CityJourney />
         <Finale />
       </main>
       <Footer />

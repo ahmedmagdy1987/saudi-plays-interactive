@@ -41,9 +41,9 @@ export default function ExperienceZones() {
   }, [lang]);
 
   return (
-    <section id="zones" data-section="05" ref={ref} className="section section--zones" aria-label={experience.title}>
+    <section id="zones" data-section="03" ref={ref} className="section section--zones" aria-label={experience.title}>
       <div className="container sec-header" data-reveal>
-        <p className="eyebrow"><span className="sec-index">05</span>{experience.eyebrow}</p>
+        <p className="eyebrow"><span className="sec-index">03</span>{experience.eyebrow}</p>
         <h2 className="heading-xl sec-title">{experience.zonesTitle}</h2>
         <p className="lede sec-lede">{experience.zonesSub}</p>
       </div>

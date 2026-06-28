@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import SaudiMap from "@/components/common/SaudiMap";
 import CountUp from "@/components/common/CountUp";
 import { RIYADH } from "@/data/saudiGeo";
@@ -22,6 +22,10 @@ export default function IntroHero() {
   const ref = useRef<HTMLElement>(null);
   const { hero, ui, brand } = useContent();
   const { lang } = useLang();
+  // Official logo slot: try the owner-approved asset; until it is added the hero
+  // falls back to the text wordmark (never a fabricated logo) and auto-upgrades
+  // the moment /brand/saudi-plays-logo.(svg|png) exists and loads.
+  const [logoReady, setLogoReady] = useState(false);
 
   useGsapScene(ref, ({ gsap, scope, reduced }) => {
     const border = scope.querySelector(".intro__map [data-map-border]") as SVGPathElement | null;
@@ -163,10 +167,25 @@ export default function IntroHero() {
         <div className="intro__overlay">
           <p className="eyebrow intro__eyebrow">{hero.eyebrow}</p>
           <div className="intro__titlewrap">
-            <h1 className="intro__title">
-              <span className="line line--1"><span>{hero.titleLines[0]}</span></span>
-              <span className="line line--2"><span>{hero.titleLines[1]}</span></span>
-            </h1>
+            {/* Official logo replaces the large text wordmark (owner request). The
+                approved asset is not bundled yet, so this falls back to the text
+                wordmark until /brand/saudi-plays-logo.(svg|png) is added — never a
+                fabricated logo — and auto-upgrades once the file loads. */}
+            <img
+              className="intro__logo"
+              src="/brand/saudi-plays-logo.svg"
+              alt={brand.name}
+              decoding="async"
+              onLoad={() => setLogoReady(true)}
+              onError={() => setLogoReady(false)}
+              style={logoReady ? undefined : { display: "none" }}
+            />
+            {!logoReady && (
+              <h1 className="intro__title">
+                <span className="line line--1"><span>{hero.titleLines[0]}</span></span>
+                <span className="line line--2"><span>{hero.titleLines[1]}</span></span>
+              </h1>
+            )}
             <p className="intro__supporting">{hero.supporting}</p>
           </div>
         </div>

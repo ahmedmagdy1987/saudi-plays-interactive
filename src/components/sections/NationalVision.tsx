@@ -62,7 +62,7 @@ export default function NationalVision() {
     <SectionShell
       ref={ref}
       id="vision"
-      index="02"
+      index="06"
       eyebrow={vision.eyebrow}
       title={vision.headline}
       lede={vision.sub}

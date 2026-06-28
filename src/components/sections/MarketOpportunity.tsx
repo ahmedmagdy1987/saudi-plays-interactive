@@ -129,7 +129,7 @@ export default function MarketOpportunity() {
   });
 
   return (
-    <SectionShell ref={ref} id="market" index="03" eyebrow={market.eyebrow} title={market.headline} lede={market.sub} label={market.headline}>
+    <SectionShell ref={ref} id="market" index="07" eyebrow={market.eyebrow} title={market.headline} lede={market.sub} label={market.headline}>
       <div className="market__figures container">
         {market.figures.map((f) => (
           <div className="mfig" key={f.label} data-reveal>

@@ -130,7 +130,7 @@ export default function Governance() {
     route ? (id === active ? " is-hot" : route.nodes.has(id) ? " is-near" : " is-dim") : "";
 
   return (
-    <SectionShell ref={ref} id="governance" index="07" eyebrow={governance.eyebrow} title={governance.title} lede={governance.sub} label={governance.title}>
+    <SectionShell ref={ref} id="governance" index="09" eyebrow={governance.eyebrow} title={governance.title} lede={governance.sub} label={governance.title}>
       <div className="gov__diagram-wrap container">
         {/* viewBox extended above gea (for its two stacked labels) and below the
             beneficiary so neither set of labels is clipped or overlaps a circle */}

@@ -62,6 +62,12 @@ export interface CityJourneyData {
     startExperience: Bi;
     /** shown while the auto-showcase is running (any input takes control back) */
     showcaseHint: Bi;
+    /** interactive explorer (§04) labels */
+    chooseCity: Bi;
+    exploreLocations: Bi;
+    backToCities: Bi;
+    close: Bi;
+    viewDetails: Bi;
   };
   cities: JourneyCity[];
 }
@@ -93,6 +99,11 @@ export const cityJourney: CityJourneyData = {
     hintScroll: { ar: "مرّر للمتابعة", en: "Scroll to travel" },
     startExperience: { ar: "ابدأ الاستعراض", en: "Start the Experience" },
     showcaseHint: { ar: "مرّر في أي وقت للتحكم في الرحلة", en: "Scroll anytime to take control" },
+    chooseCity: { ar: "اختر مدينة", en: "Choose a city" },
+    exploreLocations: { ar: "استكشف المواقع", en: "Explore locations" },
+    backToCities: { ar: "العودة إلى المدن", en: "Back to cities" },
+    close: { ar: "إغلاق", en: "Close" },
+    viewDetails: { ar: "عرض التفاصيل", en: "View details" },
   },
   cities: [
     {

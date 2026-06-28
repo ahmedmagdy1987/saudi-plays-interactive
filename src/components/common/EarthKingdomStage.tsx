@@ -48,11 +48,12 @@ export default function EarthKingdomStage() {
     let endY = 1;
     let isMobile = false;
     const measure = () => {
-      const vis = document.getElementById("vision");
+      const vis = document.getElementById("riyadh");
       const jrn = document.getElementById("journey");
       const y = window.scrollY || 0;
       isMobile = window.innerWidth <= 820;
-      // P=0 when the viewport centre reaches §02's top; P=1 when it reaches §10's top
+      // P=0 when the viewport centre reaches the first content section (riyadh) top;
+      // P=1 when it reaches the interactive explorer (journey) top — visual-first order.
       startY = vis ? vis.getBoundingClientRect().top + y - window.innerHeight * 0.5 : 0;
       endY = jrn ? jrn.getBoundingClientRect().top + y - window.innerHeight * 0.5 : startY + 1;
       if (endY <= startY) endY = startY + 1;

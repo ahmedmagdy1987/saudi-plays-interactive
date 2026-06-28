@@ -63,9 +63,9 @@ export default function MalahiOperating() {
   });
 
   return (
-    <section id="malahi" data-section="06" ref={ref} className="section section--malahi" data-spin={spin} aria-label={malahi.title}>
+    <section id="malahi" data-section="05" ref={ref} className="section section--malahi" data-spin={spin} aria-label={malahi.title}>
       <div className="container sec-header" data-reveal>
-        <p className="eyebrow"><span className="sec-index">06</span>{malahi.eyebrow}</p>
+        <p className="eyebrow"><span className="sec-index">05</span>{malahi.eyebrow}</p>
         <h2 className="heading-xl sec-title">{malahi.title}</h2>
         <p className="lede sec-lede">{malahi.sub}</p>
       </div>
