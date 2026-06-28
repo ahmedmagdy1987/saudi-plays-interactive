@@ -394,12 +394,12 @@ export default function CityJourney() {
     <section
       id="journey"
       ref={rootRef}
-      data-section="10"
+      data-section="04"
       className={`section cj cj--${mode}`}
       aria-label={t(data.header.title)}
     >
       <div className="container sec-header" data-align="center" data-reveal>
-        <p className="eyebrow eyebrow--violet"><span className="sec-index">10</span>{t(data.header.eyebrow)}</p>
+        <p className="eyebrow eyebrow--violet"><span className="sec-index">04</span>{t(data.header.eyebrow)}</p>
         <h2 className="heading-xl sec-title">{t(data.header.title)}</h2>
         <p className="lede sec-lede">{t(data.header.lede)}</p>
       </div>

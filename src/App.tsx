@@ -145,16 +145,19 @@ export default function App() {
           rebuilds against the new RTL/LTR layout — no stale timelines, no stale
           ScrollTriggers, no inline opacity/transform surviving the switch. */}
       <main key={lang} id="main-content">
+        {/* Visual-first order: lead with the strongest visuals (Riyadh, zones, the
+            interactive city explorer), then the operating model, and only then the
+            quantitative/commercial/governance sections — never open with metrics. */}
         <IntroHero />
-        <NationalVision />
-        <MarketOpportunity />
         <RiyadhToSaudi />
         <ExperienceZones />
-        <MalahiOperating />
-        <Governance />
-        <RevenueEcosystem />
-        <ImpactDashboard />
         <CityJourney />
+        <MalahiOperating />
+        <NationalVision />
+        <MarketOpportunity />
+        <RevenueEcosystem />
+        <Governance />
+        <ImpactDashboard />
         <Finale />
       </main>
       <Footer />

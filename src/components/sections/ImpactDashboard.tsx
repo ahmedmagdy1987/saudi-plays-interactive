@@ -12,7 +12,7 @@ import "./ImpactDashboard.css";
 export default function ImpactDashboard() {
   const { impact } = useContent();
   return (
-    <SectionShell id="impact" index="09" eyebrow={impact.eyebrow} title={impact.title} lede={impact.sub} label={impact.title}>
+    <SectionShell id="impact" index="10" eyebrow={impact.eyebrow} title={impact.title} lede={impact.sub} label={impact.title}>
       <div className="container">
         <div className="imp__sub-head" data-reveal>
           <h3>{impact.targetsTitle}</h3>

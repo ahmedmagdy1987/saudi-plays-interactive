@@ -96,7 +96,7 @@ export default function RiyadhToSaudi() {
     <SectionShell
       ref={ref}
       id="riyadh"
-      index="04"
+      index="02"
       eyebrow={riyadhToSaudi.eyebrow}
       title={riyadhToSaudi.title}
       lede={riyadhToSaudi.sub}
