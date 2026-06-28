@@ -98,13 +98,17 @@
    bands (where headers + content live) for contrast, but lets the cinematic media stay
    a visible living texture through the middle so light sections never look faded/dead. */
 :root[data-theme="light"] .ms-flow__scrim {
+  /* NOT a flat white veil: clear sides, a gentle centre reading column, and softer
+     top/bottom bands — so the cinematic media stays a living texture in light mode
+     (readability comes from the content cards/panels, not a page-wide white wash). */
   background:
-    radial-gradient(120% 90% at 82% 4%, rgba(12, 138, 126, 0.06), transparent 56%),
-    linear-gradient(180deg, rgba(237, 242, 250, 0.9) 0%, rgba(237, 242, 250, 0.74) 36%, rgba(237, 242, 250, 0.72) 60%, rgba(237, 242, 250, 0.88) 100%);
+    radial-gradient(120% 90% at 82% 4%, rgba(12, 138, 126, 0.05), transparent 56%),
+    linear-gradient(90deg, rgba(237, 242, 250, 0) 0%, rgba(237, 242, 250, 0.34) 22%, rgba(237, 242, 250, 0.46) 50%, rgba(237, 242, 250, 0.34) 78%, rgba(237, 242, 250, 0) 100%),
+    linear-gradient(180deg, rgba(237, 242, 250, 0.62) 0%, rgba(237, 242, 250, 0.16) 30%, rgba(237, 242, 250, 0.16) 70%, rgba(237, 242, 250, 0.62) 100%);
 }
 @media (max-width: 820px) {
   :root[data-theme="light"] .ms-flow__scrim {
     background:
-      linear-gradient(180deg, rgba(237, 242, 250, 0.94) 0%, rgba(237, 242, 250, 0.74) 35%, rgba(237, 242, 250, 0.7) 65%, rgba(237, 242, 250, 0.92) 100%);
+      linear-gradient(180deg, rgba(237, 242, 250, 0.72) 0%, rgba(237, 242, 250, 0.34) 34%, rgba(237, 242, 250, 0.34) 66%, rgba(237, 242, 250, 0.72) 100%);
   }
 }

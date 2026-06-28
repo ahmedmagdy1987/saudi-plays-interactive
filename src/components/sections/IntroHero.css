@@ -124,6 +124,19 @@
 }
 .intro__eyebrow { justify-content: center; margin-bottom: 1.3rem; }
 .intro__titlewrap { will-change: opacity; }
+/* Official logo slot (replaces the large text wordmark). Sized like a wordmark,
+   never upscaled past its natural resolution; falls back to .intro__title when the
+   asset is missing. */
+.intro__logo {
+  display: block;
+  margin: 0 auto;
+  width: auto;
+  height: auto;
+  max-width: min(78vw, 440px);
+  max-height: 26vh;
+  filter: drop-shadow(0 10px 34px rgba(0, 0, 0, 0.5));
+}
+@media (max-width: 720px) { .intro__logo { max-width: 84vw; max-height: 20vh; } }
 .intro__title {
   font-family: var(--font-ar);
   font-weight: 700;

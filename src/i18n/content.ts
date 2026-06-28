@@ -38,7 +38,7 @@ export const ar = {
     langName: "العربية",
     otherLang: "English",
     switchAria: "تبديل اللغة",
-    cue: "تابع",
+    cue: "مرّر لاكتشاف التجربة",
     dragHint: "اسحب أفقيًا لاستكشاف المناطق",
     navAria: "فصول العرض",
     proven: "تجربة مُثبتة",
@@ -76,7 +76,7 @@ export const ar = {
   hero: {
     eyebrow: "منصة وطنية للترفيه المجتمعي",
     titleLines: ["السعودية", "تلعب"],
-    supporting: "معًا نصنع تجربة ترفيهية وطنية تصل إلى كل مدينة وكل حي",
+    supporting: "عرض تفاعلي يقدّم رؤية وطنية لمنظومة ترفيه مجتمعي متصلة، من الفكرة والمواقع إلى التشغيل والأثر.",
     caseStudyTag: "تجربة «الرياض تلعب» · 2024–2025",
     caseStudyNote: "أرقام تجربة «الرياض تلعب»، مرحلة تجريبية مُثبتة، وليست أرقامًا وطنية.",
     stats: [
@@ -306,7 +306,7 @@ export const en: Content = {
     langName: "English",
     otherLang: "العربية",
     switchAria: "Switch language",
-    cue: "Scroll",
+    cue: "Scroll to explore",
     dragHint: "Drag horizontally to explore the zones",
     navAria: "Presentation chapters",
     proven: "Proven pilot",
@@ -344,7 +344,7 @@ export const en: Content = {
   hero: {
     eyebrow: "SAUDI PLAYS · NATIONAL ENTERTAINMENT PLATFORM",
     titleLines: ["Saudi", "Plays"],
-    supporting: "Together we build a national entertainment experience that reaches every city and every neighbourhood.",
+    supporting: "An interactive presentation of a connected national community-entertainment ecosystem—from vision and locations to operations and impact.",
     caseStudyTag: "“Riyadh Plays” pilot · 2024–2025",
     caseStudyNote: "Figures from the “Riyadh Plays” pilot: a proven trial stage, not national results.",
     stats: [
