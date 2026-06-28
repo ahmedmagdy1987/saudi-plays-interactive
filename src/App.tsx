@@ -19,7 +19,7 @@ import MalahiOperating from "@/components/sections/MalahiOperating";
 import Governance from "@/components/sections/Governance";
 import RevenueEcosystem from "@/components/sections/RevenueEcosystem";
 import ImpactDashboard from "@/components/sections/ImpactDashboard";
-import CityJourney from "@/components/sections/CityJourney";
+import CityExplorer from "@/components/sections/CityExplorer";
 import Finale from "@/components/sections/Finale";
 import Footer from "@/components/sections/Footer";
 
@@ -151,7 +151,7 @@ export default function App() {
         <IntroHero />
         <RiyadhToSaudi />
         <ExperienceZones />
-        <CityJourney />
+        <CityExplorer />
         <MalahiOperating />
         <NationalVision />
         <MarketOpportunity />
