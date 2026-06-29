@@ -181,3 +181,43 @@
   .vx__thumb, .vx__cat { transition: none; }
   .vx__thumb:hover, .vx__thumb[data-on="true"] { transform: none; }
 }
+
+/* ---- Earth intro layers + z-order + mode-based initial opacities --------- */
+.vx__media { z-index: 0; }
+.vx__geo { z-index: 1; }
+.vx__globe { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.vx__globe-canvas { position: absolute; inset: 0; }
+.vx__globe-fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(58% 58% at 50% 44%, #123a6e 0%, #08214a 38%, #041027 66%, #02060f 100%);
+}
+.vx__globe-fallback::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 60% at 50% 44%, transparent 52%, rgba(74, 163, 255, 0.18) 60%, transparent 66%);
+}
+.vx__scrim { z-index: 3; }
+.vx__overlay { z-index: 4; }
+.vx__earthcap {
+  position: absolute;
+  z-index: 4;
+  inset-block-end: clamp(2rem, 9vh, 5.5rem);
+  inset-inline: 0;
+  text-align: center;
+  pointer-events: none;
+  color: #fff;
+}
+.vx__earthcap .eyebrow { justify-content: center; color: rgba(255, 255, 255, 0.85); }
+.vx__earthcap-cue { font-size: var(--fz-eyebrow); letter-spacing: 0.18em; color: rgba(255, 255, 255, 0.6); margin-top: 0.35rem; }
+.vx__cats { z-index: 5; }
+
+/* initial opacities by mode — the live scroll scrub overrides these inline at runtime */
+.vx__stage--scrub .vx__globe { opacity: 1; }
+.vx__stage--scrub .vx__geo { opacity: 0; }
+.vx__stage--scrub .vx__overlay { opacity: 0; }
+.vx__stage--scrub .vx__earthcap { opacity: 1; }
+.vx__stage--reduced .vx__geo { opacity: 0; }
+.vx__stage--reduced .vx__overlay { opacity: 1; }
+.vx__stage--reduced .vx__earthcap { display: none; }

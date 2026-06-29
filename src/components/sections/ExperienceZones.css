@@ -253,3 +253,43 @@ button.zcard {
   .zmodal, .zmodal__dialog { animation: none; }
   .zmodal__close { transition: none; }
 }
+
+/* "view details" affordance so every card reads as interactive */
+.zcard__more {
+  margin-top: 0.35rem;
+  font-size: var(--fz-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+@media (min-width: 700px) {
+  /* keep the four supporting cards clean; show the affordance on hover/focus there */
+  .zcard:not(:first-child) .zcard__more { opacity: 0; transition: opacity 0.3s var(--ease-out); }
+  .zcard:not(:first-child):hover .zcard__more,
+  .zcard:not(:first-child):focus-visible .zcard__more { opacity: 1; }
+}
+
+/* in-popup zone stepper (switch zones without leaving the popup) */
+.zmodal__body { flex: 1 1 auto; min-height: 0; }
+.zmodal__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.2rem 1rem clamp(1rem, 3vw, 1.4rem);
+  flex: none;
+}
+.zmodal__navbtn {
+  width: 2.5em; height: 2.5em;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1.3rem; line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.zmodal__navbtn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.zmodal__navbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.zmodal__count { font-size: var(--fz-label); color: var(--ink-mute); min-width: 3.2em; text-align: center; }
