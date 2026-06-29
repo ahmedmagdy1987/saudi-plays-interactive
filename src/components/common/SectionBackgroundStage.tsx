@@ -43,8 +43,8 @@ interface MediaItem { id: string; img: string; loop?: string }
 // Order MUST mirror the section DOM order (App.tsx) — the crossfade controller maps
 // the scroll "section float" onto this array assuming ascending section centres.
 const MEDIA: MediaItem[] = [
-  { id: "riyadh", img: "s04-expansion", loop: "loop-expansion" },
   { id: "zones", img: "s05-entertainment", loop: "loop-entertainment" },
+  { id: "riyadh", img: "s04-expansion", loop: "loop-expansion" },
   { id: "malahi", img: "s06-energy", loop: "loop-malahi" },
   { id: "vision", img: "s02-vision", loop: "loop-vision" },
   { id: "market", img: "s03-market", loop: "loop-market" },

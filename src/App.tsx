@@ -7,7 +7,6 @@ import SectionProgressNavigation from "@/components/nav/SectionProgressNavigatio
 import LanguageSwitcher from "@/components/nav/LanguageSwitcher";
 import ThemeToggle from "@/components/nav/ThemeToggle";
 import SectionBackgroundStage from "@/components/common/SectionBackgroundStage";
-import EarthKingdomStage from "@/components/common/EarthKingdomStage";
 import MediaDebug from "@/components/common/MediaDebug";
 
 import IntroHero from "@/components/sections/IntroHero";
@@ -19,7 +18,7 @@ import MalahiOperating from "@/components/sections/MalahiOperating";
 import Governance from "@/components/sections/Governance";
 import RevenueEcosystem from "@/components/sections/RevenueEcosystem";
 import ImpactDashboard from "@/components/sections/ImpactDashboard";
-import CityExplorer from "@/components/sections/CityExplorer";
+import VisualExplorer from "@/components/sections/VisualExplorer";
 import Finale from "@/components/sections/Finale";
 import Footer from "@/components/sections/Footer";
 
@@ -125,12 +124,6 @@ export default function App() {
   return (
     <div className="app-root">
       <SectionBackgroundStage />
-      {/* Earth→Kingdom scroll camera: composites the globe + zooming Kingdom OVER the
-          section-video context, turning §02→§10 into one descending geographic journey.
-          MUST stay rendered AFTER SectionBackgroundStage: both layers share z-index
-          var(--z-atmos), so equal-z paint order (DOM order) is what stacks the globe
-          above the section video and below the content — do not reorder. */}
-      <EarthKingdomStage />
       <a href="#main-content" className="skip-link">
         {ui.skip}
       </a>
@@ -145,13 +138,13 @@ export default function App() {
           rebuilds against the new RTL/LTR layout — no stale timelines, no stale
           ScrollTriggers, no inline opacity/transform surviving the switch. */}
       <main key={lang} id="main-content">
-        {/* Visual-first order: lead with the strongest visuals (Riyadh, zones, the
-            interactive city explorer), then the operating model, and only then the
-            quantitative/commercial/governance sections — never open with metrics. */}
+        {/* Visual-first order: hero → full-screen visual explorer → experience zones,
+            then the Riyadh proof and operating model, and only then the quantitative/
+            commercial/governance sections — never open with metrics. */}
         <IntroHero />
-        <RiyadhToSaudi />
+        <VisualExplorer />
         <ExperienceZones />
-        <CityExplorer />
+        <RiyadhToSaudi />
         <MalahiOperating />
         <NationalVision />
         <MarketOpportunity />

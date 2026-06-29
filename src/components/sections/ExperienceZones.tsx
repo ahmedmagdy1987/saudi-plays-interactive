@@ -1,14 +1,12 @@
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useContent, useLang } from "@/i18n";
 import "./ExperienceZones.css";
 
 /**
- * Section 05 — Experience zones, presented as a professional image-card experience.
- * A quick audience-category overview, then five premium image cards (one per zone)
- * built entirely from the existing bilingual data — strong relevant image, localized
- * title + English subtitle, short supporting copy, accent system, polished hover/tap/
- * focus states, keyboard-visible focus, responsive grid (one column on mobile).
- * Cards reveal with a restrained one-time stagger (latched → stable on reverse scroll).
+ * §03 — Five Experience Zones. A premium image-card grid; tapping/clicking a zone
+ * opens a smooth in-place detail POPUP (title, English, explanation, key visual) —
+ * never a page navigation. Escape closes and returns focus; modal on desktop, a
+ * safe-area bottom sheet on mobile. This is the ONLY section with popup behaviour.
  */
 const ZONE_IMG: Record<string, string> = {
   digital: "/media/sections/zone-digital.webp",
@@ -25,9 +23,12 @@ export default function ExperienceZones() {
   const { lang } = useLang();
   const dir = lang === "en" ? "ltr" : "rtl";
 
-  // one-time staggered reveal (latched → stable on reverse). A capability-checked
-  // IntersectionObserver toggles a single class; all hover/focus visuals live in CSS
-  // so nothing inline ever fights the interaction states. Falls back to fully visible.
+  const [openId, setOpenId] = useState<string | null>(null);
+  const lastTrigger = useRef<HTMLElement | null>(null);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const zone = openId ? experience.zones.find((z) => z.id === openId) ?? null : null;
+  const closeLabel = lang === "en" ? "Close" : "إغلاق";
+
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
@@ -40,6 +41,20 @@ export default function ExperienceZones() {
     return () => io.disconnect();
   }, [lang]);
 
+  const open = useCallback((id: string, el: HTMLElement) => { lastTrigger.current = el; setOpenId(id); }, []);
+  const close = useCallback(() => {
+    setOpenId(null);
+    requestAnimationFrame(() => lastTrigger.current?.focus());
+  }, []);
+
+  useEffect(() => {
+    if (!zone) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { e.stopPropagation(); close(); } };
+    document.addEventListener("keydown", onKey);
+    const raf = requestAnimationFrame(() => closeRef.current?.focus());
+    return () => { document.removeEventListener("keydown", onKey); cancelAnimationFrame(raf); };
+  }, [zone, close]);
+
   return (
     <section id="zones" data-section="03" ref={ref} className="section section--zones" aria-label={experience.title}>
       <div className="container sec-header" data-reveal>
@@ -48,7 +63,6 @@ export default function ExperienceZones() {
         <p className="lede sec-lede">{experience.zonesSub}</p>
       </div>
 
-      {/* quick audience-category overview (existing data, no invented claims) */}
       <div className="container zaudiences" data-reveal aria-label={experience.coreSub}>
         {experience.audiences.map((a) => (
           <span className="zaud-chip" key={a.id}>{a.ar}</span>
@@ -58,28 +72,57 @@ export default function ExperienceZones() {
       <div className="container">
         <div className="zones-grid" ref={gridRef} role="list" aria-label={experience.zonesTitle}>
           {experience.zones.map((z, i) => (
-            <article
+            <button
+              type="button"
               className="zcard"
               data-accent={z.accent}
               key={z.id}
               role="listitem"
-              tabIndex={0}
+              aria-haspopup="dialog"
               aria-label={`${z.ar}${z.en && z.en !== z.ar ? " — " + z.en : ""}: ${z.desc}`}
               style={{ ["--i" as string]: i } as CSSProperties}
+              onClick={(e) => open(z.id, e.currentTarget)}
             >
-              <div className="zcard__media" aria-hidden="true">
+              <span className="zcard__media" aria-hidden="true">
                 <img className="zcard__img" src={ZONE_IMG[z.id]} alt="" loading="lazy" decoding="async" />
                 <span className="zcard__scrim" />
-              </div>
-              <div className="zcard__body" dir={dir}>
-                <h3 className="zcard__title">{z.ar}</h3>
+              </span>
+              <span className="zcard__body" dir={dir}>
+                <span className="zcard__title">{z.ar}</span>
                 {z.en && z.en !== z.ar && <span className="zcard__en">{z.en}</span>}
-                <p className="zcard__desc">{z.desc}</p>
-              </div>
-            </article>
+                <span className="zcard__desc">{z.desc}</span>
+              </span>
+            </button>
           ))}
         </div>
       </div>
+
+      {/* zone detail popup — modal (desktop) / bottom sheet (mobile) */}
+      {zone && (
+        <div className="zmodal" onClick={close}>
+          <div
+            className="zmodal__dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label={zone.ar}
+            dir={dir}
+            data-accent={zone.accent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="zmodal__media">
+              <img src={ZONE_IMG[zone.id]} alt="" decoding="async" />
+            </div>
+            <div className="zmodal__body">
+              <h3 className="zmodal__title">{zone.ar}</h3>
+              {zone.en && zone.en !== zone.ar && <span className="zmodal__en">{zone.en}</span>}
+              <p className="zmodal__desc">{zone.desc}</p>
+            </div>
+            <button type="button" className="zmodal__close" ref={closeRef} onClick={close} aria-label={closeLabel}>
+              <span aria-hidden="true">✕</span>
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

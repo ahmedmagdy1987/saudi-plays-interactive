@@ -62,9 +62,9 @@ export const ar = {
   },
   NAV: [
     { id: "intro", index: "01", label: "الافتتاحية" },
-    { id: "riyadh", index: "02", label: "من الرياض للمملكة" },
+    { id: "journey", index: "02", label: "استكشف المواقع" },
     { id: "zones", index: "03", label: "مناطق التجربة" },
-    { id: "journey", index: "04", label: "استكشف المدن" },
+    { id: "riyadh", index: "04", label: "من الرياض للمملكة" },
     { id: "malahi", index: "05", label: "منظومة ملاهي" },
     { id: "vision", index: "06", label: "الرؤية الوطنية" },
     { id: "market", index: "07", label: "حجم الفرصة" },
@@ -330,9 +330,9 @@ export const en: Content = {
   },
   NAV: [
     { id: "intro", index: "01", label: "Opening" },
-    { id: "riyadh", index: "02", label: "Riyadh to Kingdom" },
+    { id: "journey", index: "02", label: "Explore places" },
     { id: "zones", index: "03", label: "Experience Zones" },
-    { id: "journey", index: "04", label: "Explore the Cities" },
+    { id: "riyadh", index: "04", label: "Riyadh to Kingdom" },
     { id: "malahi", index: "05", label: "Malahi OS" },
     { id: "vision", index: "06", label: "National Vision" },
     { id: "market", index: "07", label: "Market" },

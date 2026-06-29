@@ -173,3 +173,83 @@
   .zcard__title { font-size: var(--fz-lead); }
   .zcard__body { padding: clamp(0.9rem, 4vw, 1.3rem); }
 }
+
+/* zone card is now a <button> — reset native chrome, keep the grid sizing */
+button.zcard {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: start;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.zcard__title { display: block; }
+
+/* ---- zone detail popup: modal (desktop) / bottom sheet (mobile) ---------- */
+.zmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  background: rgba(2, 6, 15, 0.72);
+  backdrop-filter: blur(6px);
+  animation: zm-fade 0.24s var(--ease-out) both;
+}
+.zmodal__dialog {
+  --accent: #38e0cd;
+  position: relative;
+  width: min(680px, 100%);
+  max-height: min(88vh, 720px);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--card-2);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-deep);
+  animation: zm-pop 0.3s var(--ease-out) both;
+}
+.zmodal__dialog[data-accent="violet"] { --accent: #a99bff; }
+.zmodal__dialog[data-accent="gold"] { --accent: #f0cd85; }
+.zmodal__media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; flex: none; }
+.zmodal__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.zmodal__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(2, 6, 15, 0.6)); }
+.zmodal__body { padding: clamp(1.1rem, 3vw, 1.8rem); overflow-y: auto; border-top: 3px solid var(--accent); }
+.zmodal__title { font-size: var(--fz-h3); font-weight: 700; color: var(--ink); margin: 0; }
+.zmodal__en { font-family: var(--font-en); font-size: var(--fz-label); letter-spacing: 0.05em; color: var(--accent); }
+.zmodal__desc { font-size: var(--fz-body); color: var(--ink-soft); line-height: 1.7; margin: 0.7rem 0 0; max-width: 60ch; }
+.zmodal__close {
+  position: absolute;
+  inset-block-start: 0.7rem; inset-inline-end: 0.7rem;
+  width: 2.4em; height: 2.4em;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: rgba(2, 6, 15, 0.6);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.zmodal__close:hover { background: rgba(2, 6, 15, 0.85); transform: scale(1.06); }
+.zmodal__close:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@keyframes zm-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zm-pop { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
+@media (max-width: 720px) {
+  .zmodal { place-items: end stretch; padding: 0; }
+  .zmodal__dialog {
+    width: 100%;
+    max-height: 90svh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    animation: zm-sheet 0.3s var(--ease-out) both;
+  }
+}
+@keyframes zm-sheet { from { transform: translateY(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .zmodal, .zmodal__dialog { animation: none; }
+  .zmodal__close { transition: none; }
+}

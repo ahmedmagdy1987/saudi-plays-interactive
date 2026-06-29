@@ -1,0 +1,183 @@
+/* ============================================================================
+   §02 — Full-screen Visual Explorer. Sticky 100svh stage scrubbed across a tall
+   track (scroll = category transition). transform + opacity only; iPhone-safe.
+   ========================================================================== */
+
+/* category accents — distinct in both themes */
+:root {
+  --cat-metro: #5ff3e2;     /* transport / metro  */
+  --cat-water: #6cc8ff;     /* waterfront / sea   */
+  --cat-heritage: #f6d99a;  /* heritage / landmark */
+}
+:root[data-theme="light"] {
+  --cat-metro: #0a6258;
+  --cat-water: #1366a8;
+  --cat-heritage: #9a6f1e;
+}
+
+.vx-section { position: relative; }
+.vx__track { position: relative; }
+.vx__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #02060f;
+  isolation: isolate;
+}
+
+/* full-bleed media layers (only the active one is shown) */
+.vx__media { position: absolute; inset: 0; z-index: 0; }
+.vx__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-out, ease);
+  will-change: opacity;
+}
+.vx__img[data-on="true"] { opacity: 1; }
+
+/* geographic transition layer (rises between categories) */
+.vx__geo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 60% at 50% 42%, rgba(20, 48, 100, 0.5), transparent 70%),
+    rgba(2, 6, 15, 0.86);
+  will-change: opacity, transform;
+}
+.vx__geo .saudimap { width: min(72vw, 720px); opacity: 0.95; filter: drop-shadow(0 30px 80px rgba(0, 0, 0, 0.6)); }
+
+/* readability scrim */
+.vx__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(2, 6, 15, 0.66) 0%, rgba(2, 6, 15, 0.28) 38%, transparent 70%),
+    linear-gradient(0deg, rgba(2, 6, 15, 0.78) 2%, rgba(2, 6, 15, 0.2) 32%, transparent 55%);
+}
+:root[data-theme="light"] .vx__scrim {
+  background:
+    linear-gradient(90deg, rgba(8, 18, 38, 0.62) 0%, rgba(8, 18, 38, 0.26) 40%, transparent 72%),
+    linear-gradient(0deg, rgba(8, 18, 38, 0.72) 2%, rgba(8, 18, 38, 0.2) 34%, transparent 56%);
+}
+
+/* overlay content (lower area) */
+.vx__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-block: 0 clamp(2rem, 7vh, 5rem);
+  padding-bottom: max(clamp(2rem, 7vh, 5rem), env(safe-area-inset-bottom, 0));
+  pointer-events: none;
+  color: #fff;
+}
+.vx__eyebrow { color: rgba(255, 255, 255, 0.82); }
+.vx__eyebrow .sec-index { color: var(--acc); border-color: color-mix(in srgb, var(--acc) 50%, transparent); }
+.vx__cat-title {
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 1rem + 5vw, 4.6rem);
+  line-height: 1.05;
+  margin: 0;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+}
+.vx__cat-kicker { font-size: var(--fz-lead); color: rgba(255, 255, 255, 0.86); margin: 0.2rem 0 0; }
+.vx__active-meta {
+  margin-top: 0.9rem;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.8rem;
+  border-inline-start: 3px solid var(--acc);
+  padding-inline-start: 0.8rem;
+}
+.vx__active-meta b { font-size: var(--fz-h3); font-weight: 600; color: #fff; }
+.vx__active-meta span { font-size: var(--fz-label); color: rgba(255, 255, 255, 0.72); }
+
+/* compact in-place selectors */
+.vx__thumbs { display: flex; gap: 0.6rem; margin-top: 1.2rem; pointer-events: auto; flex-wrap: wrap; }
+.vx__thumb {
+  width: clamp(54px, 8vw, 78px);
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  transition: border-color var(--dur-fast, 0.2s) ease, transform var(--dur-fast, 0.2s) ease;
+}
+.vx__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vx__thumb:hover { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.6); }
+.vx__thumb:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+.vx__thumb[data-on="true"] { border-color: var(--acc); box-shadow: 0 0 0 2px var(--acc), 0 8px 24px rgba(0, 0, 0, 0.4); transform: translateY(-2px); }
+
+/* category navigation (top) */
+.vx__cats {
+  position: absolute;
+  inset-block-start: clamp(4.5rem, 9vh, 6.5rem);
+  inset-inline-start: 0; inset-inline-end: 0;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 0.7rem;
+  padding-inline: var(--gut, 5vw);
+  pointer-events: none;
+}
+.vx__cat {
+  pointer-events: auto;
+  display: inline-flex; align-items: center; gap: 0.5em;
+  padding: 0.45em 1em;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(2, 6, 15, 0.45);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-ar); font-size: var(--fz-label); font-weight: 600;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.vx__cat i { width: 9px; height: 9px; border-radius: 50%; background: var(--acc); flex: none; box-shadow: 0 0 8px var(--acc); }
+.vx__cat:hover { border-color: rgba(255, 255, 255, 0.55); color: #fff; }
+.vx__cat:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+.vx__cat[data-on="true"] { background: color-mix(in srgb, var(--acc) 22%, rgba(2, 6, 15, 0.6)); border-color: var(--acc); color: #fff; }
+
+.vx__cue {
+  position: absolute;
+  inset-block-end: 1rem; inset-inline: 0;
+  z-index: 4;
+  text-align: center;
+  font-size: var(--fz-eyebrow);
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+}
+
+/* ---- mobile ----------------------------------------------------------- */
+@media (max-width: 720px) {
+  .vx__overlay { padding-inline: var(--gut, 6vw); }
+  .vx__cats { inset-block-start: clamp(4rem, 8vh, 5.2rem); justify-content: flex-start; gap: 0.4rem; }
+  .vx__cat { padding: 0.4em 0.8em; }
+  .vx__active-meta b { font-size: var(--fz-lead); }
+  .vx__thumbs { gap: 0.5rem; }
+}
+
+/* ---- reduced motion: no geo scale, instant-ish swaps, tabs drive it ---- */
+@media (prefers-reduced-motion: reduce) {
+  .vx__img { transition: opacity 0.2s ease; }
+  .vx__thumb, .vx__cat { transition: none; }
+  .vx__thumb:hover, .vx__thumb[data-on="true"] { transform: none; }
+}
